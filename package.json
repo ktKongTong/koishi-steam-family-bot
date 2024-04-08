@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-steam-family-bot",
   "description": "一个用于新版 Steam 家庭的库存监控 koishi Bot 插件",
-  "version": "0.0.1-dev.patch02",
+  "version": "0.0.1-dev.patch03",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
