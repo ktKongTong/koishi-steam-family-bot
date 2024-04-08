@@ -1,0 +1,6 @@
+common:
+  hello: 你好，我是 bsbot
+  ping: pong
+_config:
+  beatSaverHost: BeatSaverOrigin，例如:https://api.beatsaver.com
+  beatSaverWSHost: BeatSaverWebSocketOrigin，用于实时监听谱面更新，例如wss://ws.beatsaver.com/maps

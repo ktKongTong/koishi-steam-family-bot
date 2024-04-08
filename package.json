@@ -9,14 +9,14 @@
     "dist"
   ],
   "license": "MIT",
-  "scripts": {},
   "keywords": [
     "chatbot",
     "koishi",
     "plugin"
   ],
-  "devDependencies": {},
   "peerDependencies": {
-    "koishi": "^4.17.1"
+    "koishi": "^4.17.1",
+    "lodash": "^4.17.21",
+    "steam-session": "^1.7.2"
   }
 }
