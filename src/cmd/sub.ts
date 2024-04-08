@@ -64,7 +64,7 @@ export function SubCmd(ctx:Context,cfg:Config) {
       const insertRes = await ctx.database.upsert('SteamFamilyLib',dbContent)
 
       const  res = await ctx.database.upsert("SteamFamilyLibSubscribe", [{
-        "uid": session.userId,
+        "uid": session.uid,
         'channelId': session.event.channel.id,
         "selfId": session.bot.selfId,
         "platform": session.platform,
