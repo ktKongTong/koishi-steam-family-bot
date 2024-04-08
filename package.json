@@ -1,7 +1,7 @@
 {
-  "name": "koishi-plugin-koishi-steam-family-lib-monitor",
-  "description": "",
-  "version": "0.0.1",
+  "name": "koishi-plugin-steam-family-bot",
+  "description": "一个用于新版 Steam 家庭的库存监控 koishi Bot 插件",
+  "version": "0.0.1-dev",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -9,11 +9,35 @@
     "dist"
   ],
   "license": "MIT",
+  "author": {
+    "name": "ktKongTong",
+    "email": "kt@ktlab.io"
+  },
+  "repository": "https://github.com/ktKongTong/koishi-steam-family-bot",
   "keywords": [
-    "chatbot",
+    "steam",
+    "steam-family",
     "koishi",
-    "plugin"
+    "koishi-plugin"
   ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "koishi": {
+    "preview": true,
+    "service": {
+      "required": ["database"]
+    },
+    "locales": [
+      "en",
+      "zh"
+    ],
+    "description": {
+      "en": "a koishi bot plugin to monitor steam family library changes",
+      "zh": "一个用于新版 Steam 家庭的库存监控 koishi Bot 插件"
+    }
+  },
   "peerDependencies": {
     "koishi": "^4.17.1",
     "lodash": "^4.17.21",

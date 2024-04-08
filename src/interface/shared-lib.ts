@@ -1,4 +1,4 @@
-interface SteamSharedLib {
+export interface SteamSharedLib {
   appid: number,
   ownerSteamids: string[],
   name: string,

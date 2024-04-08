@@ -8,5 +8,5 @@ export const getGameAsset = (game:StoreItem, filename:string) => {
   return prefix + url
 }
 export const getGameCapsule = (game:StoreItem) => {
-  return getGameAsset(game,game.assets?.libraryCapsule??'')
+  return getGameAsset(game,game.assets?.libraryCapsule??game.assets?.mainCapsule??game.assets?.smallCapsule??'')
 }

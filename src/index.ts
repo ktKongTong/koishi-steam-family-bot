@@ -1,27 +1,24 @@
 import {Context} from 'koishi'
-import {schedules} from "./schedules";
+import schedules from "./schedules/index";
 import {Config} from "./config";
 import Cmd, {LoginCmd, SubCmd} from "./cmd";
-import {Account} from "./interface/players";
 export const name = 'koishi-steam-family-lib-monitor'
 
 
-export const inject = ['database','puppeteer']
+export const inject = ['database']
 
 declare module 'koishi' {
   interface Tables {
     SteamAccount:SteamAccount,
     SteamFamilyLibSubscribe: SteamFamilyLibSubscribe,
     SteamFamilyLib:SteamFamilyLib,
-    SteamFamilyWishes: SteamFamilyWishes
-  }
-  interface User {
-    // accounts: Account[];
   }
 }
 
-interface SteamAccount {
+export interface SteamAccount {
   id: number,
+  uid: string,
+  accountName: string,
   familyId: string,
   steamId: string,
   steamAccessToken: string,
@@ -29,33 +26,23 @@ interface SteamAccount {
   lastRefreshTime: string,
   valid: string
 }
-interface SteamFamilyWishes {
-
+export interface SteamFamilyLib {
   id: number,
   familyId: string,
-  name: string,
+  name?: string,
   appId: number,
-  //
-  wisherSteamIds: string,
+  // for wishes -> wisherSteamIds / lib -> ownerSteamIds
+  steamIds: string,
+  type: 'lib'|'wish'
 }
-interface SteamFamilyLib {
-  id: number,
-  familyId: string,
-  // name: string,
-  appId: number,
-  //
-  ownerSteamIds: string,
-  // wisherSteamIds: string[],
-  // type: lib/wishes
-}
-interface SteamFamilyLibSubscribe {
+export interface SteamFamilyLibSubscribe {
   id: number,
   platform: string,
   selfId: string,
   channelId: string|null,
   uid: string,
   steamFamilyId: string,
-  steamAccountId: string,
+  steamAccountId: number,
   subLib: boolean,
   subWishes: boolean
 }
@@ -68,21 +55,24 @@ function pluginInit(ctx: Context, config:Config) {
   ctx.model.extend('SteamFamilyLib', {
     familyId: 'string',
     appId: 'integer',
-    ownerSteamIds: 'string',
+    steamIds: 'string',
+    name: 'string',
+    type:'string'
   },{
-    primary: ['familyId', 'appId'],
+    primary: ['familyId', 'appId','type'],
   })
   ctx.model.extend('SteamAccount', {
     id: 'unsigned',
+    uid: 'string',
     familyId: 'string',
+    accountName: 'string',
     steamId: 'string',
     steamAccessToken: 'string',
     steamRefreshToken: 'string',
     lastRefreshTime: 'string',
     valid:'string',
-
   }, {
-
+    autoInc: true
   })
   ctx.model.extend('SteamFamilyLibSubscribe', {
     // 各字段的类型声明
@@ -92,19 +82,16 @@ function pluginInit(ctx: Context, config:Config) {
     selfId: 'string',
     platform: 'string',
     steamFamilyId: 'string',
-    // steamAccountId: 'string',
-    // subLib: 'boolean',
-    // subWishes: 'boolean'
+    steamAccountId: 'unsigned',
+    subLib: 'boolean',
+    subWishes: 'boolean'
   },{
-    autoInc: true
-  })
-  ctx.model.extend('SteamFamilyWishes', {
-    name: 'string',
-    familyId: 'string',
-    appId: 'integer',
-    wisherSteamIds: 'string',
-  },{
-    primary: ['familyId', 'appId'],
+    autoInc: true,
+    foreign: {
+      // 相当于约束了 foo.uid 必须是某一个 user.id
+      uid: ['user', 'id'],
+      steamAccountId: ['SteamAccount','id']
+    },
   })
 }
 
