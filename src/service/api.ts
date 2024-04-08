@@ -1,5 +1,4 @@
-import {BeatLeaderPlayerScoreRequest, Leaderboard} from "koishi-plugin-beatsaber-bot/lib/types/beatleader";
-import {wrapperErr} from "koishi-plugin-beatsaber-bot/lib/service/utils/handlerError";
+
 import {Context} from "koishi";
 import {APIResp, SteamFamily} from "../interface/family";
 import {SharedLibResp} from "../interface/shared-lib";
@@ -8,6 +7,7 @@ import {SteamAppDetails} from "../interface/steam-app-details";
 import {Config} from "../config";
 import {WishItem} from "../interface/wish";
 import _ from "lodash";
+import {wrapperErr} from "./utils";
 export const libApi = (ctx:Context,config:Config,token:string)=> {
   const http = ctx.http
   const access_token = token

@@ -6,7 +6,6 @@ import {Config} from "../config";
 import {SteamAccount, SteamFamilyLib, SteamFamilyLibSubscribe} from "../index";
 import {SteamSharedLib} from "../interface/shared-lib";
 import {WishItem} from "../interface/wish";
-import {text} from "node:stream/consumers";
 
 const libMonitor = (ctx:Context,config:Config) => async ()=> {
   console.log('trigger lib monitor')
