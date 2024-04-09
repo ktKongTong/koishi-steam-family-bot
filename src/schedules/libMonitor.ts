@@ -107,11 +107,15 @@ const handleSubScribe = async (item: {
   account: SteamAccount
 } & SteamFamilyLibSubscribe, ctx:Context, config:Config) => {
 
+  const logger = ctx.logger('steam-family-bot.libMonitor');
+  logger.debug(`start handle family subscribe ${item.steamFamilyId}`)
   const api = new APIService(ctx,config,item.account)
   // 判断是否有效
   const {family, memberDict,wishes,prevWishes,} =
     await prepareFamilyInfo(api,ctx)
+  logger.debug('success fetch family info')
   const {prevLibs, libs} = await prepareData(api, item.account.familyId, ctx)
+  logger.debug('success fetch lib data')
 
   const {newWishes,modifiedWishes, deletedWishes,wishesDict} = diffWishes(prevWishes,wishes)
   const {modifiedLibs,libDict,newLibs, deletedLibs} = diffLibs(prevLibs, libs)
@@ -158,6 +162,7 @@ const handleSubScribe = async (item: {
       familyId: item.steamFamilyId,
       type: 'lib'
     })
+  logger.debug(`「${item.steamFamilyId}」upsert ${wishesUpsert.length}, remove ${wishesDelete.length}`)
 
   const newWishMsg = newWishes.map(newWish => {
     const names = newWish.wishers.map(ownerId => `「${memberDict[ownerId]?.personaName}」`)
@@ -165,7 +170,7 @@ const handleSubScribe = async (item: {
     return { text: text, relateAppId: newWish.appId.toString() }
   })
   const deleteWishMsg = deletedWishes.map(deletedWish => {
-    const names = deletedWish.steamIds.split(',').map(ownerId => `「${memberDict[ownerId]?.personaName}」`)
+    const names = deletedWish?.steamIds?.split(',')?.map(ownerId => `「${memberDict[ownerId]?.personaName}」`)
     let text= `库存愿望单 - 1。${deletedWish.name}，by：${names.join('，')}`
     return { text: text, relateAppId: deletedWish.appId.toString() }
   })
@@ -209,14 +214,13 @@ const handleSubScribe = async (item: {
       relateAppId: modifiedLib.appid.toString()
     }
   })
-  const logger = ctx.logger('steam-family-bot.libMonitor');
   let msgs = [
     ...newLibMsg, ...modifiedLibMsg, ...deleteLibMsg
   ]
   if(item.subWishes) {
     msgs = msgs.concat([...newWishMsg,...modifiedWishMsg,  ...deleteWishMsg])
   }
-  logger.info(`库存/愿望单变更 ${msgs.length}`)
+  logger.info(`steam 家庭「${item.steamFamilyId}」库存/愿望单变更 ${msgs.length}`)
   const bot = ctx.platform(item.platform).channel(item.channelId).bots?.[0]
   if(!bot) {return}
   const apps = msgs.map(msg=>msg.relateAppId)
