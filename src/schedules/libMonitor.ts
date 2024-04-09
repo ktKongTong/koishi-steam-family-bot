@@ -34,6 +34,9 @@ const prepareFamilyInfo = async (api:APIService,ctx:Context) => {
     familyId: family.data.familyGroupid,
     type: 'wish'
   })
+
+  const logger = ctx.logger('steam-family-bot.libMonitor');
+  logger.debug(`prepare FamilyData prevWishes:${prevWishes?.length} wishes: ${wishes?.length}`)
   return {
     family,
     memberDict,
@@ -52,6 +55,9 @@ const prepareData = async (api:APIService, familyId:string, ctx:Context) => {
       res?.data.apps.filter(app=>app.excludeReason == undefined || app.excludeReason == 0)
     )
   const [awaitedPrevLibs,awaitedLibs] = await Promise.all([prevLibs, libs])
+
+  const logger = ctx.logger('steam-family-bot.libMonitor');
+  logger.info(`prepare Data prevlibs:${awaitedPrevLibs?.length} libs: ${awaitedLibs?.length}`)
   return {prevLibs:awaitedPrevLibs, libs:awaitedLibs}
 }
 
@@ -117,9 +123,12 @@ const handleSubScribe = async (item: {
   const {prevLibs, libs} = await prepareData(api, item.account.familyId, ctx)
   logger.debug('success fetch lib data')
 
+  // logger.info(`${deletedWishes}, ${JSON.stringify(deletedWishes[0])}`)
   const {newWishes,modifiedWishes, deletedWishes,wishesDict} = diffWishes(prevWishes,wishes)
   const {modifiedLibs,libDict,newLibs, deletedLibs} = diffLibs(prevLibs, libs)
-  const libsUpsert = newLibs.concat(modifiedLibs).map(it=>(
+  const libsUpsert = newLibs
+    .concat(modifiedLibs)
+    .map(it=>(
     {
       familyId: item.steamFamilyId,
       name: it.name,
@@ -133,7 +142,9 @@ const handleSubScribe = async (item: {
     appId: it.appId,
     type: 'lib'
   }))
-  const wishesUpsert =  newWishes.map(newItem=>(
+  const wishesUpsert =  newWishes
+    .concat(modifiedWishes)
+    .map(newItem=>(
     {
       familyId: item.steamFamilyId,
       name: newItem.itemInfo?.name as any as string,
@@ -164,20 +175,23 @@ const handleSubScribe = async (item: {
     })
   logger.debug(`「${item.steamFamilyId}」upsert ${wishesUpsert.length}, remove ${wishesDelete.length}`)
 
+
   const newWishMsg = newWishes.map(newWish => {
     const names = newWish.wishers.map(ownerId => `「${memberDict[ownerId]?.personaName}」`)
     let text= `库存愿望单 + 1。${newWish.itemInfo?.name}，by：${names.join('，')}`
     return { text: text, relateAppId: newWish.appId.toString() }
   })
+
+
   const deleteWishMsg = deletedWishes.map(deletedWish => {
     const names = deletedWish?.steamIds?.split(',')?.map(ownerId => `「${memberDict[ownerId]?.personaName}」`)
     let text= `库存愿望单 - 1。${deletedWish.name}，by：${names.join('，')}`
     return { text: text, relateAppId: deletedWish.appId.toString() }
   })
   const modifiedWishMsg = modifiedWishes.map(modifiedWish => {
-    const prevLib = libDict[modifiedWish.appId]
+    const prevLib = wishesDict[modifiedWish.appId]
     const newWisherIds = modifiedWish.wishers
-    const wisherIds = prevLib.steamIds.split(',')
+    const wisherIds = prevLib?.steamIds?.split(',')
     const newlySteamIds = newWisherIds.filter(item=> !wisherIds.includes(item))
     const removedSteamIds = wisherIds.filter(item=> !newWisherIds.includes(item))
     const add = newlySteamIds.length - removedSteamIds.length
@@ -200,7 +214,7 @@ const handleSubScribe = async (item: {
   const modifiedLibMsg =  modifiedLibs.map(modifiedLib=> {
     const prevLib = libDict[modifiedLib.appid]
     const newOwnerIds = modifiedLib.ownerSteamids
-    const ownerIds = prevLib.steamIds.split(',')
+    const ownerIds = prevLib?.steamIds?.split(',')
     const newlySteamIds = newOwnerIds.filter(item=> !ownerIds.includes(item))
     const removedSteamIds = ownerIds.filter(item=> !newOwnerIds.includes(item))
     const add = newlySteamIds.length - removedSteamIds.length
