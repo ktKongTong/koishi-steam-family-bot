@@ -8,7 +8,8 @@ import {SteamSharedLib} from "../interface/shared-lib";
 import {WishItem} from "../interface/wish";
 
 const libMonitor = (ctx:Context,config:Config) => async ()=> {
-  console.log('trigger lib monitor')
+  const logger = ctx.logger('steam-family-bot.libMonitor');
+  logger.info('trigger lib monitor')
   const selection = ctx.database.join(['SteamAccount','SteamFamilyLibSubscribe'])
   const subscribe = await selection.where(row=> $.eq(row.SteamFamilyLibSubscribe.steamAccountId,row.SteamAccount.id)).execute()
   const subscribes = subscribe.map(item=> ({
@@ -48,7 +49,7 @@ const prepareData = async (api:APIService, familyId:string, ctx:Context) => {
   })
   const libs = api.Steam.getFamilyLibs(familyId)
     .then(res=>
-      res.data.apps.filter(app=>app.excludeReason == undefined || app.excludeReason == 0)
+      res?.data.apps.filter(app=>app.excludeReason == undefined || app.excludeReason == 0)
     )
   const [awaitedPrevLibs,awaitedLibs] = await Promise.all([prevLibs, libs])
   return {prevLibs:awaitedPrevLibs, libs:awaitedLibs}
@@ -208,12 +209,14 @@ const handleSubScribe = async (item: {
       relateAppId: modifiedLib.appid.toString()
     }
   })
+  const logger = ctx.logger('steam-family-bot.libMonitor');
   let msgs = [
     ...newLibMsg, ...modifiedLibMsg, ...deleteLibMsg
   ]
   if(item.subWishes) {
     msgs = msgs.concat([...newWishMsg,...modifiedWishMsg,  ...deleteWishMsg])
   }
+  logger.info(`库存/愿望单变更 ${msgs.length}`)
   const bot = ctx.platform(item.platform).channel(item.channelId).bots?.[0]
   if(!bot) {return}
   const apps = msgs.map(msg=>msg.relateAppId)
