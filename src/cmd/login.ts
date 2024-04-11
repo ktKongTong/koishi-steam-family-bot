@@ -1,7 +1,7 @@
 import {Context, h, sleep} from "koishi";
 import {Config} from "../config";
-import {APIService} from "../service";
 import {EAuthTokenPlatformType, LoginSession} from "steam-session";
+import {libApi} from "../service/api";
 
 export function LoginCmd(ctx:Context,cfg:Config) {
   const subcmd = ctx
@@ -10,7 +10,7 @@ export function LoginCmd(ctx:Context,cfg:Config) {
     .action(async ({ session, options }, input) => {
 
       let loginSession = new LoginSession(EAuthTokenPlatformType.SteamClient);
-      loginSession.loginTimeout = 120 * 1000;
+      loginSession.loginTimeout = 115 * 1000;
       // session.
       let startResult = await loginSession.startWithQR();
       let qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(startResult.qrChallengeUrl);
@@ -32,12 +32,29 @@ export function LoginCmd(ctx:Context,cfg:Config) {
           lastRefreshTime: (new Date()).getTime().toFixed(),
         }
         status = 'success'
-        const api = new APIService(ctx,cfg,account)
-        const family = await api.Steam.getSteamFamily()
-         ctx.database.upsert('SteamAccount',[{
-          familyId: family.data?.familyGroupid,
-          ...account
-        }])
+        // raw access without token check
+        const api = libApi(ctx,cfg, loginSession.accessToken)
+        const family = await api.getSteamFamily()
+        const res = await ctx.database.get('SteamAccount', {
+          steamId: account.steamId,
+          uid: account.uid,
+        })
+        if(res.length > 0) {
+          // replace previous account
+          ctx.database.upsert('SteamAccount',[{
+            id: res[0]?.id,
+            familyId: family.data?.familyGroupid,
+            valid:'valid',
+            ...account
+          }])
+        }else {
+          ctx.database.upsert('SteamAccount',[{
+            familyId: family.data?.familyGroupid,
+            valid:'valid',
+            ...account
+          }])
+        }
+
 
         let webCookies = await loginSession.getWebCookies();
       });

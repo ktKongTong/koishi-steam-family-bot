@@ -22,18 +22,42 @@ export function SubCmd(ctx:Context,cfg:Config) {
         session.send('你暂未绑定Steam账号，无法获取家庭信息，暂时无法进行家庭库订阅')
         return
       }
-      let account =  accounts[0]
+
       if (accounts.length > 1) {
         session.send('你当前绑定多个账号，请输入序号选择 steam 账号进行家庭库订阅')
-        // const res = await session.prompt(30 * 1000)
+        const res = await session.prompt(30 * 1000)
       }
-      //
+      let account =  accounts[0]
+      const subscribe = await ctx.database.get('SteamFamilyLibSubscribe', {
+        channelId: session.channelId,
+        steamFamilyId: account.familyId,
+        active: true
+      })
+
+
+      if(subscribe.length !== 0) {
+        let subscribeItem = subscribe[0]
+        if(subscribeItem && subscribeItem.active) {
+          session.send(`家庭「${account.familyId}」已经在当前会话中由「${subscribeItem.steamAccountId}」进行了绑定，无需重复订阅`)
+          return
+        }
+      }
       // session.send(`将要订阅「${account.steamId}」的家庭更新，请在 30s 内输入：\n1. 仅订阅家庭库更新\n2. 仅订阅成员愿望单更新\n3. 订阅家庭库和成员愿望单更新\n默认仅订阅家庭库更新`)
-      const api = new APIService(ctx,cfg, account)
+      const apiServiceResult = await APIService.create(ctx,cfg, account)
+      if(!apiServiceResult.isSuccess()) {
+        session.send('当前账号的 token 已失效，若需继续使用，请通过 renew 指令更新该账号的 token')
+        return
+      }
+      let api = apiServiceResult.data
 
       const steamFamily:APIResp<SteamFamily> = await api.Steam.getSteamFamily()
       const familyId = steamFamily.data.familyGroupid
+      if(!familyId) {
+        session.send('无法获取家庭，若需继续使用，可能时因为网络问题或 token 失效，请稍后重试或 renew token')
+        return
+      }
       const steamSharedLibs: APIResp<SharedLibResp> = await api.Steam.getFamilyLibs(familyId)
+      const steamAccountId = steamSharedLibs.data.ownerSteamid
       let dbContent:Omit<SteamFamilyLib, 'id'>[] = []
       let wishesSize = 0
       if (subWish) {
@@ -69,15 +93,17 @@ export function SubCmd(ctx:Context,cfg:Config) {
         "selfId": session.bot.selfId,
         "platform": session.platform,
         'steamFamilyId': familyId,
-        'steamAccountId': account.id,
+        'steamAccountId': steamAccountId,
+        'accountId': account.id,
         "subLib":subLib,
-        'subWishes':subWish
+        'subWishes':subWish,
+        active: true
       }])
 
       session.send(
         h('message',
           h('quote', {id:session.messageId}),
-          `hello，${steamFamily.data.familyGroup.name} 的成员，成功订阅家庭游戏库更新，已获取库存 ${apps.length} 项作品 ${subWish ? `愿望单 ${wishesSize} 项`:''}`,
+          `hello，「${steamFamily.data.familyGroup.name}」的成员，成功订阅家庭游戏库更新，已获取库存 ${apps.length} 项${subWish ? `，愿望单 ${wishesSize} 项`:''}`,
         )
       )
 

@@ -10,12 +10,18 @@ import {WishItem} from "../interface/wish";
 const libMonitor = (ctx:Context,config:Config) => async ()=> {
   const logger = ctx.logger('steam-family-bot.libMonitor');
   logger.info('trigger lib monitor')
+  // batch valid account
+  // subscribes account
+  // valid account
+  // check account valid
+
   const selection = ctx.database.join(['SteamAccount','SteamFamilyLibSubscribe'])
-  const subscribe = await selection.where(row=> $.eq(row.SteamFamilyLibSubscribe.steamAccountId,row.SteamAccount.id)).execute()
+  const subscribe = await selection.where(row=> $.and($.eq(row.SteamFamilyLibSubscribe.accountId,row.SteamAccount.id),$.eq( row.SteamAccount.valid,'valid'))).execute()
   const subscribes = subscribe.map(item=> ({
     ...item.SteamFamilyLibSubscribe,
     account:item.SteamAccount
   }))
+
   for (const item of subscribes) {
     handleSubScribe(item, ctx,config)
   }
@@ -115,7 +121,58 @@ const handleSubScribe = async (item: {
 
   const logger = ctx.logger('steam-family-bot.libMonitor');
   logger.debug(`start handle family subscribe ${item.steamFamilyId}`)
-  const api = new APIService(ctx,config,item.account)
+  const apiServiceResult = await APIService.create(ctx,config,item.account)
+  // try to get bot
+
+  const bot = ctx.platform(item.platform).channel(item.channelId).bots?.[0]
+  if(!bot) {return}
+  if(!apiServiceResult.isSuccess()) {
+    logger.debug(`account 「${item.account.id}」steamId「${item.account.steamId}」token is invalid`)
+    let timesStr = item.account.valid.split('.')?.[1]
+    let times = 0
+    if (!timesStr) {
+      let tmp = parseInt(item.account.valid.split('.')[1])
+      if(!Number.isNaN(tmp)) {times = tmp}
+    }
+    if (times >= 3) {
+      bot.sendMessage(item.channelId,h(
+        'message',
+        [
+          h('at',
+            {id: item.account.uid
+            }),
+          `steam account 「${item.account.steamId}」token has expired, now this account binding and subscription has deleted due to none response`
+        ]
+      ))
+      ctx.database.remove('SteamAccount', {
+        id: item.account.id,
+      })
+      ctx.database.remove('SteamFamilyLibSubscribe', {
+        accountId: item.account.id,
+      })
+    }else {
+      bot.sendMessage(item.channelId, h(
+        'message',
+        [
+          h('at',
+            {id: item.account.uid
+            }),
+          `steam account 「${item.account.steamId}」token has expired, please dm me and follow the instruction with [renew] cmd to refresh it`
+        ]
+      ))
+      ctx.database.set('SteamAccount', {
+        id: item.account.id,
+      }, {
+        valid: `invalid-notified.${times+1}`
+      })
+      ctx.database.set('SteamFamilyLibSubscribe', {
+        accountId: item.account.id,
+      }, {active: false})
+    }
+    return
+  }
+
+  let api = apiServiceResult.data
   // 判断是否有效
   const {family, memberDict,wishes,prevWishes,} =
     await prepareFamilyInfo(api,ctx)
@@ -235,8 +292,6 @@ const handleSubScribe = async (item: {
     msgs = msgs.concat([...newWishMsg,...modifiedWishMsg,  ...deleteWishMsg])
   }
   logger.info(`steam 家庭「${item.steamFamilyId}」库存/愿望单变更 ${msgs.length}`)
-  const bot = ctx.platform(item.platform).channel(item.channelId).bots?.[0]
-  if(!bot) {return}
   const apps = msgs.map(msg=>msg.relateAppId)
   const appDetails = (await Promise.all(_.chunk(apps, 30).map(appChunk => api.Steam.getSteamItems(appChunk))))
     .flatMap(it=>it.data.storeItems)
@@ -245,8 +300,8 @@ const handleSubScribe = async (item: {
     const app = appDetailsDict[msg.relateAppId]
     const img = getGameCapsule(app)
 
-    bot.sendMessage(item.channelId, h('message',msg.text))
-    bot.sendMessage(item.channelId, h('img',{src: img}))
+    bot.sendMessage(item.channelId,h('message',msg.text))
+    bot.sendMessage(item.channelId,h('img',{src: img}))
   })
 
 }

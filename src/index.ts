@@ -42,9 +42,11 @@ export interface SteamFamilyLibSubscribe {
   channelId: string|null,
   uid: string,
   steamFamilyId: string,
-  steamAccountId: number,
+  steamAccountId: string,
+  accountId: number,
   subLib: boolean,
-  subWishes: boolean
+  subWishes: boolean,
+  active: boolean,
 }
 export * from './config'
 
@@ -82,15 +84,18 @@ function pluginInit(ctx: Context, config:Config) {
     selfId: 'string',
     platform: 'string',
     steamFamilyId: 'string',
-    steamAccountId: 'unsigned',
+    steamAccountId: 'string',
+    accountId: 'unsigned',
     subLib: 'boolean',
-    subWishes: 'boolean'
+    subWishes: 'boolean',
+    active: 'boolean'
   },{
     autoInc: true,
     foreign: {
       // 相当于约束了 foo.uid 必须是某一个 user.id
       uid: ['user', 'id'],
-      steamAccountId: ['SteamAccount','id']
+      accountId: ['SteamAccount','id'],
+      steamAccountId: ['SteamAccount','steamId']
     },
   })
 }
@@ -98,12 +103,16 @@ function pluginInit(ctx: Context, config:Config) {
 export function apply(ctx: Context, config: Config) {
   pluginInit(ctx, config)
   const cmd = new Cmd(ctx,config)
-  cmd.apply(SubCmd)
-  cmd.apply(LoginCmd)
+  cmd
+    .apply(SubCmd)
+    .apply(LoginCmd)
   ctx.command('slm <prompts:text>')
   .alias('slm')
   .action(async ({ session, options }, input) => {
     session.send(input)
   })
   schedules(ctx,config)
+  // ctx.on('guild-member-removed', async (c)=> {
+  //
+  // })
 }
