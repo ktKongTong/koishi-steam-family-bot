@@ -4,8 +4,10 @@ import {Config} from "./config";
 import Cmd, {LoginCmd, SubCmd} from "./cmd";
 export const name = 'koishi-steam-family-lib-monitor'
 
+import {} from 'koishi-plugin-cron'
 
-export const inject = ['database']
+
+export const inject = ['database','cron']
 
 declare module 'koishi' {
   interface Tables {
@@ -86,13 +88,13 @@ function pluginInit(ctx: Context, config:Config) {
     steamFamilyId: 'string',
     steamAccountId: 'string',
     accountId: 'unsigned',
+    // subOptions: 'json',
     subLib: 'boolean',
     subWishes: 'boolean',
     active: 'boolean'
   },{
     autoInc: true,
     foreign: {
-      // 相当于约束了 foo.uid 必须是某一个 user.id
       uid: ['user', 'id'],
       accountId: ['SteamAccount','id'],
       steamAccountId: ['SteamAccount','steamId']

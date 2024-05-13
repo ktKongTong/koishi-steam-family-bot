@@ -1,4 +1,4 @@
-import {$, Context, h} from "koishi";
+import {$, Context, h, Logger} from "koishi";
 import {APIService} from "../service";
 import _ from "lodash";
 import {getGameCapsule} from "../utils";
@@ -23,7 +23,7 @@ const libMonitor = (ctx:Context,config:Config) => async ()=> {
   }))
 
   for (const item of subscribes) {
-    handleSubScribe(item, ctx,config)
+    handleSubScribe(item, ctx,config,logger)
   }
 }
 
@@ -117,14 +117,13 @@ const diffLibs = (prevLibs:SteamFamilyLib[],libs:SteamSharedLib[]) => {
 
 const handleSubScribe = async (item: {
   account: SteamAccount
-} & SteamFamilyLibSubscribe, ctx:Context, config:Config) => {
+} & SteamFamilyLibSubscribe, ctx:Context, config:Config, logger:Logger) => {
 
-  const logger = ctx.logger('steam-family-bot.libMonitor');
   logger.debug(`start handle family subscribe ${item.steamFamilyId}`)
   const apiServiceResult = await APIService.create(ctx,config,item.account)
   // try to get bot
 
-  const bot = ctx.platform(item.platform).channel(item.channelId).bots?.[0]
+  const bot = ctx.bots[`${item.platform}:${item.selfId}`]
   if(!bot) {return}
   if(!apiServiceResult.isSuccess()) {
     logger.debug(`account 「${item.account.id}」steamId「${item.account.steamId}」token is invalid`)
@@ -255,7 +254,7 @@ const handleSubScribe = async (item: {
     const names = newlySteamIds.map(id=>`「${memberDict[id]?.personaName}」`)
     let text= `愿望单副本 + ${add}。${modifiedWish.itemInfo?.name}，by：${names.join('，')}，当前愿望数：${newWisherIds.length}`
     if(add <= 0) {
-      text= `愿望单变动，${modifiedWish.itemInfo?.name} 副本 - ${add}。当前愿望数 ${newWisherIds.length}`
+      text= `愿望单变动，${modifiedWish.itemInfo?.name} 副本 ${add}。当前愿望数 ${newWisherIds.length}`
     }
     return { text: text, relateAppId: modifiedWish.appId.toString() }
   })
@@ -278,7 +277,7 @@ const handleSubScribe = async (item: {
     const names = newlySteamIds.map(id=>`「${memberDict[id]?.personaName}」`)
     let text= `感谢富哥${names.join("，")}，副本喜+${add}。${modifiedLib.name}，当前副本数 ${newOwnerIds.length}`
     if(add <= 0) {
-      text= `库存变动，${modifiedLib.name} 副本 -${add}。当前副本数 ${newOwnerIds.length}`
+      text= `库存变动，${modifiedLib.name} 副本 ${add}。当前副本数 ${newOwnerIds.length}`
     }
     return {
       text,
@@ -296,12 +295,16 @@ const handleSubScribe = async (item: {
   const appDetails = (await Promise.all(_.chunk(apps, 30).map(appChunk => api.Steam.getSteamItems(appChunk))))
     .flatMap(it=>it.data.storeItems)
   const appDetailsDict = _.keyBy(appDetails, 'appid')
-  msgs.forEach(msg=> {
-    const app = appDetailsDict[msg.relateAppId]
-    const img = getGameCapsule(app)
+  if(msgs.length > 10) {
+    bot.sendMessage(item.channelId,h('message',`愿望单/库存短时间内发生大量变更,共 ${msgs.length} 项，为防止刷屏，不再播报详情`))
+  } {
+    msgs.forEach(msg=> {
+      const app = appDetailsDict[msg.relateAppId]
+      const img = getGameCapsule(app)
+      bot.sendMessage(item.channelId,h('message',msg.text))
+      bot.sendMessage(item.channelId,h('img',{src: img}))
+    })
+  }
 
-    bot.sendMessage(item.channelId,h('message',msg.text))
-    bot.sendMessage(item.channelId,h('img',{src: img}))
-  })
 
 }
