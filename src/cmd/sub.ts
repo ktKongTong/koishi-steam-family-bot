@@ -19,53 +19,15 @@ export function SubCmd(ctx:Context,cfg:Config) {
         uid: session.uid,
       })
       if (accounts.length === 0) {
-        session.send('你暂未绑定Steam账号，无法获取家庭信息，暂时无法进行家庭库订阅')
+        session.sendQueued('你暂未绑定Steam账号，无法获取家庭信息，暂时无法进行家庭库订阅')
         return
       }
 
       if (accounts.length > 1) {
-        session.send('你当前绑定多个账号，请输入序号选择 steam 账号进行家庭库订阅')
+        session.sendQueued('你当前绑定多个账号，请输入序号选择 steam 账号进行家庭库订阅')
         const res = await session.prompt(30 * 1000)
       }
       let account =  accounts[0]
-      const subscribe = await ctx.database.get('SteamFamilyLibSubscribe', {
-        channelId: session.channelId,
-        steamFamilyId: account.familyId,
-        active: true
-      })
-
-
-      if(subscribe.length !== 0) {
-        let subscribeItem = subscribe[0]
-        if(subscribeItem) {
-          const  res = await ctx.database.upsert("SteamFamilyLibSubscribe", [{
-            "uid": session.uid,
-            'channelId': session.event.channel.id,
-            "selfId": session.bot.selfId,
-            "platform": session.platform,
-            'steamFamilyId': subscribeItem.steamFamilyId,
-            'steamAccountId': subscribeItem.steamAccountId,
-            'accountId': account.id,
-            "subLib":subLib,
-            'subWishes': subWish,
-            active: true
-          }])
-          let items = []
-          if(subLib) {
-            items.push("库存")
-          }
-          if(subWish) {
-            items.push("愿望单")
-          }
-          session.sendQueued(`已更新家庭「${account.familyId}」的订阅信息，已订阅${items.join("，")}更新`)
-        }
-
-        if(subscribeItem && subscribeItem.active) {
-          session.sendQueued(`家庭「${account.familyId}」已经在当前会话中由「${subscribeItem.steamAccountId}」进行了绑定，无需重复订阅`)
-          return
-        }
-      }
-      // session.send(`将要订阅「${account.steamId}」的家庭更新，请在 30s 内输入：\n1. 仅订阅家庭库更新\n2. 仅订阅成员愿望单更新\n3. 订阅家庭库和成员愿望单更新\n默认仅订阅家庭库更新`)
       const apiServiceResult = await APIService.create(ctx,cfg, account)
       if(!apiServiceResult.isSuccess()) {
         session.sendQueued('当前账号的 token 已失效，若需继续使用，请通过 renew 指令更新该账号的 token')
@@ -76,7 +38,7 @@ export function SubCmd(ctx:Context,cfg:Config) {
       const steamFamily:APIResp<SteamFamily> = await api.Steam.getSteamFamily()
       const familyId = steamFamily.data.familyGroupid
       if(!familyId) {
-        session.sendQueued('无法获取家庭，若需继续使用，可能时因为网络问题或 token 失效，请稍后重试或 renew token')
+        session.sendQueued('暂时无法获取家庭，可能是因为网络问题或 token 失效，请稍后重试或 renew token')
         return
       }
       const steamSharedLibs: APIResp<SharedLibResp> = await api.Steam.getFamilyLibs(familyId)
@@ -110,18 +72,44 @@ export function SubCmd(ctx:Context,cfg:Config) {
       dbContent = dbContent.concat(apps as any)
       const insertRes = await ctx.database.upsert('SteamFamilyLib',dbContent)
 
-      const  res = await ctx.database.upsert("SteamFamilyLibSubscribe", [{
-        "uid": session.uid,
-        'channelId': session.event.channel.id,
-        "selfId": session.bot.selfId,
-        "platform": session.platform,
-        'steamFamilyId': familyId,
-        'steamAccountId': steamAccountId,
-        'accountId': account.id,
-        "subLib":subLib,
-        'subWishes':subWish,
+
+      const subscribe = await ctx.database.get('SteamFamilyLibSubscribe', {
+        channelId: session.channelId,
+        steamFamilyId: account.familyId,
         active: true
-      }])
+      })
+
+
+      if(subscribe.length !== 0 && subscribe[0]) {
+        let subscribeItem = subscribe[0]
+        const data = {
+          id: subscribeItem.id,
+          "uid": session.uid,
+          'channelId': session.event.channel.id,
+          "selfId": session.bot.selfId,
+          "platform": session.platform,
+          'steamFamilyId': subscribeItem.steamFamilyId,
+          'steamAccountId': subscribeItem.steamAccountId,
+          'accountId': account.id,
+          "subLib":subLib,
+          'subWishes': subWish,
+          active: true
+        }
+        await ctx.database.upsert("SteamFamilyLibSubscribe", [data])
+      }else {
+        await ctx.database.upsert("SteamFamilyLibSubscribe", [{
+          "uid": session.uid,
+          'channelId': session.event.channel.id,
+          "selfId": session.bot.selfId,
+          "platform": session.platform,
+          'steamFamilyId': familyId,
+          'steamAccountId': steamAccountId,
+          'accountId': account.id,
+          "subLib":subLib,
+          'subWishes':subWish,
+          active: true
+        }])
+      }
 
       session.sendQueued(
         h('message',
@@ -129,7 +117,5 @@ export function SubCmd(ctx:Context,cfg:Config) {
           `hello，「${steamFamily.data.familyGroup.name}」的成员，成功订阅家庭游戏库更新，已获取库存 ${apps.length} 项${subWish ? `，愿望单 ${wishesSize} 项`:''}`,
         )
       )
-
-
     })
 }

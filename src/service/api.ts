@@ -37,6 +37,8 @@ export const libApi = (ctx:Context,config:Config,token:string)=> {
       const res = await fetch(url).then(res => res.json())
       return res
     }catch (e) {
+      console.log(e)
+      console.log(url)
       return null
     }
   }
@@ -46,18 +48,28 @@ export const libApi = (ctx:Context,config:Config,token:string)=> {
     let hasMore = true
     let apps:Record<string, any> = {}
     let appIds:string[] = []
+    const appMaps = new Map<string, any>();
     while (hasMore) {
-      const res = await getSteamWishesByPage(id, page)
-      Object.assign(res, apps)
-      appIds = appIds.concat(Object.values(res))
+
+      const res:Record<string, any> = await getSteamWishesByPage(id, page)
       if(res) {
+        // res expect as an object, only when no more page return empty as an array
+        if(res instanceof Array){
+          hasMore = false
+        }
+        Object.keys(res).forEach(key=> {appMaps.set(key, res[key]);})
+        appIds = appIds.concat(Object.keys(res))
         page++
-      }else { hasMore = false }
+      }else {
+        // logger
+        // unexpect change, need to resolve
+        hasMore = false
+      }
     }
     return appIds
     .map(appId=>({
       wisher: id,
-      item:apps[appId],
+      item:appMaps.get(appId),
       appId:appId
     }))
   }
