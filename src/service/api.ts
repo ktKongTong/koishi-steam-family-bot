@@ -29,20 +29,50 @@ export const libApi = (ctx:Context,config:Config,token:string)=> {
     wrapperErr(async ()=>{
       return (await http.get(`${host}/items/${appIds.join(',')}?access_token=${access_token}`))
     })
+
+
+  const getSteamWishesByPage= async (id:string,page:number)=> {
+    const url = `https://store.steampowered.com/wishlist/profiles/${id}/wishlistdata/?p=${page}&v=`
+    try {
+      const res = await fetch(url).then(res => res.json())
+      return res
+    }catch (e) {
+      return null
+    }
+  }
+
+  const getOnePlayersSteamWishes = async (id: string) => {
+    let page = 0
+    let hasMore = true
+    let apps:Record<string, any> = {}
+    let appIds:string[] = []
+    while (hasMore) {
+      const res = await getSteamWishesByPage(id, page)
+      Object.assign(res, apps)
+      appIds = appIds.concat(Object.values(res))
+      if(res) {
+        page++
+      }else { hasMore = false }
+    }
+    return appIds
+    .map(appId=>({
+      wisher: id,
+      item:apps[appId],
+      appId:appId
+    }))
+  }
+
   const getSteamWishes = async (playerIds:string[]):Promise<APIResp<WishItem[]>> =>
-    wrapperErr(async ()=>{
+    wrapperErr(
+      async ()=>{
       // return (await http.get(`${host}/items/${appIds.join(',')}?access_token=${access_token}`))
-      const wishesByPlayer = await Promise.all(playerIds.map(async (id)=>{
-              const url = `https://store.steampowered.com/wishlist/profiles/${id}/wishlistdata/?p=0&v=`
-              const res = await fetch(url).then(res => res.json())
-              const appIds = Object.keys(res)
-              return appIds.map(appId=>({
-                wisher: id,
-                item:res[appId],
-                appId:appId
-              })).filter(app=>app.appId !== "success")
-          }))
-      const wishes = wishesByPlayer.flatMap(wish=>wish)
+      const wishesByPlayer =
+        (await Promise.all(playerIds.map(it=> getOnePlayersSteamWishes(it))))
+          .flatMap(it=>it)
+          .filter(app=>app.appId !== "success")
+
+      const wishes = wishesByPlayer
+        .flatMap(wish=>wish)
 
       const groupedWishes = _.groupBy(wishes,'appId')
       const appIds = Object.keys(groupedWishes)

@@ -295,7 +295,7 @@ const handleSubScribe = async (item: {
   const appDetails = (await Promise.all(_.chunk(apps, 30).map(appChunk => api.Steam.getSteamItems(appChunk))))
     .flatMap(it=>it.data.storeItems)
   const appDetailsDict = _.keyBy(appDetails, 'appid')
-  if(msgs.length > 10) {
+  if(msgs.length > 5) {
     bot.sendMessage(item.channelId,h('message',`愿望单/库存短时间内发生大量变更,共 ${msgs.length} 项，为防止刷屏，不再播报详情`))
   } {
     msgs.forEach(msg=> {
