@@ -2,6 +2,8 @@ lib
 dist
 external
 
+docs/.vitepress/dist
+docs/.vitepress/cache
 node_modules
 npm-debug.log
 yarn-debug.log

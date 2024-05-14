@@ -41,10 +41,18 @@
       "zh": "一个用于新版 Steam 家庭的库存监控 koishi Bot 插件"
     }
   },
+  "devDependencies": {
+    "vitepress": "^1.0.0-rc.44"
+  },
   "peerDependencies": {
     "jwt-decode": "^4.0.0",
     "koishi": "^4.17.1",
     "lodash": "^4.17.21",
     "steam-session": "^1.7.2"
+  },
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   }
 }
