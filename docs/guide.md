@@ -33,7 +33,7 @@ onebot 是定义了通过网络服务提供 QQ 消息收发能力的一个协议
 不难看出，你需要自行部署 koishi 实例 + llonebot 实例。这里推荐使用 docker compose。
 当然你也可以按对应的文档自行部署。
 以下为示例 docker compose
-```docker
+```yaml
 services:
   koishi-steam:
     image: koishijs/koishi:latest
@@ -102,7 +102,6 @@ networks:
 
 `protocol` 字段选择 `ws`（`ws-reverse`也可用，但需要在llonebot进行额外配置)
 
-此时需要启动
 在启动了 llonebot 实例后，打开特定地址，此处 127.0.0.1 应当替换为自己的实例地址(如果是本地使用保持 127.0.0.1也ok)，然后打开 `http://127.0.0.1:6099/api/panel/getQQLoginQRcode`
 
 可以看到 QQ 二维码。用上面的qq号扫描即可登陆。
@@ -120,6 +119,63 @@ networks:
 至此部署完成。
 
 与 qq 机器人对话，按照需要进行登陆，订阅通知即可。
+
+### NapCatQQ
+
+上面的 QQ 是通过 LLonebot 登陆的，另外一个平替是 NapCatQQ。
+
+其优势是内存占用小，但是相对于 llonebot 来说没有图形界面，因此要定制一些配置会更复杂
+
+对应的 docker-compose 文件如下
+
+```yaml
+services:
+  napcat:
+    image: mlikiowa/napcat-docker:latest
+    environment:
+        - ACCOUNT=<改为 Bot 的QQ号>
+        - WS_ENABLE=true
+    ports:
+        - 3001:3001
+        - 6099:6099
+    container_name: napcat
+    volumes:
+      - napcat_qq:/root/.config/QQ
+    restart: always
+    networks:
+      - steam-bot
+  koishi-steam:
+    image: koishijs/koishi:latest
+    tty: true
+    container_name: koishi
+    restart: always
+    environment:
+      - TZ:"Asia/Shanghai"
+    volumes:
+      - koishi:/koishi
+    ports:
+      - "5140:5140"
+    networks:
+      - steam-bot
+volumes:
+  napcat_cfg:
+  koishi:
+networks:
+  steam-bot:
+    name: steam-bot
+```
+
+
+在启动了 llonebot 实例后，查看日志，如果你使用的是 Docker。
+使用 `docker logs napcat` 命令可以看到 QQ 二维码。用登陆上面 qq 号的手机扫描即可登陆。
+
+`endpoint` 字段：
+
+如果你是用上面的 docker-compose 文件，那么填入 `ws://napcat:3001` 就好了。
+
+如果不是，则根据实际情况填入 napcat 实例相对于 koishi 实例的地址。
+
+随后回到 koishi 的 adapter-onebot 的插件设置，启用插件即可。
 
 ## 微信篇
 ### 微信 bot 限制
