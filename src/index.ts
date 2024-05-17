@@ -114,7 +114,4 @@ export function apply(ctx: Context, config: Config) {
     session.send(input)
   })
   schedules(ctx,config)
-  // ctx.on('guild-member-removed', async (c)=> {
-  //
-  // })
 }

@@ -3,9 +3,8 @@ import {APIService} from "../service";
 import _ from "lodash";
 import {getGameCapsule} from "../utils";
 import {Config} from "../config";
-import {SteamAccount, SteamFamilyLib, SteamFamilyLibSubscribe} from "../index";
-import {SteamSharedLib} from "../interface/shared-lib";
-import {WishItem} from "../interface/wish";
+import {SteamAccount, SteamFamilyLibSubscribe} from "../index";
+import {diffLibs, diffWishes} from "./utils";
 
 const libMonitor = (ctx:Context,config:Config) => async ()=> {
   const logger = ctx.logger('steam-family-bot.libMonitor');
@@ -16,32 +15,39 @@ const libMonitor = (ctx:Context,config:Config) => async ()=> {
   // check account valid
 
   const selection = ctx.database.join(['SteamAccount','SteamFamilyLibSubscribe'])
-  const subscribe = await selection.where(row=> $.and($.eq(row.SteamFamilyLibSubscribe.accountId,row.SteamAccount.id),$.eq( row.SteamAccount.valid,'valid'))).execute()
+  const subscribe = await selection.where(row=>
+  $.and(
+      $.eq(row.SteamFamilyLibSubscribe.accountId,row.SteamAccount.id),
+      $.eq( row.SteamAccount.valid,'valid'))
+  ).execute()
   const subscribes = subscribe.map(item=> ({
     ...item.SteamFamilyLibSubscribe,
     account:item.SteamAccount
   }))
 
   for (const item of subscribes) {
-    handleSubScribe(item, ctx,config,logger)
+    try {
+      handleSubScribe(item, ctx,config,logger)
+    }catch (e) {
+      logger.error(`some error occur during handle steam subscription familyId: ${item.account.familyId}`, e)
+    }
+
   }
 }
 
 export default libMonitor
 
 
-const prepareFamilyInfo = async (api:APIService,ctx:Context) => {
-  const family = await api.Steam.getSteamFamily()
+const prepareFamilyInfo = async (api:APIService,ctx:Context,logger:Logger) => {
+  const family = await api.Steam.getSteamFamilyGroup()
   const memberIds = family.data.familyGroup.members.map(member=>member.steamid?.toString())
-  const [wishes, members] =await Promise.all([(await api.Steam.getSteamWishes(memberIds)).data, (await api.Steam.getFamilyMember(memberIds)).data])
+  const [wishes, members] =await Promise.all([(await api.Steam.getSteamWishes(memberIds)).data, (await api.Steam.getFamilyMembers(memberIds)).data])
   const m = members.accounts.map(acc=>acc.publicData)
   const memberDict = _.keyBy(m, 'steamid')
   const prevWishes = await ctx.database.get('SteamFamilyLib', {
-    familyId: family.data.familyGroupid,
+    familyId: family.data.familyGroupid.toString(),
     type: 'wish'
   })
-
-  const logger = ctx.logger('steam-family-bot.libMonitor');
   logger.debug(`prepare FamilyData prevWishes:${prevWishes?.length} wishes: ${wishes?.length}`)
   return {
     family,
@@ -51,80 +57,34 @@ const prepareFamilyInfo = async (api:APIService,ctx:Context) => {
   }
 }
 
-const prepareData = async (api:APIService, familyId:string, ctx:Context) => {
+const prepareData = async (api:APIService, familyId:string, ctx:Context,logger:Logger) => {
   const prevLibs = ctx.database.get('SteamFamilyLib', {
     familyId: familyId,
     type: 'lib'
   })
-  const libs = api.Steam.getFamilyLibs(familyId)
+  const libs = api.Steam.getSteamFamilyGroupLibs(BigInt(familyId))
     .then(res=>
       res?.data.apps.filter(app=>app.excludeReason == undefined || app.excludeReason == 0)
     )
   const [awaitedPrevLibs,awaitedLibs] = await Promise.all([prevLibs, libs])
-
-  const logger = ctx.logger('steam-family-bot.libMonitor');
   logger.info(`prepare Data prevlibs:${awaitedPrevLibs?.length} libs: ${awaitedLibs?.length}`)
   return {prevLibs:awaitedPrevLibs, libs:awaitedLibs}
 }
 
-const diffWishes = (prevWishes:SteamFamilyLib[],wishes:WishItem[]) => {
-  // filter libs not in prevLibs
-  const newWishes = wishes.filter(item=>
-    !prevWishes.some(preItem=> preItem.appId.toString() == item.appId)
-  )
-  // filter libs in prevLib but ownerId not match
-  const modifiedWishes = wishes.filter(item=>
-    prevWishes.some(preItem=> preItem.appId.toString() == item.appId
-      && preItem.steamIds != item.wishers.sort().join(','))
-  )
-  const wishesDict = _.keyBy(prevWishes, 'appId')
-  // diff {
-  //  new: wisher
-  // removed:wisher
-  // }
-  // filter libs in prevLib but not ownerId diff
-  const deletedWishes = prevWishes.filter(item=>
-    !wishes.some(newItem=> newItem.appId == item.appId.toString())
-  )
-  return {
-    newWishes,
-    deletedWishes,
-    modifiedWishes,
-    wishesDict,
-  }
-}
-const diffLibs = (prevLibs:SteamFamilyLib[],libs:SteamSharedLib[]) => {
-  // filter libs not in prevLibs
-  const newLibs = libs.filter(item=>
-    !prevLibs.some(preItem=> preItem.appId == item.appid)
-  )
-  // filter libs in prevLib but ownerId not match
-  const modifiedLibs = libs.filter(item=>
-    prevLibs.some(preItem=> preItem.appId == item.appid && preItem.steamIds != item.ownerSteamids.sort().join(','))
-  )
-  const libDict = _.keyBy(prevLibs, 'appId')
-  // filter libs in prevLib but not ownerId diff
-  const deletedLibs = prevLibs.filter(item=>
-    !libs.some(newItem=> newItem.appid == item.appId)
-  )
-  return {
-    newLibs,
-    modifiedLibs,
-    libDict,
-    deletedLibs,
-  }
-}
+
 
 const handleSubScribe = async (item: {
   account: SteamAccount
 } & SteamFamilyLibSubscribe, ctx:Context, config:Config, logger:Logger) => {
 
   logger.debug(`start handle family subscribe ${item.steamFamilyId}`)
-  const apiServiceResult = await APIService.create(ctx,config,item.account)
-  // try to get bot
 
+  const apiServiceResult = await APIService.create(ctx,config,item.account)
+
+  // try to get bot
   const bot = ctx.bots[`${item.platform}:${item.selfId}`]
   if(!bot) {return}
+
   if(!apiServiceResult.isSuccess()) {
     logger.debug(`account 「${item.account.id}」steamId「${item.account.steamId}」token is invalid`)
     let timesStr = item.account.valid.split('.')?.[1]
@@ -172,14 +132,13 @@ const handleSubScribe = async (item: {
   }
 
   let api = apiServiceResult.data
-  // 判断是否有效
   const {family, memberDict,wishes,prevWishes,} =
-    await prepareFamilyInfo(api,ctx)
+    await prepareFamilyInfo(api,ctx,logger)
   logger.debug('success fetch family info')
-  const {prevLibs, libs} = await prepareData(api, item.account.familyId, ctx)
+  logger.info(item.account.familyId)
+  const {prevLibs, libs} = await prepareData(api, item.account.familyId, ctx,logger)
   logger.debug('success fetch lib data')
 
-  // logger.info(`${deletedWishes}, ${JSON.stringify(deletedWishes[0])}`)
   const {newWishes,modifiedWishes, deletedWishes,wishesDict} = diffWishes(prevWishes,wishes)
   const {modifiedLibs,libDict,newLibs, deletedLibs} = diffLibs(prevLibs, libs)
   const libsUpsert = newLibs
@@ -200,15 +159,13 @@ const handleSubScribe = async (item: {
   }))
   const wishesUpsert =  newWishes
     .concat(modifiedWishes)
-    .map(newItem=>(
-    {
+    .map(newItem=>({
       familyId: item.steamFamilyId,
       name: newItem.itemInfo?.name as any as string,
       appId: parseInt(newItem.appId),
       steamIds: newItem.wishers.sort().join(','),
       type: 'wish'
-    }
-  ))
+    }))
   const wishesDelete = deletedWishes.map(it=> ({
     familyId: item.steamFamilyId,
     appId: it.appId,
@@ -259,7 +216,7 @@ const handleSubScribe = async (item: {
     return { text: text, relateAppId: modifiedWish.appId.toString() }
   })
   const newLibMsg = newLibs.map(newlib=> {
-    const names = newlib.ownerSteamids.map(ownerId => `「${memberDict[ownerId]?.personaName}」`)
+    const names = newlib.ownerSteamids.map(ownerId => `「${memberDict[String(ownerId)]?.personaName}」`)
     let text= `感谢富哥${names.join('，')}，库存喜+1。${newlib.name}`
     if (names.length > 1) {
       text +=  "当前副本数 "+names.length
@@ -271,10 +228,10 @@ const handleSubScribe = async (item: {
     const prevLib = libDict[modifiedLib.appid]
     const newOwnerIds = modifiedLib.ownerSteamids
     const ownerIds = prevLib?.steamIds?.split(',')
-    const newlySteamIds = newOwnerIds.filter(item=> !ownerIds.includes(item))
-    const removedSteamIds = ownerIds.filter(item=> !newOwnerIds.includes(item))
+    const newlySteamIds = newOwnerIds.filter(item=> !ownerIds.includes(String(item)))
+    const removedSteamIds = ownerIds.filter(item=> !newOwnerIds.includes(BigInt(item)))
     const add = newlySteamIds.length - removedSteamIds.length
-    const names = newlySteamIds.map(id=>`「${memberDict[id]?.personaName}」`)
+    const names = newlySteamIds.map(id=>`「${memberDict[String(id)]?.personaName}」`)
     let text= `感谢富哥${names.join("，")}，副本喜+${add}。${modifiedLib.name}，当前副本数 ${newOwnerIds.length}`
     if(add <= 0) {
       text= `库存变动，${modifiedLib.name} 副本 ${add}。当前副本数 ${newOwnerIds.length}`
@@ -296,8 +253,14 @@ const handleSubScribe = async (item: {
     .flatMap(it=>it.data.storeItems)
   const appDetailsDict = _.keyBy(appDetails, 'appid')
   if(msgs.length > 5) {
+    msgs.slice(0, 3).forEach((msg)=> {
+        const app = appDetailsDict[msg.relateAppId]
+        const img = getGameCapsule(app)
+        bot.sendMessage(item.channelId,h('message',msg.text))
+        bot.sendMessage(item.channelId,h('img',{src: img}))
+      })
     bot.sendMessage(item.channelId,h('message',`愿望单/库存短时间内发生大量变更,共 ${msgs.length} 项，为防止刷屏，不再播报详情`))
-  } {
+  } else {
     msgs.forEach(msg=> {
       const app = appDetailsDict[msg.relateAppId]
       const img = getGameCapsule(app)
@@ -305,6 +268,4 @@ const handleSubScribe = async (item: {
       bot.sendMessage(item.channelId,h('img',{src: img}))
     })
   }
-
-
 }

@@ -8,33 +8,80 @@ import {Config} from "../config";
 import {WishItem} from "../interface/wish";
 import _ from "lodash";
 import {wrapperErr} from "./utils";
+import {SteamAPI} from "node-steam-family-group-api";
+import {jwtDecode} from "jwt-decode";
 export const libApi = (ctx:Context,config:Config,token:string)=> {
   const http = ctx.http
+  const steamAPI = new SteamAPI(token)
   const access_token = token
-  let host =  "https://steam-family-lib-viewer.ktlab.io/api/steam"
+  // currently, using steam-family-lib-viewer's api to proxy some proto api
+  let host =  `${config.SteamHelperAPIHost}/api/steam`
 
-  const getSteamFamily = async ():Promise<APIResp<SteamFamily>> =>
-    wrapperErr(async ()=>{
-      return  (await http.get(`${host}/family?access_token=${access_token}`))
-    })
-  const getFamilyLibs = async (familyId:string):Promise<APIResp<SharedLibResp>> =>
-    wrapperErr(async ()=>{
-      return  (await http.get(`${host}/family/shared/${familyId}?access_token=${access_token}`))
-    })
-  const getFamilyMember = async (memberIds:string[]):Promise<APIResp<SteamPlayers>> =>
-    wrapperErr(async ()=>{
-      return  (await http.get(`${host}/player/${memberIds.join(',')}?access_token=${access_token}`))
-    })
-  const getSteamItems = async (appIds:string[]):Promise<APIResp<SteamAppDetails>> =>
-    wrapperErr(async ()=>{
-      return (await http.get(`${host}/items/${appIds.join(',')}?access_token=${access_token}`))
-    })
+  const tokenInfo = jwtDecode(token??"")
+  const steamid = tokenInfo.sub
+
+  const getSteamFamilyGroup = ()=>steamAPI.familyGroup
+    .getFamilyGroupForUser({steamid: BigInt(steamid), includeFamilyGroupResponse: true}, token)
+
+  const getSteamFamilyGroupLibs = (familyId:bigint)=> steamAPI.familyGroup
+    .getFamilyGroupShardLibrary({
+      familyGroupid: familyId,
+      includeOwn: true,
+      includeExcluded: true,
+      language: 'schinese',
+    }, token)
 
 
-  const getSteamWishesByPage= async (id:string,page:number)=> {
-    const url = `https://store.steampowered.com/wishlist/profiles/${id}/wishlistdata/?p=${page}&v=`
+  const getFamilyMembers = (memberIds:string[]) => steamAPI.common
+    .getSteamPlayerLinkDetails({steamids: memberIds.map(it=>BigInt(it))}, token)
+
+
+  const getSteamItems = async (appIds:string[]) => steamAPI.common
+    .getSteamItemsById({
+      ids: appIds.map(it=> parseInt(it)).filter(it => !Number.isNaN(it))
+        .map(it=>({appid: it})),
+      context: {
+        language: 'schinese',
+        countryCode: 'US',
+        steamRealm: 1
+      },
+      dataRequest: {
+        includeAssets: true,
+        includeRelease: true,
+        includePlatforms: true,
+        includeScreenshots: true,
+        includeTrailers: true,
+        includeIncludedItems: true,
+        includeTagCount: 20
+      }
+    })
+
+
+
+  const getSteamFamily = async () => wrapperErr(
+    () => http.get<APIResp<SteamFamily>>(`${host}/family?access_token=${access_token}`)
+  )
+  const getFamilyLibs = async (familyId:string) => wrapperErr(
+    () => http.get<APIResp<SharedLibResp>>(`${host}/family/shared/${familyId}?access_token=${access_token}`)
+  )
+  const getFamilyMember = async (memberIds:string[]) => wrapperErr(
+      () => http.get<APIResp<SteamPlayers>>(`${host}/player/${memberIds.join(',')}?access_token=${access_token}`)
+  )
+  // const getSteamItems = async (appIds:string[]) => wrapperErr(
+  //   () => http.get<APIResp<SteamAppDetails>>(`${host}/items/${appIds.join(',')}?access_token=${access_token}`)
+  // )
+
+  // for wishlist larger than 50 items, same request may give different response item in a short time.
+  // it's really an annoyed bug. but steam didn't fix it for a long time.
+  // check this: https://steamcommunity.com/sharedfiles/filedetails/?id=1746978201
+  const getSteamWishesByPage = async (id:string,page:number)=> {
+    const url = `https://store.steampowered.com/wishlist/profiles/${id}/wishlistdata/?p=${page}&v=1`
     try {
       const res = await fetch(url).then(res => res.json())
+      // filter keys equal success
+      if(res["success"]) {
+        return []
+      }
       return res
     }catch (e) {
       console.log(e)
@@ -46,22 +93,23 @@ export const libApi = (ctx:Context,config:Config,token:string)=> {
   const getOnePlayersSteamWishes = async (id: string) => {
     let page = 0
     let hasMore = true
-    let apps:Record<string, any> = {}
     let appIds:string[] = []
     const appMaps = new Map<string, any>();
     while (hasMore) {
-
       const res:Record<string, any> = await getSteamWishesByPage(id, page)
       if(res) {
         // res expect as an object, only when no more page return empty as an array
         if(res instanceof Array){
           hasMore = false
+          continue
         }
         Object.keys(res).forEach(key=> {appMaps.set(key, res[key]);})
+        console.log(`${id}, ${page}, ${Object.keys(res).length}`)
         appIds = appIds.concat(Object.keys(res))
         page++
       }else {
         // logger
+        console.log(`unexpect error, ${id}, ${page}`)
         // unexpect change, need to resolve
         hasMore = false
       }
@@ -77,7 +125,6 @@ export const libApi = (ctx:Context,config:Config,token:string)=> {
   const getSteamWishes = async (playerIds:string[]):Promise<APIResp<WishItem[]>> =>
     wrapperErr(
       async ()=>{
-      // return (await http.get(`${host}/items/${appIds.join(',')}?access_token=${access_token}`))
       const wishesByPlayer =
         (await Promise.all(playerIds.map(it=> getOnePlayersSteamWishes(it))))
           .flatMap(it=>it)
@@ -85,9 +132,9 @@ export const libApi = (ctx:Context,config:Config,token:string)=> {
 
       const wishes = wishesByPlayer
         .flatMap(wish=>wish)
-
       const groupedWishes = _.groupBy(wishes,'appId')
       const appIds = Object.keys(groupedWishes)
+        console.log(`total wishes count ${wishes.length}`)
       const finalWishes = appIds.map(appId => {
         const items = groupedWishes[appId]
         return {
@@ -101,9 +148,12 @@ export const libApi = (ctx:Context,config:Config,token:string)=> {
       }
     })
   return {
-    getSteamFamily,
-    getFamilyLibs,
-    getFamilyMember,
+    getSteamFamilyGroup,
+    // getSteamFamily,
+    // getFamilyLibs,
+    getSteamFamilyGroupLibs,
+    // getFamilyMember,
+    getFamilyMembers,
     getSteamItems,
     getSteamWishes
   }

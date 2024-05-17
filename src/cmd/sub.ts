@@ -1,11 +1,10 @@
-import {Context, h} from "koishi";
+import {Context, h, Logger} from "koishi";
 import {Config} from "../config";
 import {APIService} from "../service";
-import {APIResp, SteamFamily} from "../interface/family";
-import {SharedLibResp} from "../interface/shared-lib";
 import {SteamFamilyLib} from "../index";
 
-export function SubCmd(ctx:Context,cfg:Config) {
+export function SubCmd(ctx:Context,cfg:Config,logger:Logger) {
+  let log = logger.extend("subscribe")
   const subcmd = ctx
     .command('slm.sub')
     .alias('sbsub')
@@ -15,18 +14,15 @@ export function SubCmd(ctx:Context,cfg:Config) {
       let subWish = options.w ?? false
       let subLib = options.l ?? true
 
-      const accounts = await ctx.database.get('SteamAccount', {
-        uid: session.uid,
-      })
+      const accounts = await ctx.database.get('SteamAccount', {uid: session.uid})
       if (accounts.length === 0) {
         session.sendQueued('你暂未绑定Steam账号，无法获取家庭信息，暂时无法进行家庭库订阅')
         return
       }
-
-      if (accounts.length > 1) {
-        session.sendQueued('你当前绑定多个账号，请输入序号选择 steam 账号进行家庭库订阅')
-        const res = await session.prompt(30 * 1000)
-      }
+      // if (accounts.length > 1) {
+      //   session.sendQueued('你当前绑定多个账号，请输入序号选择 steam 账号进行家庭库订阅')
+      //   const res = await session.prompt(30 * 1000)
+      // }
       let account =  accounts[0]
       const apiServiceResult = await APIService.create(ctx,cfg, account)
       if(!apiServiceResult.isSuccess()) {
@@ -35,22 +31,23 @@ export function SubCmd(ctx:Context,cfg:Config) {
       }
       let api = apiServiceResult.data
 
-      const steamFamily:APIResp<SteamFamily> = await api.Steam.getSteamFamily()
+      const steamFamily = await api.Steam.getSteamFamilyGroup()
       const familyId = steamFamily.data.familyGroupid
       if(!familyId) {
-        session.sendQueued('暂时无法获取家庭，可能是因为网络问题或 token 失效，请稍后重试或 renew token')
+        log.info(`can't get family info :accountId: ${account.id}, familyId: ${account.familyId}`)
+        session.sendQueued('暂时无法获取家庭信息，可能是因为网络问题或 token 失效，请稍后重试或 renew token')
         return
       }
-      const steamSharedLibs: APIResp<SharedLibResp> = await api.Steam.getFamilyLibs(familyId)
+      const steamSharedLibs = await api.Steam.getSteamFamilyGroupLibs(familyId)
       const steamAccountId = steamSharedLibs.data.ownerSteamid
       let dbContent:Omit<SteamFamilyLib, 'id'>[] = []
       let wishesSize = 0
       if (subWish) {
-        const memberIds = steamFamily.data.familyGroup.members.map(member=>member.steamid)
+        const memberIds = steamFamily.data.familyGroup.members.map(member=>String(member.steamid))
         const wishes = (await api.Steam.getSteamWishes(memberIds)).data
         dbContent = dbContent.concat(wishes.map(wish=> {
           return {
-            familyId: familyId,
+            familyId: String(familyId),
             appId: parseInt(wish.appId),
             name: wish.itemInfo?.name as any as string,
             steamIds: wish.wishers.sort().join(','),
@@ -70,6 +67,7 @@ export function SubCmd(ctx:Context,cfg:Config) {
         }))
 
       dbContent = dbContent.concat(apps as any)
+      // take a lock
       const insertRes = await ctx.database.upsert('SteamFamilyLib',dbContent)
 
 
@@ -102,8 +100,8 @@ export function SubCmd(ctx:Context,cfg:Config) {
           'channelId': session.event.channel.id,
           "selfId": session.bot.selfId,
           "platform": session.platform,
-          'steamFamilyId': familyId,
-          'steamAccountId': steamAccountId,
+          'steamFamilyId': String(familyId),
+          'steamAccountId': String(steamAccountId),
           'accountId': account.id,
           "subLib":subLib,
           'subWishes':subWish,
