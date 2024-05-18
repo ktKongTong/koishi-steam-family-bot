@@ -1,13 +1,14 @@
 import {Context} from 'koishi'
 import schedules from "./schedules/index";
 import {Config} from "./config";
-import Cmd, {LoginCmd, SubCmd} from "./cmd";
+import Cmd, {LoginCmd, StatisticCmd, SubCmd} from "./cmd";
 export const name = 'koishi-steam-family-lib-monitor'
 
 import {} from 'koishi-plugin-cron'
+import {} from 'koishi-plugin-puppeteer'
 
 
-export const inject = ['database','cron']
+export const inject = ['database','puppeteer','cron']
 
 declare module 'koishi' {
   interface Tables {
@@ -108,6 +109,7 @@ export function apply(ctx: Context, config: Config) {
   cmd
     .apply(SubCmd)
     .apply(LoginCmd)
+    .apply(StatisticCmd)
   ctx.command('slm <prompts:text>')
   .alias('slm')
   .action(async ({ session, options }, input) => {

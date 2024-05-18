@@ -2,6 +2,7 @@ import {Context, Logger} from "koishi";
 import {Config} from "../config";
 export * from './sub'
 export * from './login'
+export * from './statistic'
 export default class Cmd {
   private readonly config: Config;
   private readonly ctx: Context;

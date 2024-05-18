@@ -1,7 +1,7 @@
 import {$, Context, h, Logger} from "koishi";
 import {APIService} from "../service";
 import _ from "lodash";
-import {getGameCapsule} from "../utils";
+import {getGameCapsule} from "../utils/index";
 import {Config} from "../config";
 import {SteamAccount, SteamFamilyLibSubscribe} from "../index";
 import {diffLibs, diffWishes} from "./utils";
@@ -81,8 +81,8 @@ const handleSubScribe = async (item: {
 
   const apiServiceResult = await APIService.create(ctx,config,item.account)
 
-  // try to get bot
   const bot = ctx.bots[`${item.platform}:${item.selfId}`]
+  logger.info(`it's seem that bot 「${item.platform}:${item.selfId}」 for family 「${item.steamFamilyId}」have down. skip it`)
   if(!bot) {return}
 
   if(!apiServiceResult.isSuccess()) {
