@@ -42,16 +42,22 @@ export function SubCmd(ctx:Context,cfg:Config,logger:Logger) {
       const steamAccountId = steamSharedLibs.data.ownerSteamid
       let dbContent:Omit<SteamFamilyLib, 'id'>[] = []
       let wishesSize = 0
+      const date = new Date()
       if (subWish) {
         const memberIds = steamFamily.data.familyGroup.members.map(member=>String(member.steamid))
         const wishes = (await api.Steam.getSteamWishes(memberIds)).data
+
         dbContent = dbContent.concat(wishes.map(wish=> {
           return {
             familyId: String(familyId),
             appId: parseInt(wish.appId),
             name: wish.itemInfo?.name as any as string,
             steamIds: wish.wishers.sort().join(','),
-            type: 'wish'
+            type: 'wish',
+            lastModifiedAt: date.getTime(),
+            rtTimeAcquired: 0,
+            tags: '',
+            tagSynced: false
           }
         }))
         wishesSize = dbContent.length
@@ -63,7 +69,11 @@ export function SubCmd(ctx:Context,cfg:Config,logger:Logger) {
           appId: item.appid,
           name: item.name,
           steamIds: item.ownerSteamids.sort().join(','),
-          type: 'lib'
+          lastModifiedAt: date.getTime(),
+          rtTimeAcquired: item.rtTimeAcquired ?? 0,
+          type: 'lib',
+          tags: '',
+          tagSynced: false
         }))
 
       dbContent = dbContent.concat(apps as any)

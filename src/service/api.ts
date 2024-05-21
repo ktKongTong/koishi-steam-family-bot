@@ -3,25 +3,37 @@ import {Context} from "koishi";
 import {APIResp, SteamFamily} from "../interface/family";
 import {SharedLibResp} from "../interface/shared-lib";
 import {SteamPlayers} from "../interface/players";
-import {SteamAppDetails} from "../interface/steam-app-details";
 import {Config} from "../config";
 import {WishItem} from "../interface/wish";
 import _ from "lodash";
 import {wrapperErr} from "./utils";
 import {SteamAPI} from "node-steam-family-group-api";
 import {jwtDecode} from "jwt-decode";
+
+import {
+  PartialMessage
+} from "node-steam-family-group-api/lib/proto";
+import {
+  CStoreBrowse_GetItems_Request,
+} from "node-steam-family-group-api/lib/proto/gen/web-ui/common_pb";
 export const libApi = (ctx:Context,config:Config,token:string)=> {
   const http = ctx.http
   const steamAPI = new SteamAPI(token)
   const access_token = token
   // currently, using steam-family-lib-viewer's api to proxy some proto api
   let host =  `${config.SteamHelperAPIHost}/api/steam`
-
-  const tokenInfo = jwtDecode(token??"")
-  const steamid = tokenInfo.sub
-
+  let steamid = ""
+  try {
+    const tokenInfo = jwtDecode(token??"")
+    steamid = tokenInfo.sub
+  }catch (e) {
+    //   ignore for non token api
+  }
   const getSteamFamilyGroup = ()=>steamAPI.familyGroup
     .getFamilyGroupForUser({steamid: BigInt(steamid), includeFamilyGroupResponse: true}, token)
+
+  const getPlaytimeSummary = (familyGroupid: bigint)=>steamAPI.familyGroup
+    .getFamilyGroupPlaytimeSummary({familyGroupid: familyGroupid},token)
 
   const getSteamFamilyGroupLibs = (familyId:bigint)=> steamAPI.familyGroup
     .getFamilyGroupShardLibrary({
@@ -36,8 +48,8 @@ export const libApi = (ctx:Context,config:Config,token:string)=> {
     .getSteamPlayerLinkDetails({steamids: memberIds.map(it=>BigInt(it))}, token)
 
 
-  const getSteamItems = async (appIds:string[]) => steamAPI.common
-    .getSteamItemsById({
+  const getSteamItems = async (appIds:string[],params?:PartialMessage<CStoreBrowse_GetItems_Request>) => steamAPI.common
+    .getSteamItemsById(params ?? {
       ids: appIds.map(it=> parseInt(it)).filter(it => !Number.isNaN(it))
         .map(it=>({appid: it})),
       context: {
@@ -55,8 +67,6 @@ export const libApi = (ctx:Context,config:Config,token:string)=> {
         includeTagCount: 20
       }
     })
-
-
 
   const getSteamFamily = async () => wrapperErr(
     () => http.get<APIResp<SteamFamily>>(`${host}/family?access_token=${access_token}`)
@@ -90,13 +100,34 @@ export const libApi = (ctx:Context,config:Config,token:string)=> {
     }
   }
 
+  const sleep = (sec: number = 1)=> {
+    return new Promise<void>((resolve,reject) => {
+      setTimeout(resolve, sec * 1000)
+    })
+  }
+
+  const withRetry = async <T>(func:()=>T, times= 3) => {
+    let time = 0
+    try {
+      let res = null
+      while(!res && time < times) {
+        time++
+        await sleep()
+        res = await func()
+      }
+      return res
+    }catch (e) {
+      return null
+    }
+  }
+
   const getOnePlayersSteamWishes = async (id: string) => {
     let page = 0
     let hasMore = true
     let appIds:string[] = []
     const appMaps = new Map<string, any>();
     while (hasMore) {
-      const res:Record<string, any> = await getSteamWishesByPage(id, page)
+      const res:Record<string, any> = await withRetry(()=>getSteamWishesByPage(id, page))
       if(res) {
         // res expect as an object, only when no more page return empty as an array
         if(res instanceof Array){
@@ -104,7 +135,7 @@ export const libApi = (ctx:Context,config:Config,token:string)=> {
           continue
         }
         Object.keys(res).forEach(key=> {appMaps.set(key, res[key]);})
-        console.log(`${id}, ${page}, ${Object.keys(res).length}`)
+        // console.log(`${id}, ${page}, ${Object.keys(res).length}`)
         appIds = appIds.concat(Object.keys(res))
         page++
       }else {
@@ -148,6 +179,7 @@ export const libApi = (ctx:Context,config:Config,token:string)=> {
       }
     })
   return {
+    getPlaytimeSummary,
     getSteamFamilyGroup,
     // getSteamFamily,
     // getFamilyLibs,

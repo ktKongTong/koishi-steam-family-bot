@@ -18,7 +18,9 @@ export class APIService {
   private constructor(ctx:Context, cfg: Config, account:AccountInfo) {
     this.Steam = libApi(ctx,cfg,account.steamAccessToken)
   }
-
+  static createNonTokenAPI(ctx: Context, cfg: Config) {
+    return new APIService(ctx,cfg, {steamAccessToken:""} as any)
+  }
   /**
    * async create an API Service
    * auto check token valid after generated

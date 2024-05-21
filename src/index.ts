@@ -1,7 +1,7 @@
-import {Context} from 'koishi'
+import {Context,h } from 'koishi'
 import schedules from "./schedules/index";
 import {Config} from "./config";
-import Cmd, {LoginCmd, StatisticCmd, SubCmd} from "./cmd";
+import Cmd, {ClearCmd, LoginCmd, refreshCmd, StatisticCmd, SubCmd} from "./cmd";
 export const name = 'koishi-steam-family-lib-monitor'
 
 import {} from 'koishi-plugin-cron'
@@ -31,12 +31,15 @@ export interface SteamAccount {
 }
 export interface SteamFamilyLib {
   id: number,
+  rtTimeAcquired: number,
   familyId: string,
   name?: string,
   appId: number,
-  // for wishes -> wisherSteamIds / lib -> ownerSteamIds
+  tags: string,
   steamIds: string,
-  type: 'lib'|'wish'
+  tagSynced: boolean,
+  type: 'lib'|'wish',
+  lastModifiedAt: number,
 }
 export interface SteamFamilyLibSubscribe {
   id: number,
@@ -62,7 +65,14 @@ function pluginInit(ctx: Context, config:Config) {
     appId: 'integer',
     steamIds: 'string',
     name: 'string',
-    type:'string'
+    rtTimeAcquired: 'unsigned',
+    tags: 'string',
+    tagSynced: {
+      type:'boolean',
+      initial: false,
+    },
+    type:'string',
+    lastModifiedAt: 'unsigned'
   },{
     primary: ['familyId', 'appId','type'],
   })
@@ -103,13 +113,15 @@ function pluginInit(ctx: Context, config:Config) {
   })
 }
 
-export function apply(ctx: Context, config: Config) {
+export async function apply(ctx: Context, config: Config) {
   pluginInit(ctx, config)
   const cmd = new Cmd(ctx,config)
   cmd
     .apply(SubCmd)
     .apply(LoginCmd)
     .apply(StatisticCmd)
+    .apply(refreshCmd)
+    .apply(ClearCmd)
   ctx.command('slm <prompts:text>')
   .alias('slm')
   .action(async ({ session, options }, input) => {
