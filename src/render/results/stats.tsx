@@ -8,15 +8,13 @@ import * as _ from 'lodash'
 import {
   CFamilyGroups_GetFamilyGroupForUser_Response,
   CFamilyGroups_GetPlaytimeSummary_Response,
-  CFamilyGroups_PlaytimeEntry
-} from "node-steam-family-group-api/lib/proto/gen/web-ui/service_familygroups_pb";
-import {Player} from "../types/player";
-import {
+  CFamilyGroups_PlaytimeEntry,
   CPlayer_GetPlayerLinkDetails_Response
-} from "node-steam-family-group-api/lib/proto/gen/web-ui/service_player_pb";
+} from "node-steam-family-group-api";
+import {Player} from "../types/player";
 import {SteamFamilyLib} from "../../index";
 import {SteamFamilyLibForStats} from "../index";
-import {shaDigestAvatarToStrAvatarHash} from "node-steam-family-group-api/lib/utils";
+import {shaDigestAvatarToStrAvatarHash} from "node-steam-family-group-api";
 
 
 const getPlaytime = (data:CFamilyGroups_GetPlaytimeSummary_Response)=> {
@@ -62,7 +60,7 @@ const getPlayer = (familyInfo:CFamilyGroups_GetFamilyGroupForUser_Response, memb
 const getLibs = (libs:SteamFamilyLib[]):SteamFamilyLibForStats[] => {
   return libs.map(it=> ({
     ...it,
-    rtTimeAcquired: 0,
+    rtTimeAcquired: it.rtTimeAcquired ?? 0,
     ownerSteamids: it.steamIds.split(','),
     mappedTags: it.tags.split(',')
   }))
@@ -73,7 +71,7 @@ function Stats({
 }:{
   familyGames: FamilyGames
 }) {
-  const bg = `https://www.loliapi.com/acg/pc/`
+  const bg = `https://www.loliapi.com/acg/pe/`
   const player = getPlayer(familyGames.familyInfo,familyGames.members)
   const recentAppDetail = familyGames.recentAppDetail.storeItems
   return (
@@ -91,12 +89,12 @@ function Stats({
 }
 
 
-export const renderStatsImg = (ctx: Context, games: FamilyGames) => {
+export const renderStatsImg = (ctx: Context, games: FamilyGames, onStart?: ()=>void, onError?: ()=> void) => {
   // getSteamItems
 
   // collect data
   // 1. family info
   // 2. family Shared App
   // 3.
-  return renderImg(ctx, <Stats familyGames={games}/>)
+  return renderImg(ctx, <Stats familyGames={games}/>, onStart, onError)
 }

@@ -3,7 +3,7 @@ import {WishItem} from "../interface/wish";
 import _ from "lodash";
 import {
   CFamilyGroups_GetSharedLibraryApps_Response_SharedApp
-} from "node-steam-family-group-api/lib/proto/gen/web-ui/service_familygroups_pb";
+} from "node-steam-family-group-api";
 
 export const diffWishes = (prevWishes:SteamFamilyLib[],wishes:WishItem[]) => {
   // filter libs not in prevLibs

@@ -22,10 +22,10 @@ export const axisStyle = {
 
 
 export const selectableColor =  [
-  'rgb(196, 71, 95,0.7)', 'rgb(53, 162, 235,0.7)',
-  'rgb(245, 193, 87,0.7)', 'rgb(227, 92, 94,0.7)',
-  'rgb(66, 151, 104,0.7)', 'rgb(243, 121, 78,0.7)',
-  'rgb(242, 180, 158,0.7)']
+  'rgba(196, 71, 95, 0.7)', 'rgba(53, 162, 235, 0.7)',
+  'rgba(245, 193, 87, 0.7)', 'rgba(227, 92, 94, 0.7)',
+  'rgba(66, 151, 104, 0.7)', 'rgba(243, 121, 78, 0.7)',
+  'rgba(242, 180, 158, 0.7)']
 export const defaultTextStyle = {
   color: '#ffffff'
 }
@@ -163,7 +163,7 @@ export function PlaytimeGraph({
       }
     ]
   }
-  const res = renderChart(option)
+  const res = renderChart(option,style)
   return (
     <div dangerouslySetInnerHTML={{
       __html:res

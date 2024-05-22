@@ -1,4 +1,4 @@
-import {StoreItem} from "node-steam-family-group-api/lib/proto/gen/web-ui/common_pb";
+import {StoreItem} from "node-steam-family-group-api";
 
 export const getGameAsset = (game:StoreItem, filename:string) => {
   const format = game.assets?.assetUrlFormat

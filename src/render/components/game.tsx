@@ -53,7 +53,7 @@ players
         <img
           src={getGameCapsule(game)}
           className={' rounded-lg absolute z-0 inset-0'}
-          loading={'lazy'}
+          loading={'eager'}
         />
         <div className={'absolute text-white text-[8px] top-0 left-0 bg-zinc-700/50 px-1 py-0.5 rounded-md text-xs'}>
           <div>{dayjs.unix(game.rtTimeAcquired!).format('YY年MM月DD日')}</div>
@@ -80,11 +80,8 @@ players
             {
               game.owners.map((it, index) =>
                 < div key={index}>
-                  <div>
-                    {it.personaName}
-                  </div>
-                  <div className={'h-6 w-6 border-[2px] border-zinc-700 -mt-[10px] group-hover:mb-[10px]  transition-all ease-in-out round-full'}>
-                    <img src={getAvatar(it?.avatar_hash??"")} alt={`@${it?.personaName}`} className={'h-6 w-6 round-full'}/>
+                  <div className={'h-6 w-6 border-[2px] border-zinc-700 -mt-[10px] group-hover:mb-[10px]  transition-all ease-in-out rounded-full'}>
+                    <img src={getAvatar(it?.avatar_hash??"")} alt={`@${it?.personaName}`} className={'h-6 w-6 rounded-full' } loading={'eager'}/>
                   </div>
                 </div>
               )

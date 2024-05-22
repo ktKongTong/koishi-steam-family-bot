@@ -1,4 +1,4 @@
-import { CFamilyGroups_PlaytimeEntry } from "node-steam-family-group-api/lib/proto/gen/web-ui/service_familygroups_pb"
+import { CFamilyGroups_PlaytimeEntry } from "node-steam-family-group-api"
 
 
 export interface SteamPlaytimeResponse {

@@ -8,9 +8,10 @@ import {SteamAppPlaytime} from "../types/playtime";
 import PlayerItem from "./Player";
 import {useComputedData} from "../useComputedData";
 import {
+  StoreItem,
   CFamilyGroups_GetFamilyGroupForUser_Response
-} from "node-steam-family-group-api/lib/proto/gen/web-ui/service_familygroups_pb";
-import {StoreItem} from "node-steam-family-group-api/lib/proto/gen/web-ui/common_pb";
+} from "node-steam-family-group-api"
+import WordCloud from "./(chart)/echart-wordcloud";
 
 
 export default function Graph({
@@ -49,15 +50,15 @@ export default function Graph({
         </div>
         <Piegraph
           countData={cntData}
-          style={{height: 400, width: 800}}
+          style={{height: 400, width: 1000}}
         />
         <PlaytimeGraph
           playtime={playtimeData}
           players={players}
           style={{height: 400, width: 1000}}
         />
-        {/*<EchartWordCloud words={dicts} height={800} width={800}*/}
-        {/*           className={'flex items-center'}/>*/}
+        <WordCloud words={dicts} height={800} width={800}
+                   className={'flex items-center'}/>
         <div className={'grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-2 lg:gap-2 '}>
           {
             mappedRecentLibs
@@ -65,8 +66,16 @@ export default function Graph({
           }
         </div>
       </div>
-      <img src={bg} crossOrigin="anonymous" className={'inset-0 absolute -z-10 object-cover h-full'}
-           loading={'eager'}/>
+      <img
+        src={bg}
+        crossOrigin="anonymous"
+        style={{
+          objectFit: "cover",
+          inset: 0,
+          height: '100%'
+        }}
+        className={'inset-0 absolute -z-10 object-cover h-full'}
+        loading={'eager'}/>
 
     </div>
   )

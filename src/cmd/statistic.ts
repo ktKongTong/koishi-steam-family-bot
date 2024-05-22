@@ -24,7 +24,12 @@ export function StatisticCmd(ctx:Context, cfg:Config, logger:Logger) {
       if(!apiServiceResult.isSuccess()) {
         session.sendQueued("当前账户 token 似乎已失效")
       }
-
+      const onStart = ()=> {
+        session.sendQueued("开始渲染了，请耐心等待 5s")
+      }
+      const onError = ()=> {
+        session.sendQueued("出现了意外错误，如有需要请查看日志")
+      }
       if(options.r) {
         let token = account.steamAccessToken
         let url = `${cfg.SteamHelperAPIHost}/render?access_token=${token}`
@@ -42,11 +47,13 @@ export function StatisticCmd(ctx:Context, cfg:Config, logger:Logger) {
         const ids = res.data.familyGroup.members.map(it=> it.steamid.toString())
         const members = await apiServiceResult.data.Steam.getFamilyMembers(ids)
         const items = await ctx.database.get('SteamFamilyLib', {
-          familyId: res.data.familyGroupid.toString()
+          familyId: res.data.familyGroupid.toString(),
+          type: 'lib'
         })
         const summary = await apiServiceResult.data.Steam.getPlaytimeSummary(res.data.familyGroupid)
-        const recentApp = items.sort((a,b)=> a.rtTimeAcquired - b.rtTimeAcquired).slice(0,12)
-        const recentAppDetail = await apiServiceResult.data.Steam.getSteamItems(recentApp.map(it=>it.appId.toString()))
+        const recentApp = items.sort((a,b)=> b.rtTimeAcquired - a.rtTimeAcquired).slice(0,12)
+        const recentAppDetail = await apiServiceResult.data.Steam
+          .getSteamItems(recentApp.map(it=>it.appId.toString()))
         let familyGames = {
           familyInfo: res.data,
           members: members.data,
@@ -54,7 +61,8 @@ export function StatisticCmd(ctx:Context, cfg:Config, logger:Logger) {
           playtimeSummary: summary.data,
           recentAppDetail:recentAppDetail.data
         }
-        session.sendQueued(await renderStatsImg(ctx, familyGames))
+
+        session.sendQueued(await renderStatsImg(ctx, familyGames,onStart, onError))
         return
       }
 

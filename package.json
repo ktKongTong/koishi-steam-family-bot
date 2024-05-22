@@ -1,8 +1,8 @@
 {
   "name": "koishi-plugin-steam-family-bot",
   "description": "一个用于新版 Steam 家庭的库存监控 koishi Bot 插件",
-  "version": "0.0.3-dev.patch08",
-  "main": "src/index.ts",
+  "version": "0.0.3-dev.patch27",
+  "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
     "lib",
@@ -46,20 +46,22 @@
   "devDependencies": {
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "react-jsx": "^1.0.0",
     "vitepress": "^1.1.4"
   },
   "peerDependencies": {
+    "canvas": "^2.11.2",
+    "dayjs": "^1.11.11",
+    "echarts": "^5.5.0",
     "jwt-decode": "^4.0.0",
     "koishi": "^4.17.4",
     "koishi-plugin-puppeteer": "^3.8.4",
     "lodash": "^4.17.21",
-    "node-steam-family-group-api": "^0.0.4-dev.patch02",
-    "steam-session": "^1.7.2",
-    "steamid": "^2.0.0",
+    "node-steam-family-group-api": "^0.0.4-dev.patch04",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "echarts": "^5.5.0",
-    "dayjs": "^1.11.11"
+    "steam-session": "^1.7.2",
+    "steamid": "^2.0.0"
   },
   "scripts": {
     "docs:dev": "vitepress dev docs",

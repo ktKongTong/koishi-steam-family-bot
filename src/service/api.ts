@@ -11,11 +11,9 @@ import {SteamAPI} from "node-steam-family-group-api";
 import {jwtDecode} from "jwt-decode";
 
 import {
-  PartialMessage
-} from "node-steam-family-group-api/lib/proto";
-import {
   CStoreBrowse_GetItems_Request,
-} from "node-steam-family-group-api/lib/proto/gen/web-ui/common_pb";
+  PartialMessage
+} from "node-steam-family-group-api";
 export const libApi = (ctx:Context,config:Config,token:string)=> {
   const http = ctx.http
   const steamAPI = new SteamAPI(token)

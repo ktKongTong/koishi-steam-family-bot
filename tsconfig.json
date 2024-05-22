@@ -10,11 +10,13 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
+    "allowJs": true,
     "jsx": "react-jsx",
     "jsxImportSource": "@satorijs/element",
     "types": [
       "node",
-      "yml-register/types"
+      "yml-register/types",
+      "react"
     ]
   },
   "include": [

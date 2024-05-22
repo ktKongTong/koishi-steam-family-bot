@@ -24,21 +24,19 @@ function App({
 
 export default App;
 
-export const renderImg = (ctx: Context, child: React.ReactNode) => {
+export const renderImg = async (ctx: Context, child: React.ReactNode, onStart?: ()=> void, onError?:()=>void) => {
   let res = ReactDOMServer.renderToString(<App>{child}</App>)
   res = ` <!DOCTYPE html>` + res
 
 
-  return ctx.puppeteer.render(res, async (page, next) => {
-    console.log('start render')
+  const buf = await ctx.puppeteer.render(res, async (page, next) => {
+    onStart?.()
     await new Promise<void>((resolve, reject)=> {
-      console.log('start wait 3s')
-      setTimeout(resolve,3000)
+      setTimeout(resolve,5000)
     })
-    console.log('wait finished')
-    console.log('start screenshot')
-    return page.$('body').then(next)
+    return page.$('body').then(next).catch(e=> {onError?.(); return ""})
   })
+  return buf
 }
 
 

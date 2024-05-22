@@ -1,9 +1,9 @@
 import {SteamAppPlaytime} from "./types/playtime";
-import * as _ from 'lodash-es'
+import * as _ from 'lodash'
 import {Player} from "./types/player";
 import {convertTag} from "../utils/tag-dict";
 import {SteamFamilyLibForStats} from "./index";
-import {StoreItem} from "node-steam-family-group-api/lib/proto/gen/web-ui/common_pb";
+import {StoreItem} from "node-steam-family-group-api";
 
 export const useComputedData = (
   libs: SteamFamilyLibForStats[],
