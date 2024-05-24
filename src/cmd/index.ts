@@ -5,6 +5,7 @@ export * from './login'
 export * from './statistic'
 export * from './refresh'
 export * from './clear'
+export * from './query'
 export default class Cmd {
   private readonly config: Config;
   private readonly ctx: Context;

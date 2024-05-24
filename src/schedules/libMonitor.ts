@@ -1,7 +1,7 @@
 import {$, Context, h, Logger} from "koishi";
 import {APIService} from "../service";
 import _ from "lodash";
-import {getGameCapsule} from "../utils/index";
+import {getGameCapsule} from "../utils";
 import {Config} from "../config";
 import {SteamAccount, SteamFamilyLibSubscribe} from "../index";
 import {diffLibs, diffWishes} from "./utils";
@@ -259,7 +259,21 @@ const handleSubScribe = async (item: {
         bot.sendMessage(item.channelId,h('message',msg.text))
         bot.sendMessage(item.channelId,h('img',{src: img}))
       })
-    bot.sendMessage(item.channelId,h('message',`愿望单/库存短时间内发生大量变更,共 ${msgs.length} 项，为防止刷屏，不再播报详情`))
+
+    let size = msgs.length - 3
+    let t = size > 30 ? '30项': ''
+    bot.sendMessage(item.channelId,h('message',`愿望单/库存短时间内发生大量变更,共 ${msgs.length} 项，为防止刷屏，仅播报${t}简略信息。`))
+
+    let chunkedText = _.chunk(msgs.slice(3), 10)
+      .slice(0,3)
+      .map(
+        (appTexts,index)=>
+          appTexts.map((appText,idx)=> `${ index * 10 + idx + 1}. ${appText.text}`)
+            .join("")
+      )
+    chunkedText.forEach(text=> {
+      bot.sendMessage(item.channelId,h('message',text))
+    })
   } else {
     msgs.forEach(msg=> {
       const app = appDetailsDict[msg.relateAppId]

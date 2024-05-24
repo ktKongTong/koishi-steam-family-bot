@@ -43,7 +43,6 @@ export const renderCanvasChart = (options:ECBasicOption, s?: Style)=> {
   let chart = echarts.init(canvas as any);
   chart.setOption(options)
   const canvasRes = chart.renderToCanvas();
-
   const res = canvasToDataURL(canvasRes)
   chart.dispose();
 

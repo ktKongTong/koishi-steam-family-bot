@@ -1,7 +1,7 @@
-import {Context,h } from 'koishi'
+import {Context} from 'koishi'
 import schedules from "./schedules/index";
 import {Config} from "./config";
-import Cmd, {ClearCmd, LoginCmd, refreshCmd, StatisticCmd, SubCmd} from "./cmd";
+import Cmd, {ClearCmd, LoginCmd, QueryCmd, refreshCmd, StatisticCmd, SubCmd} from "./cmd";
 export const name = 'koishi-steam-family-lib-monitor'
 
 import {} from 'koishi-plugin-cron'
@@ -122,6 +122,7 @@ export async function apply(ctx: Context, config: Config) {
     .apply(StatisticCmd)
     .apply(refreshCmd)
     .apply(ClearCmd)
+    .apply(QueryCmd)
   ctx.command('slm <prompts:text>')
   .alias('slm')
   .action(async ({ session, options }, input) => {
