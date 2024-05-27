@@ -21,5 +21,9 @@
   },
   "include": [
     "src"
-  ]
+  ],
+//  for koishi build tool: prevent yakomo-tsc copy source js to output file
+  "atsc": {
+    "loaders": [".yaml",".yml",".js"]
+  }
 }

@@ -51,6 +51,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
     "globals": "^15.3.0",
+    "globby": "^14.0.1",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.5",
     "react-jsx": "^1.0.0",
@@ -80,7 +81,11 @@
     "lint-fix": "eslint --fix src",
     "lint-staged": "lint-staged",
     "prepare": "husky install",
-    "build": "tsc"
+    "clean": "rm -rf lib  tsconfig.tsbuildinfo",
+    "copy-yml-resource": "node ./scripts/build.mjs",
+    "compile": "tsc",
+    "build": "npm run clean && npm run copy-yml-resource && npm run compile",
+    "publish": "npm publish"
   },
   "lint-staged": {
     "*.{js,ts,vue,jsx,tsx}": [
