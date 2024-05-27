@@ -1,7 +1,7 @@
-import {Context} from "koishi";
-import {Config} from "../config";
+import { Context } from 'koishi'
+import { Config } from '../config'
 
-export function UnSubCmd(ctx:Context,cfg:Config) {
+export function UnSubCmd(ctx: Context, cfg: Config) {
   const unsubcmd = ctx
     .command('slm.unsub')
     .alias('sbunsub')
@@ -22,18 +22,20 @@ export function UnSubCmd(ctx:Context,cfg:Config) {
         session.send('没有任何家庭库订阅，暂时无法进行家庭库订阅/取消操作')
         return
       }
-      let sub = subs[0]
-      if(!options.l && !options.w) {
+      const sub = subs[0]
+      if (!options.l && !options.w) {
         ctx.database.remove('SteamFamilyLibSubscribe', {
           uid: session.uid,
         })
         session.send('成功取消订阅')
       }
-      if(!options.l && options.w) {
-        ctx.database.upsert('SteamFamilyLibSubscribe', [{
-          ...sub,
-          subWishes: false,
-        }])
+      if (!options.l && options.w) {
+        ctx.database.upsert('SteamFamilyLibSubscribe', [
+          {
+            ...sub,
+            subWishes: false,
+          },
+        ])
         session.send('成功取消愿望单订阅')
       }
     })

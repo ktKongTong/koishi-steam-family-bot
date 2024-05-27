@@ -1,25 +1,25 @@
-import {} from "koishi";
+import {} from 'koishi'
 
 enum ReqResultStatus {
   Success,
   NotMatch,
-  NetworkError
+  NetworkError,
 }
 
 class NetReqResult<T> {
-  data:T
+  data: T
   private status: ReqResultStatus
-  constructor(data:T,status:ReqResultStatus) {
+  constructor(data: T, status: ReqResultStatus) {
     this.data = data
     this.status = status
   }
-  successOr(data:T) {
-    if(this.isSuccess()) {
+  successOr(data: T) {
+    if (this.isSuccess()) {
       return this.data
     }
     return data
   }
-  isSuccess () {
+  isSuccess() {
     return this.status === ReqResultStatus.Success
   }
 
@@ -30,15 +30,13 @@ class NetReqResult<T> {
   isNotMatch() {
     return this.status === ReqResultStatus.NotMatch
   }
-
 }
 
-export const wrapperErr = async<T>(block:()=>T) => {
+export const wrapperErr = async <T>(block: () => T) => {
   try {
     return await block()
-  }catch (e) {
+  } catch (e) {
     console.log(e)
     return null
   }
 }
-

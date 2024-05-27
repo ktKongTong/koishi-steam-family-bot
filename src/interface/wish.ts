@@ -1,5 +1,5 @@
 export interface WishItem {
-  wishers: string[];
-  appId: string;
-  itemInfo: any;
+  wishers: string[]
+  appId: string
+  itemInfo: any
 }

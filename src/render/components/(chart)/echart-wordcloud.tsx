@@ -1,30 +1,36 @@
 /** @jsxImportSource react */
-import {selectableColor} from "./playtimeGraph";
-import {random} from "lodash";
-import {renderCanvasChart} from "../renderChart";
+import { selectableColor } from './playtimeGraph'
+import { random } from 'lodash'
+import { renderCanvasChart } from '../renderChart'
 interface WordCloudProps {
-  width: number;
-  height: number;
-  words: WordData[],
-  className: string,
+  width: number
+  height: number
+  words: WordData[]
+  className: string
 }
 
 export interface WordData {
-  text: string;
-  value: number;
+  text: string
+  value: number
 }
 
-export default function EchartWordCloud({ width, height,words,className}: WordCloudProps) {
-  const data = words.map(it=> ({
+export default function EchartWordCloud({
+  width,
+  height,
+  words,
+  className,
+}: WordCloudProps) {
+  const data = words.map((it) => ({
     name: it.text,
-    value: it.value
+    value: it.value,
   }))
   const option = {
-      tooltip: {
-        show: true,
-        formatter: '{b}: {c}'
-      },
-      series: [{
+    tooltip: {
+      show: true,
+      formatter: '{b}: {c}',
+    },
+    series: [
+      {
         type: 'wordCloud',
         shape: 'square',
         keepAspect: false,
@@ -53,20 +59,23 @@ export default function EchartWordCloud({ width, height,words,className}: WordCl
           color: function () {
             const idx = random(selectableColor.length - 1, false)
             return selectableColor[idx]
-          }
+          },
         },
-        data: data
-      }]
-    }
+        data: data,
+      },
+    ],
+  }
 
   const res = renderCanvasChart(option, {
     height: 800,
-    width: 800
+    width: 800,
   })
   return (
-    <div className={className} dangerouslySetInnerHTML={{
-      __html: res
-    }}>
-    </div>
+    <div
+      className={className}
+      dangerouslySetInnerHTML={{
+        __html: res,
+      }}
+    ></div>
   )
 }

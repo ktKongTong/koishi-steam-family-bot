@@ -1,82 +1,89 @@
 /** @jsxImportSource react */
-import React from "react";
-import {Player} from "../../types/player";
-import {renderChart} from "../renderChart";
+import React from 'react'
+import { Player } from '../../types/player'
+import { renderChart } from '../renderChart'
 
 export const axisStyle = {
   axisLine: {
     lineStyle: {
-      color: "#ffffff"
-    }
+      color: '#ffffff',
+    },
   },
   axisLabel: {
-    color: "#ffffff"
+    color: '#ffffff',
   },
   splitLine: {
     lineStyle: {
-      color: 'rgb(0,0,0,0.3)'
-    }
+      color: 'rgb(0,0,0,0.3)',
+    },
   },
 }
 
-
-
-export const selectableColor =  [
-  'rgba(196, 71, 95, 0.7)', 'rgba(53, 162, 235, 0.7)',
-  'rgba(245, 193, 87, 0.7)', 'rgba(227, 92, 94, 0.7)',
-  'rgba(66, 151, 104, 0.7)', 'rgba(243, 121, 78, 0.7)',
-  'rgba(242, 180, 158, 0.7)']
+export const selectableColor = [
+  'rgba(196, 71, 95, 0.7)',
+  'rgba(53, 162, 235, 0.7)',
+  'rgba(245, 193, 87, 0.7)',
+  'rgba(227, 92, 94, 0.7)',
+  'rgba(66, 151, 104, 0.7)',
+  'rgba(243, 121, 78, 0.7)',
+  'rgba(242, 180, 158, 0.7)',
+]
 export const defaultTextStyle = {
-  color: '#ffffff'
+  color: '#ffffff',
 }
-const secondsToHours = (sec:number) => {
-  return sec/3600
+const secondsToHours = (sec: number) => {
+  return sec / 3600
 }
 
 export function PlaytimeGraph({
   playtime,
   players,
- style
-}:{
+  style,
+}: {
   playtime: {
-    steamid: string,
-    asOwnerLendTime: number,
+    steamid: string
+    asOwnerLendTime: number
     asPlayerTime: number
-  }[],
+  }[]
   players: Player[]
-  style: {height: number, width: number}
-}){
+  style: { height: number; width: number }
+}) {
   const option = {
     darkMode: true,
     axisTick: {
       lineStyle: {
-        color: '#ffffff'
-      }
+        color: '#ffffff',
+      },
     },
     axisLabel: {
       lineStyle: {
-        color: '#ffffff'
-      }
+        color: '#ffffff',
+      },
     },
     color: selectableColor,
     title: {
       text: '谁是义父，谁是义子？',
       left: 'center',
-      textStyle: defaultTextStyle
+      textStyle: defaultTextStyle,
     },
     tooltip: {
       trigger: 'item',
-      textStyle:defaultTextStyle,
+      textStyle: defaultTextStyle,
 
-      formatter: (param:any)=> {
-        return param.name+` ${param.seriesName} ` + Math.abs(param.value).toFixed(1) + 'h'
-      }
+      formatter: (param: any) => {
+        return (
+          param.name +
+          ` ${param.seriesName} ` +
+          Math.abs(param.value).toFixed(1) +
+          'h'
+        )
+      },
     },
     legend: {
       left: 'center',
-      top:'bottom',
+      top: 'bottom',
       textStyle: defaultTextStyle,
-      data: ["被嫖时长","白嫖时长"],
+      data: ['被嫖时长', '白嫖时长'],
     },
     xAxis: [
       {
@@ -84,90 +91,100 @@ export function PlaytimeGraph({
         nameTextStyle: defaultTextStyle,
         axisLine: {
           lineStyle: {
-            color: "#ffffff"
-          }
+            color: '#ffffff',
+          },
         },
         axisLabel: {
-          color: "#ffffff"
+          color: '#ffffff',
         },
         splitLine: {
           lineStyle: {
-            color: 'rgb(0,0,0,0.3)'
-          }
+            color: 'rgb(0,0,0,0.3)',
+          },
         },
-      }
+      },
     ],
     yAxis: [
       {
-
         nameTextStyle: defaultTextStyle,
         axisLine: {
           lineStyle: {
-            color: "#ffffff"
-          }
+            color: '#ffffff',
+          },
         },
         axisLabel: {
-          color: "#ffffff"
+          color: '#ffffff',
         },
         splitLine: {
           lineStyle: {
-            color: '#000000'
-          }
+            color: '#000000',
+          },
         },
         offset: 30,
         nameGap: 0,
         type: 'category',
-        data: playtime.map(item=>item.steamid).map(id=> players.find(it=>it.steamid?.toString()==id)?.personaName ?? "前成员")
-      }
+        data: playtime
+          .map((item) => item.steamid)
+          .map(
+            (id) =>
+              players.find((it) => it.steamid?.toString() == id)?.personaName ??
+              '前成员'
+          ),
+      },
     ],
     series: [
       {
         roundCap: true,
-        name: "被嫖时长",
+        name: '被嫖时长',
         type: 'bar',
         stack: 'Total',
         opacity: 0.5,
         height: 3,
         label: {
-          formatter: (param:any)=> {return param.value.toFixed(1) + "h"},
+          formatter: (param: any) => {
+            return param.value.toFixed(1) + 'h'
+          },
           show: true,
           textStyle: defaultTextStyle,
           position: 'right',
         },
         itemStyle: {
-          borderRadius: [0,100,100,0]
+          borderRadius: [0, 100, 100, 0],
         },
         emphasis: {
-          focus: 'series'
+          focus: 'series',
         },
-        data: playtime.map(item=>secondsToHours(item.asOwnerLendTime))
+        data: playtime.map((item) => secondsToHours(item.asOwnerLendTime)),
       },
       {
-        name: "白嫖时长",
+        name: '白嫖时长',
         type: 'bar',
         stack: 'Total',
         label: {
           show: true,
-          formatter: (param:any)=> {return Math.abs(param.value).toFixed(1) + "h"},
+          formatter: (param: any) => {
+            return Math.abs(param.value).toFixed(1) + 'h'
+          },
           textStyle: defaultTextStyle,
           position: 'left',
         },
 
         itemStyle: {
-          borderRadius: [100,0,0,100]
+          borderRadius: [100, 0, 0, 100],
         },
         emphasis: {
-          focus: 'series'
+          focus: 'series',
         },
-        data: playtime.map(item=> - secondsToHours(item.asPlayerTime))
-      }
-    ]
+        data: playtime.map((item) => -secondsToHours(item.asPlayerTime)),
+      },
+    ],
   }
-  const res = renderChart(option,style)
+  const res = renderChart(option, style)
   return (
-    <div dangerouslySetInnerHTML={{
-      __html:res
-    }}>
-    </div>
-)
+    <div
+      dangerouslySetInnerHTML={{
+        __html: res,
+      }}
+    ></div>
+  )
 }

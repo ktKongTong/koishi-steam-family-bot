@@ -1,28 +1,27 @@
-import * as echarts from 'echarts';
-
+import * as echarts from 'echarts'
 
 echarts.extendSeriesModel({
   type: 'series.wordCloud',
   visualStyleAccessPath: 'textStyle',
   visualStyleMapper: function (model) {
     return {
-      fill: model.get('color')
-    };
+      fill: model.get('color'),
+    }
   },
   visualDrawType: 'fill',
 
   optionUpdated: function () {
-    var option = this.option;
-    option.gridSize = Math.max(Math.floor(option.gridSize), 4);
+    var option = this.option
+    option.gridSize = Math.max(Math.floor(option.gridSize), 4)
   },
 
   getInitialData: function (option, ecModel) {
     var dimensions = echarts.helper.createDimensions(option.data, {
-      coordDimensions: ['value']
-    });
-    var list = new echarts.List(dimensions, this);
-    list.initData(option.data);
-    return list;
+      coordDimensions: ['value'],
+    })
+    var list = new echarts.List(dimensions, this)
+    list.initData(option.data)
+    return list
   },
 
   // Most of options are from https://github.com/timdream/wordcloud2.js/blob/gh-pages/API.md
@@ -54,8 +53,7 @@ echarts.extendSeriesModel({
     shrinkToFit: false,
 
     textStyle: {
-      fontWeight: 'normal'
-    }
-  }
-});
-
+      fontWeight: 'normal',
+    },
+  },
+})

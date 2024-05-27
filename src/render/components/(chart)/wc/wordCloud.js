@@ -1,163 +1,160 @@
-import * as echarts from 'echarts';
+/* eslint-disable */
+import * as echarts from 'echarts'
 
-import  './WordCloudView';
-import  './WordCloudSeries';
-import wordCloudLayoutHelper from './wc';
-import { createCanvas} from "../canvas";
+import './WordCloudView'
+import './WordCloudSeries'
+import wordCloudLayoutHelper from './wc'
+import { createCanvas } from '../canvas'
 // https://github.com/timdream/wordcloud2.js/blob/c236bee60436e048949f9becc4f0f67bd832dc5c/index.js#L233
 function updateCanvasMask(maskCanvas) {
-  var ctx = maskCanvas.getContext('2d');
-  var imageData = ctx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
-  var newImageData = ctx.createImageData(imageData);
+  var ctx = maskCanvas.getContext('2d')
+  var imageData = ctx.getImageData(0, 0, maskCanvas.width, maskCanvas.height)
+  var newImageData = ctx.createImageData(imageData)
 
-  var toneSum = 0;
-  var toneCnt = 0;
+  var toneSum = 0
+  var toneCnt = 0
   for (var i = 0; i < imageData.data.length; i += 4) {
-    var alpha = imageData.data[i + 3];
+    var alpha = imageData.data[i + 3]
     if (alpha > 128) {
       var tone =
-        imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2];
-      toneSum += tone;
-      ++toneCnt;
+        imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2]
+      toneSum += tone
+      ++toneCnt
     }
   }
-  var threshold = toneSum / toneCnt;
+  var threshold = toneSum / toneCnt
 
   for (var i = 0; i < imageData.data.length; i += 4) {
-    var tone =
-      imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2];
-    var alpha = imageData.data[i + 3];
+    var tone = imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2]
+    var alpha = imageData.data[i + 3]
 
     if (alpha < 128 || tone > threshold) {
       // Area not to draw
-      newImageData.data[i] = 0;
-      newImageData.data[i + 1] = 0;
-      newImageData.data[i + 2] = 0;
-      newImageData.data[i + 3] = 0;
+      newImageData.data[i] = 0
+      newImageData.data[i + 1] = 0
+      newImageData.data[i + 2] = 0
+      newImageData.data[i + 3] = 0
     } else {
       // Area to draw
       // The color must be same with backgroundColor
-      newImageData.data[i] = 255;
-      newImageData.data[i + 1] = 255;
-      newImageData.data[i + 2] = 255;
-      newImageData.data[i + 3] = 255;
+      newImageData.data[i] = 255
+      newImageData.data[i + 1] = 255
+      newImageData.data[i + 2] = 255
+      newImageData.data[i + 3] = 255
     }
   }
 
-  ctx.putImageData(newImageData, 0, 0);
+  ctx.putImageData(newImageData, 0, 0)
 }
 
 function adjustRectAspect(gridRect, aspect) {
   // var outerWidth = gridRect.width + gridRect.x * 2;
   // var outerHeight = gridRect.height + gridRect.y * 2;
-  var width = gridRect.width;
-  var height = gridRect.height;
+  var width = gridRect.width
+  var height = gridRect.height
   if (width > height * aspect) {
-    gridRect.x += (width - height * aspect) / 2;
-    gridRect.width = height * aspect;
+    gridRect.x += (width - height * aspect) / 2
+    gridRect.width = height * aspect
   } else {
-    gridRect.y += (height - width / aspect) / 2;
-    gridRect.height = width / aspect;
+    gridRect.y += (height - width / aspect) / 2
+    gridRect.height = width / aspect
   }
 }
 
-
 echarts.registerLayout(function (ecModel, api) {
-    ecModel.eachSeriesByType('wordCloud', function (seriesModel) {
-
-    });
-  });
+  ecModel.eachSeriesByType('wordCloud', function (seriesModel) {})
+})
 
 echarts.registerPreprocessor(function (option) {
-    var series = (option || {}).series;
-    !echarts.util.isArray(series) && (series = series ? [series] : []);
+  var series = (option || {}).series
+  !echarts.util.isArray(series) && (series = series ? [series] : [])
 
-    var compats = ['shadowColor', 'shadowBlur', 'shadowOffsetX', 'shadowOffsetY'];
+  var compats = ['shadowColor', 'shadowBlur', 'shadowOffsetX', 'shadowOffsetY']
 
-    echarts.util.each(series, function (seriesItem) {
-      if (seriesItem && seriesItem.type === 'wordCloud') {
-        var textStyle = seriesItem.textStyle || {};
+  echarts.util.each(series, function (seriesItem) {
+    if (seriesItem && seriesItem.type === 'wordCloud') {
+      var textStyle = seriesItem.textStyle || {}
 
-        compatTextStyle(textStyle.normal);
-        compatTextStyle(textStyle.emphasis);
-      }
-    });
+      compatTextStyle(textStyle.normal)
+      compatTextStyle(textStyle.emphasis)
+    }
+  })
 
-    function compatTextStyle(textStyle) {
-      textStyle &&
+  function compatTextStyle(textStyle) {
+    textStyle &&
       echarts.util.each(compats, function (key) {
         if (textStyle.hasOwnProperty(key)) {
-          textStyle['text' + echarts.format.capitalFirst(key)] = textStyle[key];
+          textStyle['text' + echarts.format.capitalFirst(key)] = textStyle[key]
         }
-      });
-    }
-  });
+      })
+  }
+})
 
 export const layoutItems = (seriesModel, api) => {
   var gridRect = echarts.helper.getLayoutRect(
     seriesModel.getBoxLayoutParams(),
     {
       width: api.getWidth(),
-      height: api.getHeight()
+      height: api.getHeight(),
     }
-  );
+  )
 
-  var keepAspect = seriesModel.get('keepAspect');
-  var maskImage = seriesModel.get('maskImage');
-  var ratio = maskImage ? maskImage.width / maskImage.height : 1;
-  keepAspect && adjustRectAspect(gridRect, ratio);
+  var keepAspect = seriesModel.get('keepAspect')
+  var maskImage = seriesModel.get('maskImage')
+  var ratio = maskImage ? maskImage.width / maskImage.height : 1
+  keepAspect && adjustRectAspect(gridRect, ratio)
 
-  var data = seriesModel.getData();
+  var data = seriesModel.getData()
 
   var canvas = createCanvas(800, 800)
   const canvasListener = {}
   canvas.addEventListener = function (name, cb) {
-    canvasListener[name] = cb;
+    canvasListener[name] = cb
   }
   canvas.removeEventListener = function (name, cb) {
-    canvasListener[name] = null;
+    canvasListener[name] = null
   }
-  canvas.dispatchEvent = (e)=> {
+  canvas.dispatchEvent = (e) => {
     let cb = canvasListener[e.type]
-    if(cb) {
+    if (cb) {
       cb(e)
     }
   }
-  canvas.addEventListener('wordclouddrawn', onWordCloudDrawn);
-  canvas.width = gridRect.width;
-  canvas.height = gridRect.height;
+  canvas.addEventListener('wordclouddrawn', onWordCloudDrawn)
+  canvas.width = gridRect.width
+  canvas.height = gridRect.height
 
-  var ctx = canvas.getContext('2d');
+  var ctx = canvas.getContext('2d')
   if (maskImage) {
     try {
-      ctx.drawImage(maskImage, 0, 0, canvas.width, canvas.height);
-      updateCanvasMask(canvas);
+      ctx.drawImage(maskImage, 0, 0, canvas.width, canvas.height)
+      updateCanvasMask(canvas)
     } catch (e) {
-      console.error('Invalid mask image');
-      console.error(e.toString());
+      console.error('Invalid mask image')
+      console.error(e.toString())
     }
   }
 
-  var sizeRange = seriesModel.get('sizeRange');
-  var rotationRange = seriesModel.get('rotationRange');
-  var valueExtent = data.getDataExtent('value');
+  var sizeRange = seriesModel.get('sizeRange')
+  var rotationRange = seriesModel.get('rotationRange')
+  var valueExtent = data.getDataExtent('value')
 
-  var DEGREE_TO_RAD = Math.PI / 180;
-  var gridSize = seriesModel.get('gridSize');
+  var DEGREE_TO_RAD = Math.PI / 180
+  var gridSize = seriesModel.get('gridSize')
   // const wc = wordCloudLayoutHelper( canvas)
   const list = data
     .mapArray('value', function (value, idx) {
-      var itemModel = data.getItemModel(idx);
+      var itemModel = data.getItemModel(idx)
       return [
         data.getName(idx),
         itemModel.get('textStyle.fontSize', true) ||
-        echarts.number.linearMap(value, valueExtent, sizeRange),
-        idx
-      ];
+          echarts.number.linearMap(value, valueExtent, sizeRange),
+        idx,
+      ]
     })
     .sort(function (a, b) {
       // Sort from large to small in case there is no more room for more words
-      return b[1] - a[1];
+      return b[1] - a[1]
     })
 
   wordCloudLayoutHelper(canvas, {
@@ -174,38 +171,30 @@ export const layoutItems = (seriesModel, api) => {
     shrinkToFit: seriesModel.get('shrinkToFit'),
 
     shuffle: false,
-    shape: seriesModel.get('shape')
+    shape: seriesModel.get('shape'),
   })
 
   function onWordCloudDrawn(e) {
-    var item = e.detail.item;
+    var item = e.detail.item
     if (e.detail.drawn && seriesModel.ondraw) {
       const drawn = e.detail.drawn
       const d = {
         ...drawn,
-        gx:drawn.gx + gridRect.x / gridSize,
-        gy: drawn.gy + gridRect.y / gridSize
+        gx: drawn.gx + gridRect.x / gridSize,
+        gy: drawn.gy + gridRect.y / gridSize,
       }
-      seriesModel.ondraw(
-        item[0],
-        item[1],
-        item[2],
-        d
-      );
+      seriesModel.ondraw(item[0], item[1], item[2], d)
     }
   }
 
-
-
   if (seriesModel.layoutInstance) {
     // Dispose previous
-    seriesModel.layoutInstance.dispose();
+    seriesModel.layoutInstance.dispose()
   }
 
   seriesModel.layoutInstance = {
     ondraw: null,
 
-    dispose: function () {
-    }
-  };
+    dispose: function () {},
+  }
 }

@@ -1,5 +1,4 @@
 class MemLock {
-
   instance: MemLock
   get() {
     if (!this.instance) {
@@ -9,10 +8,5 @@ class MemLock {
   }
   private constructor() {}
 
-  private keyLockMap =  new Map<string, boolean>
-
-
-
-
+  private keyLockMap = new Map<string, boolean>()
 }
-

@@ -1,9 +1,9 @@
-import {SteamFamilyLib} from "../index";
+import { SteamFamilyLib } from '../index'
 
 export * from './results/stats'
 
-export interface SteamFamilyLibForStats  extends SteamFamilyLib {
-  ownerSteamids: string[],
-  mappedTags: string[],
-  rtTimeAcquired: number,
+export interface SteamFamilyLibForStats extends SteamFamilyLib {
+  ownerSteamids: string[]
+  mappedTags: string[]
+  rtTimeAcquired: number
 }
