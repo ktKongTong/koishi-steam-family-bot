@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-steam-family-bot",
   "description": "一个用于新版 Steam 家庭的库存监控 koishi Bot 插件",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.3.0",
+    "@types/js-yaml": "^4.0.9",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^9.3.0",
@@ -53,6 +54,7 @@
     "globals": "^15.3.0",
     "globby": "^14.0.1",
     "husky": "^9.0.11",
+    "js-yaml": "^4.1.0",
     "lint-staged": "^15.2.5",
     "react-jsx": "^1.0.0",
     "typescript": "^5.4.5",
@@ -85,7 +87,7 @@
     "copy-yml-resource": "node ./scripts/build.mjs",
     "compile": "tsc",
     "build": "npm run clean && npm run copy-yml-resource && npm run compile",
-    "publish": "npm publish"
+    "pub": "npm run build && npm publish"
   },
   "lint-staged": {
     "*.{js,ts,vue,jsx,tsx}": [
