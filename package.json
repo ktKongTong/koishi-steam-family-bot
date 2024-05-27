@@ -59,7 +59,7 @@
     "react-jsx": "^1.0.0",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.10.0",
-    "vitepress": "^1.1.4"
+    "vitepress": "^1.2.2"
   },
   "peerDependencies": {
     "canvas": "^2.11.2",
