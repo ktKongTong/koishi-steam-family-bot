@@ -50,10 +50,10 @@ export class SteamFamilyLibDAO implements ISteamFamilySharedLibDAO {
       )
       .where((row) => {
         return $.or(
-          $.lt(
-            $.add($.number(row.SteamGameInfo.lastRefreshedAt), -5),
-            Date.now()
-          ),
+          // $.lt(
+          //   $.add($.number(row.SteamGameInfo.lastRefreshedAt), -5),
+          //   Date.now()
+          // ),
           $.eq(row.SteamGameInfo.appid, null)
         )
       })

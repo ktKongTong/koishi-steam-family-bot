@@ -133,11 +133,12 @@ function pluginInit(ctx: Context, config: Config) {
       tagSynced: 'boolean',
     },
     async (database) => {
-      // @ts-expect-error
       const data = await database.get('SteamFamilyLib', {}, [
         'appId',
         'name',
+        // @ts-expect-error
         'tags',
+        // @ts-expect-error
         'tagSynced',
       ])
       const migrateData = data.map((item) => {
@@ -174,6 +175,7 @@ function pluginInit(ctx: Context, config: Config) {
       await database.upsert('SteamRelateChannelInfo', migrateData)
     }
   )
+  // @ts-ignore
   ctx.model.migrate(
     'SteamFamilyLibSubscribe',
     {
@@ -184,12 +186,15 @@ function pluginInit(ctx: Context, config: Config) {
       uid: 'string',
     },
     async (database) => {
-      // @ts-expect-error
       const data = await database.get('SteamFamilyLibSubscribe', {}, [
         'id',
+        // @ts-expect-error
         'uid',
+        // @ts-expect-error
         'platform',
+        // @ts-expect-error
         'channelId',
+        // @ts-expect-error
         'selfId',
       ])
       const migrateData = data.map((item) => {
