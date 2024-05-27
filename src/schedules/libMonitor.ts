@@ -18,6 +18,7 @@ const libMonitor = (ctx:Context,config:Config) => async ()=> {
   const subscribe = await selection.where(row=>
   $.and(
       $.eq(row.SteamFamilyLibSubscribe.accountId,row.SteamAccount.id),
+    $.eq(row.SteamFamilyLibSubscribe.active,true),
       $.eq( row.SteamAccount.valid,'valid'))
   ).execute()
   const subscribes = subscribe.map(item=> ({
@@ -27,7 +28,7 @@ const libMonitor = (ctx:Context,config:Config) => async ()=> {
 
   for (const item of subscribes) {
     try {
-      handleSubScribe(item, ctx,config,logger)
+      await handleSubScribe(item, ctx, config, logger)
     }catch (e) {
       logger.error(`some error occur during handle steam subscription familyId: ${item.account.familyId}`, e)
     }
@@ -219,7 +220,7 @@ const handleSubScribe = async (item: {
     const names = newlib.ownerSteamids.map(ownerId => `「${memberDict[String(ownerId)]?.personaName}」`)
     let text= `感谢富哥${names.join('，')}，库存喜+1。${newlib.name}`
     if (names.length > 1) {
-      text +=  "当前副本数 "+names.length
+      text +=  "当前副本数 " + names.length
     }
     return { text: text, relateAppId: newlib.appid.toString() }
   })

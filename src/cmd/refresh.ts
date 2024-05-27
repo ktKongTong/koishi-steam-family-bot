@@ -18,8 +18,8 @@ export function refreshCmd(ctx:Context,cfg:Config,logger:Logger) {
       })
       if(accounts.length === 0) {
         session.sendQueued("你还没有绑定 steam 账户，暂时不需要刷新数据")
+        return
       }
-
       let account =  accounts[0]
       const apiServiceResult = await APIService.create(ctx,cfg, account)
       if(!apiServiceResult.isSuccess()) {
@@ -48,7 +48,7 @@ export function refreshCmd(ctx:Context,cfg:Config,logger:Logger) {
           lastModifiedAt: date.getTime(),
           rtTimeAcquired: item.rtTimeAcquired ?? 0,
           type: 'lib',
-          tag: ''
+          tags: ''
         }))
       dbContent = dbContent.concat(apps as any)
 
@@ -60,7 +60,7 @@ export function refreshCmd(ctx:Context,cfg:Config,logger:Logger) {
         // take a lock
         const insertRes = await ctx.database.upsert('SteamFamilyLib',dbContent)
       })
-      session.sendQueued("刷新成功")
+      session.sendQueued(`刷新成功, ${dbContent.length}`)
       return
       }catch (e) {
         logger.error(`refresh lib failed, ${e}`)
