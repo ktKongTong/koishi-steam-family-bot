@@ -1,4 +1,4 @@
-import { SteamFamilyLib } from '../index'
+import { SteamFamilyLib } from '../interface'
 
 export * from './results/stats'
 

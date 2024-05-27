@@ -1,5 +1,9 @@
-import { SteamFamilyLib } from '../index'
-import { WishItem } from '../interface/wish'
+import {
+  SteamFamilyLib,
+  WishItem,
+  IAPIService,
+  ISteamService,
+} from '../interface'
 import _ from 'lodash'
 import { CFamilyGroups_GetSharedLibraryApps_Response_SharedApp } from 'node-steam-family-group-api'
 
@@ -59,4 +63,44 @@ export const diffLibs = (
     libDict,
     deletedLibs,
   }
+}
+
+export const prepareFamilyInfo = async (
+  api: IAPIService,
+  steam: ISteamService
+) => {
+  const family = await api.Steam.getSteamFamilyGroup()
+  const memberIds = family.data.familyGroup.members.map((member) =>
+    member.steamid?.toString()
+  )
+  const [wishes, members] = await Promise.all([
+    (await api.Steam.getSteamWishesByPlayerIds(memberIds)).data,
+    (await api.Steam.getFamilyMembers(memberIds)).data,
+  ])
+  const m = members.accounts.map((acc) => acc.publicData)
+  const memberDict = _.keyBy(m, 'steamid')
+  const prevWishes = await steam.db.FamilyLib.getFamilyWishes(
+    family.data.familyGroupid.toString()
+  )
+  return {
+    family,
+    memberDict,
+    wishes,
+    prevWishes,
+  }
+}
+
+export const prepareLibData = async (
+  api: IAPIService,
+  steam: ISteamService,
+  familyId: string
+) => {
+  const prevLibs = steam.db.FamilyLib.getSteamFamilyLibByFamilyId(familyId)
+  const libs = api.Steam.getSteamFamilyGroupLibs(BigInt(familyId)).then((res) =>
+    res?.data.apps.filter(
+      (app) => app.excludeReason == undefined || app.excludeReason == 0
+    )
+  )
+  const [awaitedPrevLibs, awaitedLibs] = await Promise.all([prevLibs, libs])
+  return { prevLibs: awaitedPrevLibs, libs: awaitedLibs }
 }

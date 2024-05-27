@@ -1,9 +1,14 @@
-import { Context, h, Logger, sleep } from 'koishi'
+import { Context, h, Logger } from 'koishi'
 import { Config } from '../config'
 import { EAuthTokenPlatformType, LoginSession } from 'steam-session'
-import { libApi } from '../service/api'
+import { ISteamService } from '../interface'
 
-export function LoginCmd(ctx: Context, cfg: Config, logger: Logger) {
+export function LoginCmd(
+  ctx: Context,
+  cfg: Config,
+  logger: Logger,
+  steamService: ISteamService
+) {
   const loginCmd = ctx
     .command('slm.login')
     .alias('sblogin')
@@ -25,43 +30,19 @@ export function LoginCmd(ctx: Context, cfg: Config, logger: Logger) {
       let status = 'wait'
       loginSession.on('authenticated', async () => {
         session.send(`登陆成功，你好 ${loginSession.accountName}`)
-        const account = {
-          uid: session.uid,
-          steamId: loginSession.steamID.toString(),
-          accountName: loginSession.accountName,
-          steamAccessToken: loginSession.accessToken,
-          steamRefreshToken: loginSession.refreshToken,
-          lastRefreshTime: new Date().getTime().toFixed(),
-        }
         status = 'success'
-        // raw access without token check
-        const api = libApi(ctx, cfg, loginSession.accessToken)
-        const family = await api.getSteamFamilyGroup()
-        const res = await ctx.database.get('SteamAccount', {
-          steamId: account.steamId,
-          uid: account.uid,
-        })
-        if (res.length > 0) {
-          // replace previous account
-          ctx.database.upsert('SteamAccount', [
-            {
-              id: res[0]?.id,
-              familyId: String(family.data?.familyGroupid),
-              valid: 'valid',
-              ...account,
-            },
-          ])
-        } else {
-          ctx.database.upsert('SteamAccount', [
-            {
-              familyId: String(family.data?.familyGroupid),
-              valid: 'valid',
-              ...account,
-            },
-          ])
-        }
-
-        const webCookies = await loginSession.getWebCookies()
+        await steamService
+          .addAccountInfoByLoginSession(loginSession, {
+            uid: session.uid,
+            channelId: session.channelId,
+            selfId: session.selfId,
+            platform: session.platform,
+          })
+          .catch((e) => {
+            session.send(
+              '登陆出错，数据没能成功新增，可能是因为你目前不在家庭中'
+            )
+          })
       })
 
       loginSession.on('timeout', () => {

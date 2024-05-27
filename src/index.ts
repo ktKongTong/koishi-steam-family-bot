@@ -9,7 +9,16 @@ import Cmd, {
   StatisticCmd,
   SubCmd,
 } from './cmd'
+
 export const name = 'koishi-steam-family-lib-monitor'
+
+import {
+  SteamFamilyLibSubscribe,
+  SteamAccount,
+  SteamFamilyLib,
+  SteamRelateChannelInfo,
+  GameInfo,
+} from './interface'
 
 import {} from 'koishi-plugin-cron'
 import {} from 'koishi-plugin-puppeteer'
@@ -21,48 +30,13 @@ declare module 'koishi' {
     SteamAccount: SteamAccount
     SteamFamilyLibSubscribe: SteamFamilyLibSubscribe
     SteamFamilyLib: SteamFamilyLib
+    SteamRelateChannelInfo: SteamRelateChannelInfo
+    SteamGameInfo: GameInfo
   }
 }
 
-export interface SteamAccount {
-  id: number
-  uid: string
-  accountName: string
-  familyId: string
-  steamId: string
-  steamAccessToken: string
-  steamRefreshToken: string
-  lastRefreshTime: string
-  valid: string
-}
-export interface SteamFamilyLib {
-  id: number
-  rtTimeAcquired: number
-  familyId: string
-  name?: string
-  appId: number
-  tags: string
-  steamIds: string
-  tagSynced: boolean
-  type: 'lib' | 'wish'
-  lastModifiedAt: number
-}
-export interface SteamFamilyLibSubscribe {
-  id: number
-  platform: string
-  selfId: string
-  channelId: string | null
-  uid: string
-  steamFamilyId: string
-  steamAccountId: string
-  accountId: number
-  subLib: boolean
-  subWishes: boolean
-  active: boolean
-}
 export * from './config'
 
-//
 function pluginInit(ctx: Context, config: Config) {
   // const zhLocal = require('./locales/zh-CN')
   // ctx.i18n.define('zh-CN', zhLocal)
@@ -74,11 +48,6 @@ function pluginInit(ctx: Context, config: Config) {
       steamIds: 'string',
       name: 'string',
       rtTimeAcquired: 'unsigned',
-      tags: 'string',
-      tagSynced: {
-        type: 'boolean',
-        initial: false,
-      },
       type: 'string',
       lastModifiedAt: 'unsigned',
     },
@@ -90,7 +59,6 @@ function pluginInit(ctx: Context, config: Config) {
     'SteamAccount',
     {
       id: 'unsigned',
-      uid: 'string',
       familyId: 'string',
       accountName: 'string',
       steamId: 'string',
@@ -107,10 +75,6 @@ function pluginInit(ctx: Context, config: Config) {
     'SteamFamilyLibSubscribe',
     {
       id: 'unsigned',
-      uid: 'string',
-      channelId: 'string',
-      selfId: 'string',
-      platform: 'string',
       steamFamilyId: 'string',
       steamAccountId: 'string',
       accountId: 'unsigned',
@@ -122,10 +86,127 @@ function pluginInit(ctx: Context, config: Config) {
     {
       autoInc: true,
       foreign: {
-        uid: ['user', 'id'],
         accountId: ['SteamAccount', 'id'],
         steamAccountId: ['SteamAccount', 'steamId'],
       },
+    }
+  )
+
+  ctx.model.extend(
+    'SteamRelateChannelInfo',
+    {
+      // reference to steamAccount or Subscription
+      refId: 'unsigned',
+      type: 'string',
+      platform: 'string',
+      selfId: 'string',
+      channelId: 'string',
+      uid: 'string',
+    },
+    {
+      autoInc: false,
+      primary: ['refId', 'type'],
+    }
+  )
+
+  ctx.model.extend(
+    'SteamGameInfo',
+    {
+      appid: 'unsigned',
+      name: 'string',
+      aliases: 'text',
+      tags: 'string',
+      lastRefreshedAt: {
+        type: 'unsigned',
+        nullable: false,
+      },
+    },
+    {
+      primary: ['appid'],
+    }
+  )
+  ctx.model.migrate(
+    'SteamFamilyLibSubscribe',
+    {
+      // @ts-expect-error
+      tags: 'string',
+      tagSynced: 'boolean',
+    },
+    async (database) => {
+      // @ts-expect-error
+      const data = await database.get('SteamFamilyLib', {}, [
+        'appId',
+        'name',
+        'tags',
+        'tagSynced',
+      ])
+      const migrateData = data.map((item) => {
+        return {
+          appid: item.appId,
+          name: item.name,
+          // @ts-expect-error
+          tags: item.tags,
+          aliases: '',
+          lastRefreshedAt: Date.now(),
+        }
+      })
+      await database.upsert('SteamGameInfo', migrateData)
+    }
+  )
+
+  ctx.model.migrate(
+    'SteamAccount',
+    {
+      // @ts-expect-error
+      uid: 'string',
+    },
+    async (database) => {
+      // @ts-expect-error
+      const data = await database.get('SteamAccount', {}, ['id', 'uid'])
+      const migrateData = data.map((item) => {
+        return {
+          refId: item.id,
+          type: 'account',
+          // @ts-expect-error
+          uid: item.uid,
+        }
+      })
+      await database.upsert('SteamRelateChannelInfo', migrateData)
+    }
+  )
+  ctx.model.migrate(
+    'SteamFamilyLibSubscribe',
+    {
+      // @ts-expect-error
+      platform: 'string',
+      selfId: 'string',
+      channelId: 'string',
+      uid: 'string',
+    },
+    async (database) => {
+      // @ts-expect-error
+      const data = await database.get('SteamFamilyLibSubscribe', {}, [
+        'id',
+        'uid',
+        'platform',
+        'channelId',
+        'selfId',
+      ])
+      const migrateData = data.map((item) => {
+        return {
+          refId: item.id,
+          type: 'sub',
+          // @ts-expect-error
+          platform: item.platform,
+          // @ts-expect-error
+          selfId: item.selfId,
+          // @ts-expect-error
+          channelId: item.channelId,
+          // @ts-expect-error
+          uid: item.uid,
+        }
+      })
+      await database.upsert('SteamRelateChannelInfo', migrateData)
     }
   )
 }

@@ -2,7 +2,7 @@
 import { Context } from 'koishi'
 import React from 'react'
 import { renderImg } from '../utils'
-import { FamilyGames } from '../../interface/stats'
+import { FamilyGames, GameInfo } from '../../interface'
 import Graph from '../components/graph'
 import * as _ from 'lodash'
 import {
@@ -12,7 +12,7 @@ import {
   CPlayer_GetPlayerLinkDetails_Response,
 } from 'node-steam-family-group-api'
 import { Player } from '../types/player'
-import { SteamFamilyLib } from '../../index'
+import { SteamFamilyLib } from '../../interface'
 import { SteamFamilyLibForStats } from '../index'
 import { shaDigestAvatarToStrAvatarHash } from 'node-steam-family-group-api'
 
@@ -59,12 +59,14 @@ const getPlayer = (
   return members
 }
 
-const getLibs = (libs: SteamFamilyLib[]): SteamFamilyLibForStats[] => {
+const getLibs = (
+  libs: (SteamFamilyLib & { info?: GameInfo })[]
+): SteamFamilyLibForStats[] => {
   return libs.map((it) => ({
     ...it,
     rtTimeAcquired: it.rtTimeAcquired ?? 0,
     ownerSteamids: it.steamIds.split(','),
-    mappedTags: it.tags.split(','),
+    mappedTags: it.info?.tags?.split(',') ?? [],
   }))
 }
 
@@ -92,11 +94,5 @@ export const renderStatsImg = (
   onStart?: () => void,
   onError?: () => void
 ) => {
-  // getSteamItems
-
-  // collect data
-  // 1. family info
-  // 2. family Shared App
-  // 3.
   return renderImg(ctx, <Stats familyGames={games} />, onStart, onError)
 }

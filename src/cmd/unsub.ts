@@ -1,41 +1,41 @@
-import { Context } from 'koishi'
+import { Context, Logger } from 'koishi'
 import { Config } from '../config'
+import { ISteamService } from '../service/interface'
 
-export function UnSubCmd(ctx: Context, cfg: Config) {
+export function UnSubCmd(
+  ctx: Context,
+  cfg: Config,
+  logger: Logger,
+  steam: ISteamService
+) {
   const unsubcmd = ctx
     .command('slm.unsub')
     .alias('sbunsub')
     .option('w', '<subWish:boolean>')
     .option('l', '<subLib:boolean>')
     .action(async ({ session, options }, input) => {
-      const accounts = await ctx.database.get('SteamAccount', {
-        uid: session.uid,
-      })
-      if (accounts.length === 0) {
+      const account = await steam.db.Account.getSteamAccountBySessionUid(
+        session.uid
+      )
+      if (!account) {
         session.send('你暂未绑定Steam账号，暂时无法进行家庭库订阅/取消操作')
         return
       }
-      const subs = await ctx.database.get('SteamFamilyLibSubscribe', {
-        uid: session.uid,
-      })
-      if (subs.length === 0) {
+      const subscription =
+        await steam.db.Subscription.getSubscriptionBySessionUId(session.uid)
+      if (!subscription) {
         session.send('没有任何家庭库订阅，暂时无法进行家庭库订阅/取消操作')
         return
       }
-      const sub = subs[0]
       if (!options.l && !options.w) {
-        ctx.database.remove('SteamFamilyLibSubscribe', {
-          uid: session.uid,
-        })
+        await steam.db.Subscription.removeSubscriptionBySteamId(account.steamId)
         session.send('成功取消订阅')
       }
       if (!options.l && options.w) {
-        ctx.database.upsert('SteamFamilyLibSubscribe', [
-          {
-            ...sub,
-            subWishes: false,
-          },
-        ])
+        await steam.db.Subscription.updateSubscription({
+          ...subscription,
+          subWishes: false,
+        })
         session.send('成功取消愿望单订阅')
       }
     })

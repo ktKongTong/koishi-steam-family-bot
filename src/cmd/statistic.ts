@@ -1,27 +1,31 @@
 import { Context, h, Logger } from 'koishi'
 import { Config } from '../config'
-import { APIService } from '../service'
 import { screenshotFamilyStatistic } from '../utils/render'
 import { renderStatsImg } from '../render'
+import { ISteamService } from '../interface'
 
-export function StatisticCmd(ctx: Context, cfg: Config, logger: Logger) {
+export function StatisticCmd(
+  ctx: Context,
+  cfg: Config,
+  logger: Logger,
+  steamService: ISteamService
+) {
   const subcmd = ctx
     .command('slm.stats')
     .alias('sbstats')
     .option('r', '<remote:boolean>')
     .action(async ({ session, options }, input) => {
-      const accounts = await ctx.database.get('SteamAccount', {
-        uid: session.uid,
-      })
-      if (accounts.length === 0) {
+      const account = await steamService.db.Account.getSteamAccountBySessionUid(
+        session.uid
+      )
+      if (!account) {
         session.sendQueued('你还没有绑定 steam 账户，暂时无法获取统计信息')
         return
       }
-
-      const account = accounts[0]
-      const apiServiceResult = await APIService.create(ctx, cfg, account)
-      if (!apiServiceResult.isSuccess()) {
+      const valid = await steamService.validAccount(account)
+      if (!valid) {
         session.sendQueued('当前账户 token 似乎已失效')
+        return
       }
       const onStart = () => {
         session.sendQueued('开始渲染了，请耐心等待 5s')
@@ -50,32 +54,9 @@ export function StatisticCmd(ctx: Context, cfg: Config, logger: Logger) {
           session.send('渲染出错，详情可查看日志')
         }
       } else {
-        const res = await apiServiceResult.data.Steam.getSteamFamilyGroup()
-        const ids = res.data.familyGroup.members.map((it) =>
-          it.steamid.toString()
+        const familyGames = await steamService.getLibStatistic(
+          account.steamAccessToken
         )
-        const members = await apiServiceResult.data.Steam.getFamilyMembers(ids)
-        const items = await ctx.database.get('SteamFamilyLib', {
-          familyId: res.data.familyGroupid.toString(),
-          type: 'lib',
-        })
-        const summary = await apiServiceResult.data.Steam.getPlaytimeSummary(
-          res.data.familyGroupid
-        )
-        const recentApp = items
-          .sort((a, b) => b.rtTimeAcquired - a.rtTimeAcquired)
-          .slice(0, 12)
-        const recentAppDetail = await apiServiceResult.data.Steam.getSteamItems(
-          recentApp.map((it) => it.appId.toString())
-        )
-        const familyGames = {
-          familyInfo: res.data,
-          members: members.data,
-          games: items,
-          playtimeSummary: summary.data,
-          recentAppDetail: recentAppDetail.data,
-        }
-
         session.sendQueued(
           await renderStatsImg(ctx, familyGames, onStart, onError)
         )
