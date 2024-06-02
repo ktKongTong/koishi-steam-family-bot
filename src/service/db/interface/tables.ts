@@ -12,8 +12,8 @@ export interface SteamAccount {
 export interface GameInfo {
   appid: number
   name: string
-  tags: string
   aliases: string
+  top20tags: string
   lastRefreshedAt: number
 }
 
@@ -41,15 +41,8 @@ export interface SubscribeInfo<T> {
   subscription: SteamFamilyLibSubscribe
   channel: T
 }
-export type SteamRelateChannelInfo = {
+export type SteamRelateChannelInfo<T> = {
   // reference to steamAccount or subscription
   refId: number
   type: 'account' | 'sub'
-} & ChannelInfo
-
-export interface ChannelInfo {
-  uid: string
-  channelId: string
-  selfId: string
-  platform: string
-}
+} & T

@@ -36,7 +36,7 @@ export interface ISteamFamilySharedLibDAO {
   getSteamFamilyLibByFamilyId(
     uid: string
   ): Promise<(SteamFamilyLib & { info: GameInfo })[]>
-  getUnSyncedTagLib(): Promise<SteamFamilyLib[]>
+  getUnSyncedLib(limit?: number): Promise<SteamFamilyLib[]>
   getLibByKeywordAndFamilyId(
     familyId: string,
     queryKey: string
@@ -49,7 +49,7 @@ export interface ISteamFamilySharedLibDAO {
   ): Promise<void>
   batchUpsertFamilyLib(libs: Partial<SteamFamilyLib>[]): Promise<void>
   batchUpsertLibInfo(
-    infos: PartialBy<GameInfo, 'aliases' | 'tags'>[]
+    infos: PartialBy<GameInfo, 'aliases' | 'top20tags'>[]
   ): Promise<void>
 }
 

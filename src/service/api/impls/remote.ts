@@ -6,6 +6,7 @@ import {
   CStoreBrowse_GetItems_Response,
   PartialMessage,
 } from 'node-steam-family-group-api'
+import { GameBaseInfoResp } from '../../interface'
 
 export class DefaultRemoteFamilyAPI extends ISteamFamilyAPI {
   remoteHost: string
@@ -59,6 +60,15 @@ export class DefaultRemoteFamilyAPI extends ISteamFamilyAPI {
     appIds: string[]
   ): Promise<ProxiedAPIResponse<CStoreBrowse_GetItems_Response>> {
     return fetch(`${this.remoteHost}/items/${appIds.join(',')}`, {
+      method: 'GET',
+      headers: {},
+    }).then((res) => res.json())
+  }
+
+  getSteamItemsBaseInfo(
+    appIds: number[]
+  ): Promise<ProxiedAPIResponse<GameBaseInfoResp>> {
+    return fetch(`${this.remoteHost}/info/${appIds.join(',')}`, {
       method: 'GET',
       headers: {},
     }).then((res) => res.json())

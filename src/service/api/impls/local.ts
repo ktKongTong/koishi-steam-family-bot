@@ -1,13 +1,11 @@
-import { APIResp } from '../interface'
-import { WishItem } from '../interface'
-import _ from 'lodash'
 import { jwtDecode } from 'jwt-decode'
 import {
   CStoreBrowse_GetItems_Request,
   PartialMessage,
   SteamAPI,
 } from 'node-steam-family-group-api'
-import { ISteamFamilyAPI } from '../interface'
+import { ISteamFamilyAPI, ProxiedAPIResponse } from '../interface'
+import { GameBaseInfoResp } from '../../interface'
 
 const sleep = (sec: number = 1) => {
   return new Promise<void>((resolve, reject) => {
@@ -16,8 +14,14 @@ const sleep = (sec: number = 1) => {
 }
 export class LocalFamilyAPI extends ISteamFamilyAPI {
   steamAPI: SteamAPI
-  constructor(token?: string) {
+  helperAPIHost: string
+  constructor(helperApiHost: string, token?: string) {
     super()
+    if (helperApiHost.endsWith('/')) {
+      this.helperAPIHost = helperApiHost.slice(0, helperApiHost.length - 1)
+    } else {
+      this.helperAPIHost = helperApiHost
+    }
     this.updateSteamToken(token)
   }
   updateSteamToken(token: string) {
@@ -88,7 +92,10 @@ export class LocalFamilyAPI extends ISteamFamilyAPI {
       }
     )
 
-  // const getSteamItems = async (appIds:string[]) => wrapperErr(
-  //   () => http.get<APIResp<SteamAppDetails>>(`${host}/items/${appIds.join(',')}?access_token=${access_token}`)
-  // )
+  getSteamItemsBaseInfo(
+    appIds: number[]
+  ): Promise<ProxiedAPIResponse<GameBaseInfoResp>> {
+    const url = `${this.helperAPIHost}/api/steam/info/${appIds.join(',')}`
+    return fetch(url).then((res) => res.json())
+  }
 }

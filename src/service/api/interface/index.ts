@@ -9,6 +9,8 @@ import {
 } from 'node-steam-family-group-api'
 import { APIResp, WishItem } from './types'
 import _ from 'lodash'
+import { GameBaseInfoResp } from '../../interface'
+import { ServiceWithAPIHelper } from '../helper'
 
 export interface ProxiedAPIResponse<T> {
   ok: boolean
@@ -16,15 +18,14 @@ export interface ProxiedAPIResponse<T> {
   message: string
   data: null | T
 }
-
-export interface IAPIService {
-  Steam: ISteamFamilyAPI
-}
-
 export * from './types'
 
 const sleep = async (millSec: number = 300) => {
   return new Promise((resolve, reject) => setTimeout(resolve, millSec))
+}
+
+export interface IAPIService {
+  Steam: ServiceWithAPIHelper<ISteamFamilyAPI>
 }
 
 export abstract class ISteamFamilyAPI {
@@ -51,6 +52,10 @@ export abstract class ISteamFamilyAPI {
     params?: PartialMessage<CStoreBrowse_GetItems_Request>
   ): Promise<ProxiedAPIResponse<CStoreBrowse_GetItems_Response>>
 
+  abstract getSteamItemsBaseInfo(
+    appIds: number[]
+  ): Promise<ProxiedAPIResponse<GameBaseInfoResp>>
+
   // for wishlist larger than 50 items, same request may give different response item in a short time.
   // it's really an annoyed bug. but steam didn't fix it for a long time.
   // check this: https://steamcommunity.com/sharedfiles/filedetails/?id=1746978201
@@ -70,7 +75,7 @@ export abstract class ISteamFamilyAPI {
     }
   }
 
-  withRetry = async <T>(func: () => T, times = 3) => {
+  retry = async <T>(func: () => T, times = 3) => {
     let time = 0
     try {
       let res = null
@@ -91,7 +96,7 @@ export abstract class ISteamFamilyAPI {
     let appIds: string[] = []
     const appMaps = new Map<string, any>()
     while (hasMore) {
-      const res: Record<string, any> = await this.withRetry(() =>
+      const res: Record<string, any> = await this.retry(() =>
         this.getSteamWishesByPage(id, page)
       )
       if (res) {
@@ -142,5 +147,47 @@ export abstract class ISteamFamilyAPI {
     return {
       data: finalWishes,
     }
+  }
+}
+
+enum ReqResultStatus {
+  Success,
+  NotMatch,
+  NetworkError,
+}
+
+export class NetReqResult<T> {
+  data?: T | null
+  private status: ReqResultStatus
+  msg: string
+  static failed<T>(reason: string): NetReqResult<T> {
+    return new NetReqResult<T>(null, ReqResultStatus.NetworkError, reason)
+  }
+  static success<T>(data: T): NetReqResult<T> {
+    return new NetReqResult(data, ReqResultStatus.Success, 'ok')
+  }
+  constructor(data: T, status: ReqResultStatus, message: string) {
+    this.data = data
+    this.status = status
+    this.msg = message
+  }
+
+  successOr(data: T) {
+    if (this.isSuccess()) {
+      return this.data
+    }
+    return data
+  }
+
+  isSuccess() {
+    return this.status === ReqResultStatus.Success
+  }
+
+  isNetworkError() {
+    return this.status === ReqResultStatus.NetworkError
+  }
+
+  isNotMatch() {
+    return this.status === ReqResultStatus.NotMatch
   }
 }

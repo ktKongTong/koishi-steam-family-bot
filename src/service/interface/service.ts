@@ -232,20 +232,22 @@ export abstract class ISteamService {
   async getLibStatistic(token: string) {
     const res = await this.api.Steam.getSteamFamilyGroup(token)
     const ids = res.data.familyGroup.members.map((it) => it.steamid.toString())
-    const members = await this.api.Steam.getFamilyMembers(ids, token)
     const items = await this.db.FamilyLib.getSteamFamilyLibByFamilyId(
       res.data.familyGroupid.toString()
-    )
-    const summary = await this.api.Steam.getPlaytimeSummary(
-      res.data.familyGroupid,
-      token
     )
     const recentApp = items
       .sort((a, b) => b.rtTimeAcquired - a.rtTimeAcquired)
       .slice(0, 12)
-    const recentAppDetail = await this.api.Steam.getSteamItems(
-      recentApp.map((it) => it.appId.toString())
-    )
+    const [summary, members, recentAppDetail] = await Promise.all([
+      this.api.Steam.withRetry(3).getPlaytimeSummary(
+        res.data.familyGroupid,
+        token
+      ),
+      this.api.Steam.withRetry(3).getFamilyMembers(ids, token),
+      this.api.Steam.withRetry(3).getSteamItems(
+        recentApp.map((it) => it.appId.toString())
+      ),
+    ])
     return {
       familyInfo: res.data,
       members: members.data,

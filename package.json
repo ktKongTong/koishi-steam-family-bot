@@ -1,9 +1,10 @@
 {
   "name": "koishi-plugin-steam-family-bot",
   "description": "一个用于新版 Steam 家庭的库存监控 koishi Bot 插件",
-  "version": "0.0.5-dev.0",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "version": "0.0.5-dev.1",
+  "main": "lib/koishi/index.js",
+
+  "typings": "lib/koishi/index.d.ts",
   "files": [
     "lib",
     "dist"
@@ -45,9 +46,13 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.3.0",
+    "@koishijs/plugin-mock": "^2.6.5",
+    "@types/chai": "^4.3.16",
     "@types/js-yaml": "^4.0.9",
+    "@types/mocha": "^10.0.6",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "chai": "^5.1.1",
     "eslint": "^9.3.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
@@ -56,6 +61,7 @@
     "husky": "^9.0.11",
     "js-yaml": "^4.1.0",
     "lint-staged": "^15.2.5",
+    "mocha": "^10.4.0",
     "react-jsx": "^1.0.0",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.10.0",
@@ -76,6 +82,7 @@
     "steamid": "^2.0.0"
   },
   "scripts": {
+    "test": "ts-node ./tests/index.spec.ts",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
