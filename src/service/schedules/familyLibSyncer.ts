@@ -52,7 +52,7 @@ const handleTokenInvalid = async (
   session: Session,
   steam: ISteamService
 ) => {
-  logger.debug(
+  logger.info(
     `account 「${item.account.id}」steamId「${item.account.steamId}」token is invalid`
   )
   const timesStr = item.account.valid.split('.')?.[1]
@@ -89,14 +89,17 @@ const buildMessages = async <CHANNEL>(
   logger: Logger
 ) => {
   const { memberDict, wishes, prevWishes } = await prepareFamilyInfo(api, steam)
-  logger.debug('success fetch family info')
-  logger.info(item.account.familyId)
+  logger.debug(
+    `success fetch family info, preWishes: ${prevWishes.length}, curWishes: ${prevWishes.length}`
+  )
   const { prevLibs, libs } = await prepareLibData(
     api,
     steam,
     item.account.familyId
   )
-  logger.debug('success fetch lib data')
+  logger.debug(
+    `success fetch lib data, prevLibs: ${prevLibs.length}, curLibs: ${libs.length}`
+  )
 
   const { newWishes, modifiedWishes, deletedWishes, wishesDict } = diffWishes(
     prevWishes,
@@ -134,6 +137,12 @@ const buildMessages = async <CHANNEL>(
     appId: it.appId,
     type: 'wish',
   }))
+  logger.debug(
+    `「${item.subscription.steamFamilyId}」 wishes need delete: ${wishesDelete.length}, wishes need upsert: ${wishesUpsert.length}`
+  )
+  logger.debug(
+    `「${item.subscription.steamFamilyId}」 libs need delete: ${libsDelete.length}, libs need upsert: ${libsUpsert.length}`
+  )
   await steam.db.FamilyLib.batchUpsertFamilyLib(wishesUpsert.concat(libsUpsert))
   await steam.db.FamilyLib.batchRemoveByAppIdAndFamilyId(
     item.subscription.steamFamilyId,
@@ -144,9 +153,6 @@ const buildMessages = async <CHANNEL>(
     item.subscription.steamFamilyId,
     libsDelete.map((it) => it.appId),
     'lib'
-  )
-  logger.debug(
-    `「${item.subscription.steamFamilyId}」upsert ${wishesUpsert.length}, remove ${wishesDelete.length}`
   )
 
   const newWishMsg = newWishes.map((newWish) => {
@@ -307,7 +313,7 @@ const handleMessage = (msgs: Msg[], session: Session) => {
       .map((appTexts, index) =>
         appTexts
           .map((appText, idx) => `${index * 10 + idx + 1}. ${appText.text}`)
-          .join('')
+          .join('\n')
       )
     chunkedText.forEach((text) => {
       session.sendMsg({ type: 'string', content: text })

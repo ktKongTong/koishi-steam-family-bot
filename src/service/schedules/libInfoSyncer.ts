@@ -17,6 +17,13 @@ export const libInfoSyncer =
     })
     const awaitedLibInfos = (await Promise.all(libInfos)).flatMap((it) => it)
     const libInfoDict = _.keyBy(awaitedLibInfos, 'appId')
+    const notSynced = libItem
+      .filter((it) => !libInfoDict[it.appId])
+      .map((it) => it.appId)
+      .join(',')
+    if (notSynced) {
+      logger.info(`not synced steam apps ${notSynced}`)
+    }
     const res = libItem
       .filter((it) => libInfoDict[it.appId])
       .map((it) => {

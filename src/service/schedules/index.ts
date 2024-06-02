@@ -1,2 +1,2 @@
-export * from './gameInfoSyncer'
+export * from './familyLibSyncer'
 export * from './libInfoSyncer'

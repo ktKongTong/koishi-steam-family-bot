@@ -40,8 +40,9 @@ declare module 'koishi' {
 }
 
 export function apply(ctx: Context, config: Config) {
+  const baseLogger = ctx.logger('steam-family-lib-monitor')
   dbInit(ctx, config)
-  const cmd = new Cmd(ctx, config)
+  const cmd = new Cmd(ctx, config, baseLogger)
   cmd
     .apply(SubCmd)
     .apply(UnSubCmd)
@@ -56,5 +57,5 @@ export function apply(ctx: Context, config: Config) {
     .action(async ({ session, options }, input) => {
       await session.send(input)
     })
-  schedules(ctx, config)
+  schedules(ctx, config, baseLogger)
 }

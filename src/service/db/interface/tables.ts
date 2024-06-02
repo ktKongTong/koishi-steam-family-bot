@@ -26,6 +26,7 @@ export interface SteamFamilyLib {
   type: 'lib' | 'wish'
   lastModifiedAt: number
 }
+
 export interface SteamFamilyLibSubscribe {
   id: number
   steamFamilyId: string

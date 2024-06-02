@@ -74,6 +74,7 @@ export class SteamFamilyLibDAO implements ISteamFamilySharedLibDAO {
       .where((row) => {
         return $.and(
           $.or(
+            $.eq(row.SteamFamilyLib.appId.toString(), queryKey),
             $.regex(
               row.SteamFamilyLib.name,
               new RegExp(escapeRegExp(queryKey), 'i')
@@ -89,13 +90,6 @@ export class SteamFamilyLibDAO implements ISteamFamilySharedLibDAO {
       })
       .execute()
     return res.map((it) => it.SteamFamilyLib)
-    // this.db.get('SteamFamilyLib', (row) => {
-    //   return $.and(
-    //     $.regex(row.name, new RegExp(escapeRegExp(queryKey), 'i')),
-    //     $.eq(row.familyId, familyId),
-    //     $.eq(row.type, 'lib')
-    //   )
-    // })
   }
 
   getFamilyWishes(familyId: string): Promise<SteamFamilyLib[]> {

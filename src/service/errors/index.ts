@@ -1,4 +1,6 @@
-interface ServiceError {}
+type ServiceError = any
 
-export interface TokenInvalidError extends ServiceError {}
+export interface TokenInvalidError extends ServiceError {
+  steamId: string
+}
 const TokenInvalidError = new Error('')

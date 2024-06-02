@@ -8,8 +8,8 @@ export const Config = Schema.object({
   libMonitorCron: Schema.string().default('*/15 * * * *'),
   libInfoSyncerCron: Schema.string().default('*/7 * * * *'),
 }).i18n({
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   'zh-CN': require('./locales/zh-CN')._config,
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   'en-US': require('./locales/en-US')._config,
 })

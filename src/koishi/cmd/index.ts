@@ -15,10 +15,10 @@ export default class Cmd {
   private readonly ctx: Context
   private readonly logger: Logger
   private readonly steam: ISteamService
-  constructor(ctx: Context, config: Config) {
+  constructor(ctx: Context, config: Config, logger: Logger) {
     this.config = config
     this.ctx = ctx
-    this.logger = this.ctx.logger('steam-family-lib.monitor.cmd')
+    this.logger = logger.extend('cmd')
     this.steam = new SteamService(ctx, config)
   }
   apply(
