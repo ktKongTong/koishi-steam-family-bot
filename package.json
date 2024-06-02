@@ -3,7 +3,6 @@
   "description": "一个用于新版 Steam 家庭的库存监控 koishi Bot 插件",
   "version": "0.0.5-dev.1",
   "main": "lib/koishi/index.js",
-
   "typings": "lib/koishi/index.d.ts",
   "files": [
     "lib",
@@ -64,7 +63,7 @@
     "mocha": "^10.4.0",
     "react-jsx": "^1.0.0",
     "typescript": "^5.4.5",
-    "typescript-eslint": "^7.10.0",
+    "typescript-eslint": "^8.0.0-alpha.24",
     "vitepress": "^1.2.2"
   },
   "peerDependencies": {
