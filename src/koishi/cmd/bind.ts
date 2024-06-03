@@ -24,6 +24,15 @@ export function BindCmd(
         session.sendQueued(`「${input}」似乎不是一个 steamID`)
         return
       }
+      const account = await steamService.db.Account.getSteamAccountBySessionUid(
+        session.uid
+      )
+      if (account && account.status !== 'un-auth') {
+        session.sendQueued(
+          `你当前已经绑定了一个经过验证的账号「${account.steamId}」，目前还不支持多账号绑定。`
+        )
+        return
+      }
       await steamService.db.Account.upsertSteamAccount(
         {
           accountName: '',

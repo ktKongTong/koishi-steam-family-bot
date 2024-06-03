@@ -51,7 +51,10 @@ export function dbInit(ctx: Context, config: Config) {
       steamAccountId: 'string',
       accountId: 'unsigned',
       // subOptions: 'json',
-      preferGameImgType: 'string',
+      preferGameImgType: {
+        type: 'string',
+        initial: 'libraryCapsule2x',
+      },
       subLib: 'boolean',
       subWishes: 'boolean',
       active: 'boolean',
