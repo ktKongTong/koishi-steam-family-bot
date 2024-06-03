@@ -18,16 +18,26 @@ export function dbInit(ctx: Context, config: Config) {
     }
   )
   ctx.model.extend(
+    'SteamAccountFamilyRel',
+    {
+      steamId: 'string',
+      familyId: 'string',
+    },
+    {
+      primary: ['familyId', 'steamId'],
+    }
+  )
+  ctx.model.extend(
     'SteamAccount',
     {
       id: 'unsigned',
-      familyId: 'string',
+      // familyId: 'string',
       accountName: 'string',
       steamId: 'string',
       steamAccessToken: 'string',
       steamRefreshToken: 'string',
       lastRefreshTime: 'string',
-      valid: 'string',
+      status: 'string',
     },
     {
       autoInc: true,
@@ -41,6 +51,7 @@ export function dbInit(ctx: Context, config: Config) {
       steamAccountId: 'string',
       accountId: 'unsigned',
       // subOptions: 'json',
+      preferGameImgType: 'string',
       subLib: 'boolean',
       subWishes: 'boolean',
       active: 'boolean',
@@ -174,6 +185,23 @@ export function dbInit(ctx: Context, config: Config) {
         }
       })
       await database.upsert('SteamRelateChannelInfo', migrateData)
+    }
+  )
+
+  ctx.model.migrate(
+    'SteamAccount',
+    {
+      // @ts-expect-error
+      familyId: 'string',
+    },
+    async (database) => {
+      const accounts = await database.get('SteamAccount', {})
+      const data = accounts.map((item) => ({
+        steamId: item.steamId,
+        // @ts-expect-error
+        familyId: item.familyId,
+      }))
+      await database.upsert('SteamAccountFamilyRel', data)
     }
   )
 }

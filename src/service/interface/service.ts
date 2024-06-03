@@ -2,6 +2,7 @@ import {
   IDBService,
   PartialBy,
   SteamAccount,
+  SteamAccountWithFamilyId,
   SteamFamilyLib,
   SteamFamilyLibSubscribe,
 } from '../db/interface'
@@ -66,10 +67,12 @@ export abstract class ISteamService {
     if (!family.ok) {
       throw Error('cannot find family Id:' + family.message)
     }
+    await this.db.Subscription.addFamilyAccountRel([
+      { familyId, steamId: account.steamId },
+    ])
     const res = await this.db.Account.getSteamAccountBySteamId(account.steamId)
     let accountData: Partial<SteamAccount> = {
-      familyId: familyId,
-      valid: 'valid',
+      status: 'valid',
       ...account,
     }
     if (res) {
@@ -79,7 +82,7 @@ export abstract class ISteamService {
   }
 
   async refreshFamilyLibByAccount(
-    steamAccount: SteamAccount,
+    steamAccount: SteamAccountWithFamilyId,
     withWishes: boolean
   ): Promise<{
     wishSize: number
@@ -92,7 +95,7 @@ export abstract class ISteamService {
       BigInt(familyId),
       token
     )
-    const date = new Date()
+    const now = Math.floor(Date.now() / 1000)
     const apps: SteamFamilyLib[] = steamSharedLibs.data.apps
       .filter(
         (item) => item.excludeReason == undefined || item.excludeReason == 0
@@ -102,14 +105,14 @@ export abstract class ISteamService {
         appId: item.appid,
         name: item.name,
         steamIds: item.ownerSteamids.sort().join(','),
-        lastModifiedAt: date.getTime(),
+        lastModifiedAt: now,
         rtTimeAcquired: item.rtTimeAcquired ?? 0,
         type: 'lib',
       }))
     let dbContent = apps
     let wishesSize = 0
+    const steamFamily = await this.api.Steam.getSteamFamilyGroup(token)
     if (withWishes) {
-      const steamFamily = await this.api.Steam.getSteamFamilyGroup(token)
       const memberIds = steamFamily.data.familyGroup.members.map((member) =>
         member.steamid.toString()
       )
@@ -123,12 +126,17 @@ export abstract class ISteamService {
           name: wish.itemInfo?.name as string,
           steamIds: wish.wishers.sort().join(','),
           type: 'wish',
-          lastModifiedAt: date.getTime(),
+          lastModifiedAt: now,
           rtTimeAcquired: wish.itemInfo?.added ?? 0,
         }
       })
       dbContent = dbContent.concat(res)
     }
+    const members = steamFamily.data.familyGroup.members.map((member) => ({
+      familyId: familyId.toString(),
+      steamId: member.steamid.toString(),
+    }))
+    await this.db.Subscription.addFamilyAccountRel(members)
     await this.db.FamilyLib.refreshLibByFamilyId(
       familyId,
       dbContent,
@@ -142,8 +150,9 @@ export abstract class ISteamService {
   }
 
   async subscribeFamilyLibByAccount<T>(
-    account: SteamAccount,
+    account: SteamAccountWithFamilyId,
     channelInfo: T,
+    preferGameImgType: string,
     subLib: boolean,
     subWish: boolean = false
   ): Promise<{
@@ -159,9 +168,10 @@ export abstract class ISteamService {
       token
     )
     const steamAccountId = steamSharedLibs.data.ownerSteamid
+
     let dbContent: SteamFamilyLib[] = []
     let wishesSize = 0
-    const date = new Date()
+    const now = Math.floor(Date.now() / 1000)
     if (subWish) {
       const memberIds = steamFamily.data.familyGroup.members.map((member) =>
         member.steamid.toString()
@@ -177,7 +187,7 @@ export abstract class ISteamService {
             name: wish.itemInfo?.name as string,
             steamIds: wish.wishers.sort().join(','),
             type: 'wish',
-            lastModifiedAt: date.getTime(),
+            lastModifiedAt: now,
             rtTimeAcquired: wish.itemInfo?.added ?? 0,
           }
         })
@@ -192,25 +202,29 @@ export abstract class ISteamService {
         appId: item.appid,
         name: item.name,
         steamIds: item.ownerSteamids.sort().join(','),
-        lastModifiedAt: date.getTime(),
+        lastModifiedAt: now,
         rtTimeAcquired: item.rtTimeAcquired ?? 0,
         type: 'lib',
       }))
 
     dbContent = dbContent.concat(apps)
+    const members = steamFamily.data.familyGroup.members.map((member) => ({
+      familyId: familyId.toString(),
+      steamId: member.steamid.toString(),
+    }))
+    await this.db.Subscription.addFamilyAccountRel(members)
     await this.db.FamilyLib.batchUpsertFamilyLib(dbContent)
-
     const subscribe =
       await this.db.Subscription.getSubscriptionByChannelInfoAndFamilyId(
         familyId.toString(),
         channelInfo
       )
-
     let subInfo: PartialBy<SteamFamilyLibSubscribe, 'id'> = {
       steamFamilyId: familyId.toString(),
       steamAccountId: steamAccountId.toString(),
       accountId: account.id,
       subLib: subLib,
+      preferGameImgType: preferGameImgType,
       subWishes: subWish,
       active: true,
     }
@@ -233,7 +247,8 @@ export abstract class ISteamService {
     const res = await this.api.Steam.getSteamFamilyGroup(token)
     const ids = res.data.familyGroup.members.map((it) => it.steamid.toString())
     const items = await this.db.FamilyLib.getSteamFamilyLibByFamilyId(
-      res.data.familyGroupid.toString()
+      res.data.familyGroupid.toString(),
+      'lib'
     )
     const recentApp = items
       .sort((a, b) => b.rtTimeAcquired - a.rtTimeAcquired)

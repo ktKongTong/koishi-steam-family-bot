@@ -10,6 +10,9 @@ export * from './statistic'
 export * from './refresh'
 export * from './clear'
 export * from './query'
+export * from './info'
+export * from './bind'
+export * from './unbind'
 export default class Cmd {
   private readonly config: Config
   private readonly ctx: Context

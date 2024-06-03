@@ -2,9 +2,13 @@ import { Database, Tables, $ } from 'koishi'
 
 import {
   ISteamFamilyLibSubscribeDAO,
+  SteamAccountFamilyRel,
   SteamFamilyLibSubscribe,
 } from '../../interface'
 import { ChannelInfo } from '../../interface'
+import { channel, subscribe } from 'node:diagnostics_channel'
+import { uid } from 'chart.js/helpers'
+import { it } from 'node:test'
 
 export class SubscriptionDAO implements ISteamFamilyLibSubscribeDAO {
   db: Database<Tables>
@@ -133,15 +137,14 @@ export class SubscriptionDAO implements ISteamFamilyLibSubscribeDAO {
       .where((row) => {
         return $.and(
           $.eq(row.SteamFamilyLibSubscribe.steamFamilyId, familyId),
-          $.eq(row.SteamRelateChannelInfo.type, 'sub'),
-          $.eq(
-            row.SteamRelateChannelInfo.refId,
-            row.SteamFamilyLibSubscribe.id
-          ),
           $.eq(row.SteamRelateChannelInfo.channelId, chan.channelId)
         )
       })
       .execute()
     return subscribe?.[0]?.SteamFamilyLibSubscribe
+  }
+
+  async addFamilyAccountRel(items: SteamAccountFamilyRel[]) {
+    await this.db.upsert('SteamAccountFamilyRel', items)
   }
 }

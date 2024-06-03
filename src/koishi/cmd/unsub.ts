@@ -20,6 +20,10 @@ export function UnSubCmd(
         session.send('你暂未绑定Steam账号，暂时无法进行家庭库订阅/取消操作')
         return
       }
+      if (account.status === 'un-auth') {
+        session.sendQueued('仅经过验证的用户可以取消家庭库订阅')
+        return
+      }
       const subscription =
         await steam.db.Subscription.getSubscriptionBySessionUId(session.uid)
       if (!subscription) {

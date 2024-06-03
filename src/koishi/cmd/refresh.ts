@@ -22,6 +22,12 @@ export function refreshCmd(
           session.sendQueued('你还没有绑定 steam 账户，暂时不需要刷新数据')
           return
         }
+
+        if (account.status == 'un-auth') {
+          session.sendQueued('你还没有绑定经过验证的 steam 账户，无法刷新数据')
+          return
+        }
+
         const valid = await steamService.validAccount(account)
         if (!valid) {
           session.sendQueued(

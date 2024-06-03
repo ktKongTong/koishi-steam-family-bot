@@ -13,7 +13,7 @@ export function QueryCmd(
     .alias('sbsou')
     .alias('sbquery')
     .action(async ({ session, options }, input) => {
-      if (input.length < 2) {
+      if (!input || input.length < 2) {
         session.sendQueued(
           '为了更精确的找到你要查询的游戏，查询关键词的长度不应小于二，tips：空格查询会忽略不计'
         )
@@ -24,6 +24,7 @@ export function QueryCmd(
       )
       if (!account) {
         session.sendQueued('你还没有绑定 steam 账户，暂时无法查询家庭库存')
+        return
       }
       const res = await steam.db.FamilyLib.getLibByKeywordAndFamilyId(
         account.familyId,

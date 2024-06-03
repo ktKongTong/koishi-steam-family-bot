@@ -65,7 +65,7 @@ const getLibs = (
     ...it,
     rtTimeAcquired: it.rtTimeAcquired ?? 0,
     ownerSteamids: it.steamIds.split(','),
-    mappedTags: it.info?.top20tags?.split(',') ?? [],
+    mappedTags: it.info?.top20Tags?.split(',') ?? [],
   }))
 }
 

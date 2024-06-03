@@ -14,8 +14,9 @@ export class SteamFamilyLibDAO implements ISteamFamilySharedLibDAO {
 
   async getSteamFamilyLibByFamilyId(
     familyId: string,
-    type: 'lib' | 'wish' = 'lib'
+    type?: 'lib' | 'wish'
   ): Promise<(SteamFamilyLib & { info: GameInfo })[]> {
+    let condition
     const res = await this.db
       .join(
         ['SteamFamilyLib', 'SteamGameInfo'],
@@ -23,10 +24,14 @@ export class SteamFamilyLibDAO implements ISteamFamilySharedLibDAO {
         [false, true]
       )
       .where((row) => {
-        return $.and(
-          $.eq(row.SteamFamilyLib.type, type),
-          $.eq(row.SteamFamilyLib.familyId, familyId)
+        let condition = $.or(
+          $.eq(row.SteamFamilyLib.type, 'lib'),
+          $.eq(row.SteamFamilyLib.type, 'wish')
         )
+        if (type) {
+          condition = $.eq(row.SteamFamilyLib.type, type)
+        }
+        return $.and(condition, $.eq(row.SteamFamilyLib.familyId, familyId))
       })
       .execute()
     return res.map((it) => ({
@@ -36,7 +41,7 @@ export class SteamFamilyLibDAO implements ISteamFamilySharedLibDAO {
   }
 
   async batchUpsertLibInfo(
-    infos: PartialBy<GameInfo, 'aliases' | 'top20tags'>[]
+    infos: PartialBy<GameInfo, 'aliases' | 'top20Tags'>[]
   ): Promise<void> {
     await this.db.upsert('SteamGameInfo', infos)
   }

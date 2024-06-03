@@ -95,7 +95,10 @@ export const prepareLibData = async (
   steam: ISteamService,
   familyId: string
 ) => {
-  const prevLibs = steam.db.FamilyLib.getSteamFamilyLibByFamilyId(familyId)
+  const prevLibs = steam.db.FamilyLib.getSteamFamilyLibByFamilyId(
+    familyId,
+    'lib'
+  )
   const libs = api.Steam.withRetry(3)
     .getSteamFamilyGroupLibs(BigInt(familyId))
     .then((res) =>

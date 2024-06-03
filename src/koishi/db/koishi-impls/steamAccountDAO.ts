@@ -1,5 +1,13 @@
 import { $, Database, Tables } from 'koishi'
-import { SteamAccount, ISteamAccountDAO, ChannelInfo } from '../../interface'
+import {
+  SteamAccount,
+  ISteamAccountDAO,
+  ChannelInfo,
+  SteamAccountWithFamilyId,
+  SteamRelateChannelInfo,
+} from '../../interface'
+import { channel } from 'node:diagnostics_channel'
+import { uid } from 'chart.js/helpers'
 
 export class SteamAccountDAO implements ISteamAccountDAO {
   db: Database<Tables>
@@ -7,10 +15,21 @@ export class SteamAccountDAO implements ISteamAccountDAO {
     this.db = db
   }
 
-  async getSteamAccountBySessionUid(uid: string): Promise<SteamAccount> {
+  async getSteamAccountBySessionUid<T>(
+    uid: string
+  ): Promise<
+    SteamAccountWithFamilyId & { channel: SteamRelateChannelInfo<T> }
+  > {
     const res = await this.db
-      .join(['SteamAccount', 'SteamRelateChannelInfo'], (account, channel) =>
-        $.and($.eq(account.id, channel.refId), $.eq(channel.type, 'account'))
+      .join(
+        ['SteamAccount', 'SteamRelateChannelInfo', 'SteamAccountFamilyRel'],
+        (account, channel, rel) =>
+          $.and(
+            $.eq(account.id, channel.refId),
+            $.eq(channel.type, 'account'),
+            $.eq(account.steamId, rel.steamId)
+          ),
+        [false, false, true]
       )
       .where((row) => {
         return $.and(
@@ -20,12 +39,38 @@ export class SteamAccountDAO implements ISteamAccountDAO {
         )
       })
       .execute()
-    return res?.[0]?.SteamAccount
+    if (res[0]) {
+      return {
+        ...res[0].SteamAccount,
+        familyId: res[0].SteamAccountFamilyRel?.familyId,
+        channel: res[0].SteamRelateChannelInfo as any,
+      }
+    }
+    return undefined
   }
 
-  async getSteamAccountBySteamId(steamid: string): Promise<SteamAccount> {
-    const res = await this.db.get('SteamAccount', { steamId: steamid })
-    return res[0]
+  async getSteamAccountBySteamId(
+    steamid: string
+  ): Promise<SteamAccountWithFamilyId> {
+    const res = await this.db
+      .join(
+        ['SteamAccount', 'SteamAccountFamilyRel'],
+        (account, rel) => {
+          return $.eq(account.steamId, rel.steamId)
+        },
+        [false, true]
+      )
+      .where((row) => {
+        return $.eq(row.SteamAccount.steamId, steamid)
+      })
+      .execute()
+    if (res[0]) {
+      return {
+        ...res[0].SteamAccount,
+        familyId: res[0].SteamAccountFamilyRel?.familyId,
+      }
+    }
+    return undefined
   }
 
   async upsertSteamAccount(
@@ -55,13 +100,17 @@ export class SteamAccountDAO implements ISteamAccountDAO {
   async getSteamAccountBySteamIdAndSessionId(
     steamid: string,
     uid: string
-  ): Promise<SteamAccount> {
+  ): Promise<SteamAccountWithFamilyId> {
     const res = await this.db
-      .join(['SteamAccount', 'SteamRelateChannelInfo'], (account, channel) =>
-        $.and($.eq(account.id, channel.refId), $.eq(channel.type, 'account'))
+      .join(
+        ['SteamAccount', 'SteamAccountFamilyRel', 'SteamRelateChannelInfo'],
+        (account, ref, channel) =>
+          $.and($.eq(account.id, channel.refId), $.eq(channel.type, 'account')),
+        [false, true, false]
       )
       .where((row) => {
         return $.and(
+          $.eq(row.SteamAccount.steamId, row.SteamAccountFamilyRel.steamId),
           $.eq(row.SteamAccount.steamId, steamid),
           $.eq(row.SteamAccount.id, row.SteamRelateChannelInfo.refId),
           $.eq(row.SteamRelateChannelInfo.uid, uid),
@@ -69,7 +118,13 @@ export class SteamAccountDAO implements ISteamAccountDAO {
         )
       })
       .execute()
-    return res?.[0]?.SteamAccount
+    if (res[0]) {
+      return {
+        ...res[0].SteamAccount,
+        familyId: res[0].SteamAccountFamilyRel?.familyId,
+      }
+    }
+    return undefined
   }
 
   async updateSteamAccountToken(
@@ -90,8 +145,56 @@ export class SteamAccountDAO implements ISteamAccountDAO {
       'SteamAccount',
       { id: id },
       {
-        valid: 'invalid',
+        status: 'invalid',
       }
     )
+  }
+
+  async getAuthedSteamAccountByFamilyId(
+    familyId: string
+  ): Promise<SteamAccountWithFamilyId> {
+    const res = await this.db
+      .join(
+        ['SteamAccount', 'SteamAccountFamilyRel'],
+        (account, rel) => {
+          return $.eq(account.steamId, rel.steamId)
+        },
+        [true, false]
+      )
+      .where((row) => {
+        return $.and(
+          $.eq(row.SteamAccountFamilyRel.familyId, familyId),
+          $.eq(row.SteamAccount.status, 'valid')
+        )
+      })
+      .execute()
+    if (res[0] && res[0].SteamAccount) {
+      return {
+        ...res[0].SteamAccount,
+        familyId: res[0].SteamAccountFamilyRel?.familyId,
+      }
+    }
+    return undefined
+  }
+
+  async removeUnAuthAccount(accountId: number): Promise<void> {
+    const res = this.db.join(
+      ['SteamAccount', 'SteamRelateChannelInfo'],
+      (account, channel) => {
+        return $.and(
+          $.eq(account.id, channel.refId),
+          $.eq(channel.type, 'account')
+        )
+      }
+    )
+    await this.db.withTransaction(async (db) => {
+      await db.remove('SteamAccount', {
+        id: accountId,
+      })
+      await db.remove('SteamRelateChannelInfo', {
+        refId: accountId,
+        type: 'account',
+      })
+    })
   }
 }

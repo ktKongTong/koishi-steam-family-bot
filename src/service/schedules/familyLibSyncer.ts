@@ -2,6 +2,7 @@ import {
   IAPIService,
   ISteamService,
   SteamAccount,
+  SteamAccountFamilyRel,
   SteamFamilyLib,
   SteamFamilyLibSubscribe,
   SteamRelateChannelInfo,
@@ -40,7 +41,7 @@ export const libMonitor =
         )
       } catch (e) {
         logger.error(
-          `some error occur during handle steam subscription familyId: ${item.account.familyId}, ${e}`
+          `some error occur during handle steam subscription familyId: ${item.steamAndFamilyRel.familyId}, ${e}`
         )
       }
     }
@@ -55,10 +56,10 @@ const handleTokenInvalid = async (
   logger.info(
     `account 「${item.account.id}」steamId「${item.account.steamId}」token is invalid`
   )
-  const timesStr = item.account.valid.split('.')?.[1]
+  const timesStr = item.account.status.split('.')?.[1]
   let times = 0
   if (!timesStr) {
-    const tmp = parseInt(item.account.valid.split('.')[1])
+    const tmp = parseInt(item.account.status.split('.')[1])
     if (!Number.isNaN(tmp)) {
       times = tmp
     }
@@ -84,6 +85,7 @@ const buildMessages = async <CHANNEL>(
   item: {
     account: SteamAccount
     subscription: SteamFamilyLibSubscribe
+    steamAndFamilyRel: SteamAccountFamilyRel
     channel: CHANNEL
   },
   logger: Logger
@@ -95,7 +97,7 @@ const buildMessages = async <CHANNEL>(
   const { prevLibs, libs } = await prepareLibData(
     api,
     steam,
-    item.account.familyId
+    item.steamAndFamilyRel.familyId
   )
   logger.debug(
     `success fetch lib data, prevLibs: ${prevLibs.length}, curLibs: ${libs.length}`
@@ -117,6 +119,8 @@ const buildMessages = async <CHANNEL>(
       appId: it.appid,
       steamIds: it.ownerSteamids.sort().join(','),
       type: 'lib',
+      rtTimeAcquired: it.rtTimeAcquired ?? 0,
+      lastModifiedAt: Math.floor(Date.now() / 1000),
     }))
   const libsDelete = deletedLibs.map((it) => ({
     familyId: item.subscription.steamFamilyId,
@@ -244,6 +248,7 @@ const handleSubScribe = async <CHANNEL, SESSION extends Session>(
   steam: ISteamService,
   item: {
     account: SteamAccount
+    steamAndFamilyRel: SteamAccountFamilyRel
     subscription: SteamFamilyLibSubscribe
     channel: SteamRelateChannelInfo<CHANNEL>
   },
@@ -251,14 +256,16 @@ const handleSubScribe = async <CHANNEL, SESSION extends Session>(
   config: Config,
   logger: Logger
 ) => {
-  logger.debug(`start handle family subscribe ${item.account.familyId}`)
+  logger.debug(
+    `start handle family subscribe ${item.steamAndFamilyRel.familyId}`
+  )
 
   // if invalid, will auto-renew account token
   const apiServiceResult = await steam.createAPIWithCurAccount(item.account)
   const session = botService.getSessionByChannelInfo(item.channel)
   if (!session) {
     logger.info(
-      `it's seem that bot for family 「${item.account.familyId}」have down. skip it`
+      `it's seem that bot for family 「${item.steamAndFamilyRel.familyId}」have down. skip it`
     )
     return
   }
@@ -281,7 +288,7 @@ const handleSubScribe = async <CHANNEL, SESSION extends Session>(
   const appDetailsDict = _.keyBy(appDetails, 'appid')
   const mappedMsgs = msgs.map((msg) => {
     const app = appDetailsDict[msg.relateAppId]
-    const img = getGameCapsule(app)
+    const img = getGameCapsule(app, item.subscription.preferGameImgType)
     return {
       text: msg.text,
       img: img,

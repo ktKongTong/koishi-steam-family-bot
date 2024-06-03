@@ -1,5 +1,5 @@
 import { Context, h, Logger } from 'koishi'
-import { ISteamService, Config } from '../interface'
+import { ISteamService, Config, PreferGameImgType } from '../interface'
 
 export function SubCmd(
   ctx: Context,
@@ -11,11 +11,30 @@ export function SubCmd(
   const subcmd = ctx
     .command('slm.sub')
     .alias('sbsub')
+    .option('img', '<preferImg:string>')
     .option('w', '<subWish:boolean>')
     .option('l', '<subLib:boolean>')
     .action(async ({ session, options }, input) => {
       const subWish = options.w ?? false
       const subLib = options.l ?? true
+      let preferGameImgType = PreferGameImgType.Library2X
+      switch (options.img) {
+        case 'main':
+          preferGameImgType = PreferGameImgType.Main
+          break
+        case 'small':
+          preferGameImgType = PreferGameImgType.Small
+          break
+        case 'library':
+          preferGameImgType = PreferGameImgType.Library
+          break
+        case 'library2x':
+          preferGameImgType = PreferGameImgType.Library2X
+          break
+        case 'header':
+          preferGameImgType = PreferGameImgType.Header
+          break
+      }
       const account = await steamService.db.Account.getSteamAccountBySessionUid(
         session.uid
       )
@@ -25,10 +44,10 @@ export function SubCmd(
         )
         return
       }
-      // if (accounts.length > 1) {
-      //   session.sendQueued('你当前绑定多个账号，请输入序号选择 steam 账号进行家庭库订阅')
-      //   const res = await session.prompt(30 * 1000)
-      // }
+      if (account.status === 'un-auth') {
+        session.sendQueued('仅经过验证的用户可以进行家庭库订阅修改操作')
+        return
+      }
       const valid = await steamService.validAccount(account)
       if (!valid) {
         session.sendQueued(
@@ -36,23 +55,42 @@ export function SubCmd(
         )
         return
       }
-      const res = await steamService.subscribeFamilyLibByAccount(
-        account,
-        {
-          uid: session.uid,
-          channelId: session.channelId,
-          selfId: session.selfId,
-          platform: session.platform,
-        },
-        subLib,
-        subWish
-      )
-      session.sendQueued(
-        h(
-          'message',
-          h('quote', { id: session.messageId }),
-          `hello，「${res.familyName}」的成员，成功订阅家庭游戏库更新，已获取库存 ${res.libSize} 项${subWish ? `，愿望单 ${res.wishSize} 项` : ''}`
+
+      const channelInfo = {
+        uid: session.uid,
+        channelId: session.channelId,
+        selfId: session.selfId,
+        platform: session.platform,
+      }
+      const subscription =
+        await steamService.db.Subscription.getSubscriptionByChannelInfoAndFamilyId(
+          account.familyId,
+          channelInfo
         )
-      )
+      if (subscription) {
+        await steamService.db.Subscription.updateSubscription({
+          ...subscription,
+          steamFamilyId: account.familyId,
+          subWishes: subWish,
+          subLib,
+          preferGameImgType,
+        })
+        session.send('成功更新订阅信息。')
+      } else {
+        const res = await steamService.subscribeFamilyLibByAccount(
+          account,
+          channelInfo,
+          preferGameImgType,
+          subLib,
+          subWish
+        )
+        session.sendQueued(
+          h(
+            'message',
+            h('quote', { id: session.messageId }),
+            `hello，「${res.familyName}」的成员，成功订阅家庭游戏库更新，已获取库存 ${res.libSize} 项${subWish ? `，愿望单 ${res.wishSize} 项` : ''}`
+          )
+        )
+      }
     })
 }

@@ -1,12 +1,15 @@
 import { Context } from 'koishi'
 import schedules from './schedules'
 import Cmd, {
+  BindCmd,
   ClearCmd,
+  InfoCmd,
   LoginCmd,
   QueryCmd,
   refreshCmd,
   StatisticCmd,
   SubCmd,
+  UnBindCmd,
   UnSubCmd,
 } from './cmd'
 
@@ -23,6 +26,7 @@ import {} from 'koishi-plugin-cron'
 import {} from 'koishi-plugin-puppeteer'
 import { Config } from './interface'
 import { dbInit } from './db'
+import { SteamAccountFamilyRel } from '../service'
 export * from './config'
 
 export const name = 'koishi-steam-family-lib-monitor'
@@ -36,6 +40,7 @@ declare module 'koishi' {
     SteamFamilyLib: SteamFamilyLib
     SteamRelateChannelInfo: SteamRelateChannelInfo<ChannelInfo>
     SteamGameInfo: GameInfo
+    SteamAccountFamilyRel: SteamAccountFamilyRel
   }
 }
 
@@ -51,6 +56,9 @@ export function apply(ctx: Context, config: Config) {
     .apply(refreshCmd)
     .apply(ClearCmd)
     .apply(QueryCmd)
+    .apply(InfoCmd)
+    .apply(BindCmd)
+    .apply(UnBindCmd)
   ctx
     .command('slm <prompts:text>')
     .alias('slm')

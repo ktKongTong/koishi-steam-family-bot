@@ -1,20 +1,29 @@
+export enum PreferGameImgType {
+  Header = 'header',
+  Main = 'mainCapsule',
+  Small = 'smallCapsule',
+  Library = 'libraryCapsule',
+  Library2X = 'libraryCapsule2x',
+  Hero = 'heroCapsule',
+  Hero2X = 'heroCapsule2x',
+  LibHero = 'libraryHero',
+  LibHero2x = 'libraryHero2x',
+}
+
 export interface SteamAccount {
   id: number
   accountName: string
-  familyId: string
   steamId: string
   steamAccessToken: string
   steamRefreshToken: string
   lastRefreshTime: string
-  valid: string
+  status: string
 }
 
-export interface GameInfo {
-  appid: number
-  name: string
-  aliases: string
-  top20tags: string
-  lastRefreshedAt: number
+export interface SteamAccountFamilyRel {
+  steamId: string
+  // accountName: string
+  familyId: string
 }
 
 export interface SteamFamilyLib {
@@ -34,11 +43,21 @@ export interface SteamFamilyLibSubscribe {
   accountId: number
   subLib: boolean
   subWishes: boolean
+  preferGameImgType: string
   active: boolean
+}
+
+export interface GameInfo {
+  appid: number
+  name: string
+  aliases: string
+  top20Tags: string
+  lastRefreshedAt: number
 }
 
 export interface SubscribeInfo<T> {
   account: SteamAccount
+  steamAndFamilyRel: SteamAccountFamilyRel
   subscription: SteamFamilyLibSubscribe
   channel: T
 }

@@ -40,7 +40,10 @@ export class DBService extends IDBService {
       .execute()
     await this.db.withTransaction(async (database) => {
       await database.remove('SteamFamilyLib', {
-        familyId: account.familyId,
+        familyId: res?.[0]?.SteamFamilyLibSubscribe.steamFamilyId,
+      })
+      await database.remove('SteamAccountFamilyRel', {
+        familyId: res?.[0]?.SteamFamilyLibSubscribe.steamFamilyId,
       })
       await database.remove('SteamRelateChannelInfo', {
         refId: res
@@ -58,24 +61,28 @@ export class DBService extends IDBService {
 
   async getAllSubscription<T>(): Promise<SubscribeInfo<T>[]> {
     const selection = this.db.join(
-      ['SteamAccount', 'SteamFamilyLibSubscribe', 'SteamRelateChannelInfo'],
-      (account, sub, channel) =>
+      [
+        'SteamAccount',
+        'SteamAccountFamilyRel',
+        'SteamFamilyLibSubscribe',
+        'SteamRelateChannelInfo',
+      ],
+      (account, rel, sub, channel) =>
         $.and(
+          $.eq(account.steamId, rel.steamId),
+          $.eq(sub.steamFamilyId, rel.familyId),
           $.eq(sub.accountId, account.id),
           $.eq(sub.id, channel.refId),
           $.eq(channel.type, 'sub')
         )
     )
+
     const subscribe = await selection
       .where((row) =>
         $.and(
-          $.eq(
-            row.SteamRelateChannelInfo.refId,
-            row.SteamFamilyLibSubscribe.id
-          ),
           $.eq(row.SteamFamilyLibSubscribe.accountId, row.SteamAccount.id),
           $.eq(row.SteamFamilyLibSubscribe.active, true),
-          $.eq(row.SteamAccount.valid, 'valid')
+          $.eq(row.SteamAccount.status, 'valid')
         )
       )
       .execute()
@@ -84,6 +91,7 @@ export class DBService extends IDBService {
         ({
           subscription: item.SteamFamilyLibSubscribe,
           account: item.SteamAccount,
+          steamAndFamilyRel: item.SteamAccountFamilyRel,
           channel: item.SteamRelateChannelInfo,
         }) as SubscribeInfo<T>
     )
