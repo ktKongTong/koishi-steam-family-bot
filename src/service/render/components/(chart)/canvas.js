@@ -1,5 +1,7 @@
 // import {Canvas} from "skia-canvas";
-import { createCanvas as _createCanvas } from 'canvas'
+// import { createCanvas as _createCanvas } from 'canvas'
+import { createCanvas as _createCanvas } from '@napi-rs/canvas'
+
 export const createCanvas = (widht, height) => {
   // createCanvas
   return _createCanvas(widht, height)
