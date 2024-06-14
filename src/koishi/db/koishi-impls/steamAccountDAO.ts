@@ -6,8 +6,6 @@ import {
   SteamAccountWithFamilyId,
   SteamRelateChannelInfo,
 } from '../../interface'
-import { channel } from 'node:diagnostics_channel'
-import { uid } from 'chart.js/helpers'
 
 export class SteamAccountDAO implements ISteamAccountDAO {
   db: Database<Tables>

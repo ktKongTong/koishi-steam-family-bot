@@ -28,7 +28,6 @@ export function LoginCmd(
       // });
       let status = 'wait'
       loginSession.on('authenticated', async () => {
-        session.send(`登陆成功，你好 ${loginSession.accountName}`)
         status = 'success'
         await steamService
           .addAccountInfoByLoginSession(loginSession, {
@@ -38,10 +37,12 @@ export function LoginCmd(
             platform: session.platform,
           })
           .catch((e) => {
+            logger.error('login error', e)
             session.send(
               '登陆出错，数据没能成功新增，可能是因为你目前不在家庭中'
             )
           })
+        session.send(`登陆成功，你好 ${loginSession.accountName}`)
       })
 
       loginSession.on('timeout', () => {

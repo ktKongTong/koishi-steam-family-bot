@@ -76,7 +76,7 @@ export abstract class ISteamService {
       ...account,
     }
     if (res) {
-      accountData = { id: res[0]?.id, ...accountData }
+      accountData = { ...accountData, id: res?.id }
     }
     await this.db.Account.upsertSteamAccount(accountData, channelInfo)
   }
