@@ -1,8 +1,7 @@
 /** @jsxImportSource react */
 import React from 'react'
-import { GameInfo } from '../../interface'
 import Graph from '../components/graph'
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {
   CFamilyGroups_GetFamilyGroupForUser_Response,
   CFamilyGroups_GetPlaytimeSummary_Response,
@@ -10,10 +9,9 @@ import {
   CPlayer_GetPlayerLinkDetails_Response,
 } from 'node-steam-family-group-api'
 import { Player } from '../types/player'
-import { SteamFamilyLib } from '../../interface'
+import { SteamFamilyLib, FamilyGames, GameInfo } from '../../interface'
 import { SteamFamilyLibForStats } from '../index'
 import { shaDigestAvatarToStrAvatarHash } from 'node-steam-family-group-api'
-import { FamilyGames } from '../../interface'
 
 const getPlaytime = (data: CFamilyGroups_GetPlaytimeSummary_Response) => {
   const appids: number[] = data!.entries.flatMap((it: any) => it.appid)

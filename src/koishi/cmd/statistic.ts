@@ -1,4 +1,3 @@
-/** @jsxImportSource react */
 import { Context, Logger } from 'koishi'
 import { screenshotFamilyStatistic } from '../utils/screenshot'
 import { renderStatsImg } from '../utils/render'
@@ -44,6 +43,7 @@ export function StatisticCmd(
         session.sendQueued(
           `当前家庭「${tmp.familyId}」已有一个渲染中任务，请勿重复调用`
         )
+        return
       } else {
         tmpLock.inFamilyId(tmp.familyId)
       }

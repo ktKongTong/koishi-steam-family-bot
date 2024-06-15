@@ -1,9 +1,9 @@
 import {
   CFamilyGroups_GetSharedLibraryApps_Response_SharedApp,
   FamilyGroupMember,
+  StoreItem,
+  CPlayer_GetPlayerLinkDetails_Response_PlayerLinkDetails_AccountPublicData,
 } from 'node-steam-family-group-api'
-import { CPlayer_GetPlayerLinkDetails_Response_PlayerLinkDetails_AccountPublicData } from 'node-steam-family-group-api'
-import { StoreItem } from 'node-steam-family-group-api'
 
 export type Player = FamilyGroupMember &
   CPlayer_GetPlayerLinkDetails_Response_PlayerLinkDetails_AccountPublicData & {

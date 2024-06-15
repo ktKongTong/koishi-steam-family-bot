@@ -16,7 +16,10 @@
     "types": [
       "node",
       "react"
-    ]
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": [
     "src"

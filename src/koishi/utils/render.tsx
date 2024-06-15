@@ -2,8 +2,8 @@
 import React from 'react'
 import { Context } from 'koishi'
 import * as ReactDOMServer from 'react-dom/server'
-import { FamilyGames } from '../interface'
-import { Stats, App } from '../../service/render'
+import { FamilyGames } from '@/service'
+import { Stats, App } from '@/service/render'
 
 export const renderImg = async (
   ctx: Context,

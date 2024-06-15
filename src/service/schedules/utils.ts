@@ -3,7 +3,7 @@ import {
   WishItem,
   IAPIService,
   ISteamService,
-} from '../../koishi/interface'
+} from '../interface'
 import _ from 'lodash'
 import { CFamilyGroups_GetSharedLibraryApps_Response_SharedApp } from 'node-steam-family-group-api'
 

@@ -1,4 +1,4 @@
-import { jwtDecode } from 'jwt-decode'
+import { jwtDecode } from '../../utils'
 import {
   CStoreBrowse_GetItems_Request,
   PartialMessage,

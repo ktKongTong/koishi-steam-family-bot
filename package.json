@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-steam-family-bot",
   "description": "一个用于新版 Steam 家庭的库存监控 koishi Bot 插件",
-  "version": "0.0.5-dev.5",
+  "version": "0.0.5-dev.6",
   "main": "lib/koishi/index.js",
   "typings": "lib/koishi/index.d.ts",
   "files": [
@@ -63,11 +63,12 @@
     "mocha": "^10.4.0",
     "react-jsx": "^1.0.0",
     "typescript": "^5.4.5",
+    "tsc-alias": "^1.8.10",
     "typescript-eslint": "^8.0.0-alpha.24",
     "vitepress": "^1.2.2"
   },
   "peerDependencies": {
-    "@napi-rs/canvas": "^0.1.53",
+    "canvas": "^2.11.2",
     "dayjs": "^1.11.11",
     "echarts": "^5.5.0",
     "jwt-decode": "^4.0.0",
@@ -77,8 +78,7 @@
     "node-steam-family-group-api": "^0.0.4-dev.patch04",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "steam-session": "^1.7.2",
-    "steamid": "^2.0.0"
+    "steam-session": "^1.7.2"
   },
   "scripts": {
     "test": "ts-node ./tests/index.spec.ts",
@@ -91,7 +91,7 @@
     "prepare": "husky install",
     "clean": "rm -rf lib  tsconfig.tsbuildinfo",
     "copy-yml-resource": "node ./scripts/build.mjs",
-    "compile": "tsc",
+    "compile": "tsc && tsc-alias",
     "build": "npm run clean && npm run copy-yml-resource && npm run compile",
     "pub": "npm run build && npm publish"
   },

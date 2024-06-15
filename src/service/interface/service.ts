@@ -7,7 +7,7 @@ import {
   SteamFamilyLibSubscribe,
 } from '../db/interface'
 import { IAPIService, Result } from '../interface'
-import { jwtDecode } from 'jwt-decode'
+import { jwtDecode } from '../utils'
 import { now } from 'lodash'
 import { EAuthTokenPlatformType, LoginSession } from 'steam-session'
 

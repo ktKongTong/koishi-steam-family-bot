@@ -1,15 +1,15 @@
 import { Context } from 'koishi'
 import { DBService } from '../db/koishi-impls'
-import { jwtDecode } from 'jwt-decode'
+import { jwtDecode } from '@/service/utils/jwt'
 import { now } from 'lodash'
-import { APIService } from '../../service'
+import { APIService } from '@/service'
 import {
   IAPIService,
   Result,
   Config,
   ISteamService,
   SteamAccount,
-} from '../interface'
+} from '@/service'
 
 export class SteamService extends ISteamService {
   ctx: Context

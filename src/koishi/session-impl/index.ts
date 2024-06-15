@@ -1,4 +1,4 @@
-import { BotService, Msg, Session } from '../../service'
+import { BotService, Msg, Session } from '@/service'
 import { Bot, Context, h } from 'koishi'
 import { ChannelInfo } from '../interface'
 

@@ -26,7 +26,7 @@ import {} from 'koishi-plugin-cron'
 import {} from 'koishi-plugin-puppeteer'
 import { Config } from './interface'
 import { dbInit } from './db'
-import { SteamAccountFamilyRel } from '../service'
+import { SteamAccountFamilyRel } from '@/service'
 export * from './config'
 
 export const name = 'koishi-steam-family-lib-monitor'

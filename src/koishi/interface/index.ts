@@ -1,4 +1,4 @@
-export * from '../../service/interface'
+export * from '@/service/interface'
 
 export interface ChannelInfo {
   uid: string

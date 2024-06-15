@@ -1,5 +1,5 @@
 import { SteamAppPlaytime } from './types/playtime'
-import * as _ from 'lodash'
+import _ from 'lodash'
 import { Player } from './types/player'
 import { convertTag } from './tag-dict'
 import { SteamFamilyLibForStats } from './index'
