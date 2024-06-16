@@ -36,7 +36,7 @@ onebot 是定义了通过网络服务提供 QQ 消息收发能力的一个协议
 ```yaml
 services:
   koishi-steam:
-    image: koishijs/koishi:latest
+    image: aktdocker/koishi:v1.20.1
     tty: true
     container_name: koishi_steam
     restart: always
@@ -124,28 +124,14 @@ networks:
 
 上面的 QQ 是通过 LLonebot 登陆的，另外一个平替是 NapCatQQ。
 
-其优势是内存占用小，但是相对于 llonebot 来说没有图形界面，因此要定制一些配置会更复杂
+其优势是内存占用小，但是相对于 llonebot 来说没有图形界面，因此要定制一些配置会更复杂。
 
 对应的 docker-compose 文件如下
 
 ```yaml
 services:
-  napcat:
-    image: mlikiowa/napcat-docker:latest
-    environment:
-        - ACCOUNT=<改为 Bot 的QQ号>
-        - WS_ENABLE=true
-    ports:
-        - 3001:3001
-        - 6099:6099
-    container_name: napcat
-    volumes:
-      - napcat_qq:/root/.config/QQ
-    restart: always
-    networks:
-      - steam-bot
   koishi-steam:
-    image: koishijs/koishi:latest
+    image: aktdocker/koishi:v1.20.1
     tty: true
     container_name: koishi
     restart: always
@@ -155,6 +141,20 @@ services:
       - koishi:/koishi
     ports:
       - "5140:5140"
+    networks:
+      - steam-bot
+  napcat:
+    image: mlikiowa/napcat-docker:latest
+    environment:
+      - ACCOUNT=<改为 Bot 的QQ号>
+      - WS_ENABLE=true
+    ports:
+      - 3001:3001
+      - 6099:6099
+    container_name: napcat
+    volumes:
+      - napcat_qq:/root/.config/QQ
+    restart: always
     networks:
       - steam-bot
 volumes:
@@ -198,6 +198,8 @@ networks:
 1. 每次重新登陆微信bot，接收到的用户id都会变化，这使得存储用户订阅信息变得不那么可用，因此在重新登陆后，你需要手动更改一些数据，使得通知功能能够继续生效。
    重新登陆并在群聊中发送消息后（推荐安装[inspect 插件](https://koishi.chat/zh-CN/manual/usage/platform.html)），拿到 频道ID(channelId)，bot自身ID(selfId)。
 
+
+for v0.0.3
 将steamFamilyLibSubscribe 表的 channelId,selfId 变更为拿到的最新值。
 ![alt text](public/image-8.png)
 

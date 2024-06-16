@@ -10,6 +10,7 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: '快速开始', link: '/guide' },
+      { text: '升级', link: '/upgrade' },
     ],
 
     sidebar: [
