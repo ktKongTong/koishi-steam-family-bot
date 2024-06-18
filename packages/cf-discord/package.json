@@ -1,0 +1,18 @@
+{
+  "name": "steam-family-bot-discord",
+  "version": "0.0.7",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "steam-family-bot-core": "workspace:*"
+  }
+}
+
+//drizzleORM impl

@@ -1,0 +1,67 @@
+{
+  "name": "koishi-plugin-steam-family-bot",
+  "description": "一个用于新版 Steam 家庭的库存监控 koishi Bot 插件",
+  "version": "0.0.6-dev.01",
+  "main": "src/index.ts",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "ktKongTong",
+    "email": "kt@ktlab.io"
+  },
+  "repository": "https://github.com/ktKongTong/koishi-steam-family-bot",
+  "homepage": "https://koishi-steam-family-bot.vercel.app/",
+  "keywords": [
+    "steam",
+    "steam-family",
+    "koishi",
+    "koishi-plugin"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "koishi": {
+    "preview": true,
+    "service": {
+      "required": [
+        "puppeteer",
+        "database",
+        "cron"
+      ]
+    },
+    "locales": [
+      "en",
+      "zh"
+    ],
+    "description": {
+      "en": "a koishi bot plugin to monitor steam family library changes",
+      "zh": "用于新版 Steam 家庭的库存监控插件"
+    }
+  },
+  "scripts": {
+    "compile": "tsc",
+    "dev": "ts-node index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "koishi": "4.17.7",
+    "koishi-plugin-cron": "^3.1.0",
+    "koishi-plugin-puppeteer": "^3.8.4"
+  },
+  "dependencies": {
+    "@koishijs/plugin-console": "^5.29.1",
+    "@koishijs/plugin-http": "^0.5.3",
+    "@koishijs/plugin-sandbox": "^3.3.1",
+    "echarts": "^5.5.0",
+    "lodash": "^4.17.21",
+    "node-steam-family-group-api": "^0.0.4-dev.patch04",
+    "steam-family-bot-core": "workspace:0.0.7",
+    "steam-session": "^1.7.2",
+    "steamid": "^2.0.0"
+  }
+}
