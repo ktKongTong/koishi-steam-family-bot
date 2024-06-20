@@ -18,3 +18,4 @@ tsconfig.tsbuildinfo
 *.ntvs*
 *.njsproj
 *.sln
+packages/koishi/dev
