@@ -10,7 +10,7 @@ export default [
   eslintConfigPrettier,
   eslintPluginPrettierRecommend,
   {
-    ignores:["**/*.js " , "packages/*/lib/**"]
+    ignores:["**/*.js " , "packages/*/lib/**", "packages/koishi/dev/**"]
   },
   {
     // files: ["packages/*/src/*.ts", "packages/*/src/*.tsx"],

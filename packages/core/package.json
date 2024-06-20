@@ -35,7 +35,6 @@
     "echarts": "^5.5.0",
     "jwt-decode": "^4.0.0",
     "koishi": "^4.17.4",
-    "koishi-plugin-puppeteer": "^3.8.4",
     "lodash": "^4.17.21",
     "node-steam-family-group-api": "^0.0.4-dev.patch04",
     "react": "^18.3.1",

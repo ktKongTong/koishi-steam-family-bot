@@ -11,9 +11,6 @@ importers:
       '@eslint/js':
         specifier: ^9.3.0
         version: 9.5.0
-      '@koishijs/plugin-mock':
-        specifier: ^2.6.5
-        version: 2.6.5(koishi@4.17.8(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
       '@types/chai':
         specifier: ^4.3.16
         version: 4.3.16
@@ -104,9 +101,6 @@ importers:
       koishi:
         specifier: ^4.17.4
         version: 4.17.8(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
-      koishi-plugin-puppeteer:
-        specifier: ^3.8.4
-        version: 3.8.4(koishi@4.17.8(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -125,15 +119,12 @@ importers:
 
   packages/koishi:
     dependencies:
-      '@koishijs/plugin-console':
-        specifier: ^5.29.1
-        version: 5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
       '@koishijs/plugin-http':
-        specifier: ^0.5.3
+        specifier: ^0.5.2
         version: 0.5.3(cordis@3.16.2)(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
-      '@koishijs/plugin-sandbox':
-        specifier: ^3.3.1
-        version: 3.3.1(@koishijs/plugin-console@5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)))(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
+      '@koishijs/plugin-proxy-agent':
+        specifier: ^0.3.2
+        version: 0.3.2(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
       echarts:
         specifier: ^5.5.0
         version: 5.5.0
@@ -153,18 +144,45 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
     devDependencies:
+      '@koishijs/plugin-console':
+        specifier: ^5.29.1
+        version: 5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
+      '@koishijs/plugin-database-sqlite':
+        specifier: ^4.4.1
+        version: 4.4.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))(minato@3.4.0(cordis@3.16.2))
+      '@koishijs/plugin-echo':
+        specifier: ^2.2.5
+        version: 2.2.5(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
+      '@koishijs/plugin-logger':
+        specifier: ^2.6.8
+        version: 2.6.8(@koishijs/plugin-console@5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)))(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
+      '@koishijs/plugin-sandbox':
+        specifier: ^3.3.1
+        version: 3.3.1(@koishijs/plugin-console@5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)))(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
       '@types/node':
         specifier: ^20.14.2
         version: 20.14.2
+      esbuild-register:
+        specifier: ^3.5.0
+        version: 3.5.0(esbuild@0.21.5)
       koishi:
         specifier: 4.17.7
         version: 4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
+      koishi-plugin-adapter-onebot:
+        specifier: ^6.5.8
+        version: 6.5.8(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
       koishi-plugin-cron:
         specifier: ^3.1.0
         version: 3.1.0(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
       koishi-plugin-puppeteer:
         specifier: ^3.8.4
         version: 3.8.4(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
 
 packages:
 
@@ -571,15 +589,29 @@ packages:
       '@koishijs/client':
         optional: true
 
+  '@koishijs/plugin-database-sqlite@4.4.1':
+    resolution: {integrity: sha512-3Abpr2xH8f7dQrYNL6ZpijqIl5H865iPMhewC1ZqpVdkJ9q3u/ecjz4hnNwmF1PhX62XYGxDIl1SGha/0BAMdA==}
+    peerDependencies:
+      koishi: ^4.17.8
+
+  '@koishijs/plugin-echo@2.2.5':
+    resolution: {integrity: sha512-VF11IyWMZ8hdcrLoMeLi6fPBT1EVjeD1Y1+mB6UZq+DzgpzxBclW/i5bg0Ouqudm047QGYCE9j1v7fvR+4Vtsw==}
+    peerDependencies:
+      koishi: ^4.15.1
+
   '@koishijs/plugin-http@0.5.3':
     resolution: {integrity: sha512-FnMHUk+OAncMSulwnpzxZrnjahnSUddrdMI8vqYhiedmbuoBvPpB9Uaye4q8+K8SgQef4FLm7CmSZ71MRBblZQ==}
     peerDependencies:
       koishi: ^4.17.8
 
-  '@koishijs/plugin-mock@2.6.5':
-    resolution: {integrity: sha512-uec864afz+VpEUV5Ic9VJ7O5Vq4XO77fxEqFt1QJr+8hr7vZ3J9UqaN6S4ays8hZzWgWbftXdjRpml6xhLkLxg==}
+  '@koishijs/plugin-logger@2.6.8':
+    resolution: {integrity: sha512-hlTjd3BNAZLpvXcyeuYsnML1Y557v6Bdbs/1ibJhaqSjG08gOw06BDQH+iuVUNhvwpFEBkw1izDRzUFaPY2s7A==}
     peerDependencies:
-      koishi: ^4.15.5
+      '@koishijs/plugin-console': ^5.28.4
+      koishi: ^4.17.5
+    peerDependenciesMeta:
+      '@koishijs/plugin-console':
+        optional: true
 
   '@koishijs/plugin-proxy-agent@0.3.2':
     resolution: {integrity: sha512-aBDWWIIVi+Als8tQs70PzMCLgqZivS3ufTQ92fdA4EEnK6KWCSOIm4aByu2v7fkw5GHz5yglYj2fOueqfmLOkQ==}
@@ -603,6 +635,19 @@ packages:
   '@mapbox/node-pre-gyp@1.0.11':
     resolution: {integrity: sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==}
     hasBin: true
+
+  '@minatojs/driver-sqlite@4.4.1':
+    resolution: {integrity: sha512-tf0XhYNMKt+crjKCzvnvvwreYX6/ctEIHILpmyR1vQxn14RV4XVqRwCcUvao1X3qD/rTZXV+wdI7E5gZIgw9eA==}
+    peerDependencies:
+      minato: ^3.4.1
+
+  '@minatojs/sql-utils@5.4.1':
+    resolution: {integrity: sha512-EYU9rIJ3Ro9eZ3Z8ItMxoZiMHiozcn8+GLyr/kqopRFQ+kpcl3ywVXVkQLCkDVj0BsjCH+gmGNFng6IzaIrCrw==}
+    peerDependencies:
+      minato: ^3.4.1
+
+  '@minatojs/sql.js@3.1.0':
+    resolution: {integrity: sha512-jaEFlM03k+maWc4JHv5DgEPq6r5bcg5OmXUZ6klWbYUi7tfRySGxLjwh70v4+p8A9qxdyL9yX3D2YQiXwl1HKw==}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -1539,6 +1584,11 @@ packages:
     resolution: {integrity: sha512-Zf5H2Kxt2xjTvbJvP2ZWLEICxA6j+hAmMzIlypy4xcBg1vKVnx89Wy0GbS+kf5cwCVFFzdCFh2XSCFNULS6csw==}
     engines: {node: '>= 0.4'}
 
+  esbuild-register@3.5.0:
+    resolution: {integrity: sha512-+4G/XmakeBAsvJuDugJvtyF1x+XJT4FMocynNpxrvEBViirpfUn2PgNpCHedfWhF4WokNsO/OvMKrmJOIJsI5A==}
+    peerDependencies:
+      esbuild: '>=0.12 <1'
+
   esbuild@0.21.5:
     resolution: {integrity: sha512-mg3OPMV4hXywwpoDxu3Qda5xCKQi+vCTZq8S9J/EpkhB2HzKXq4SNFZE3+NK93JYxc8VMSep+lOUSC/RVKaBqw==}
     engines: {node: '>=12'}
@@ -2036,6 +2086,11 @@ packages:
     resolution: {integrity: sha512-j/8tY9j5t+GVMLeioLaxweJiKUayFhlGqNTzf2ZGwL0ZCQijd2RLHK0SLW5Tsko8YyyqCZC2cojIb0/s62qTAg==}
     engines: {node: ^4.8.4 || ^6.10.1 || ^7.10.1 || >= 8.1.4}
 
+  koishi-plugin-adapter-onebot@6.5.8:
+    resolution: {integrity: sha512-Owjwz39oWGdKVNe8GKrpFAdShXW/keZJZmoOu8hi6hwm3SFAianjtg/g4znDnUyfzCLTaFmjdVVYv2LzTgvBiA==}
+    peerDependencies:
+      koishi: ^4.17.8
+
   koishi-plugin-cron@3.1.0:
     resolution: {integrity: sha512-otBrjpLnYXyWRr2PxPEuwyyoQvIqP6HbCa1Ql/dIM69cPApPMtJdVFqUf9EGnyijZtbDzM4NBpZcghcvbkpl1g==}
     peerDependencies:
@@ -2478,6 +2533,9 @@ packages:
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
 
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
+
+  qface@1.4.1:
+    resolution: {integrity: sha512-52qX9qdiDFd53xnYAFitkXVldcSddd4ZQiFTV2IluM+2HdDiJph3CKtmPi7CTCA9QF7K2d2WUAH3E2Y4P6fEjQ==}
 
   qs@6.12.1:
     resolution: {integrity: sha512-zWmv4RSuB9r2mYQw3zxQuHWeU+42aKi1wWig/j4ele4ygELZ7PEO6MM7rim9oAQH2A5MWfsAVf/jPvTPgCbvUQ==}
@@ -3467,10 +3525,6 @@ snapshots:
     dependencies:
       koishi: 4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
 
-  '@koishijs/canvas@0.2.0(koishi@4.17.8(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))':
-    dependencies:
-      koishi: 4.17.8(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
-
   '@koishijs/console@5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))':
     dependencies:
       koishi: 4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
@@ -3530,6 +3584,17 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
+  '@koishijs/plugin-database-sqlite@4.4.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))(minato@3.4.0(cordis@3.16.2))':
+    dependencies:
+      '@minatojs/driver-sqlite': 4.4.1(minato@3.4.0(cordis@3.16.2))
+      koishi: 4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
+    transitivePeerDependencies:
+      - minato
+
+  '@koishijs/plugin-echo@2.2.5(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))':
+    dependencies:
+      koishi: 4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
+
   '@koishijs/plugin-http@0.5.3(cordis@3.16.2)(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))':
     dependencies:
       '@cordisjs/plugin-http': 0.5.3(cordis@3.16.2)
@@ -3548,9 +3613,12 @@ snapshots:
       - cordis
       - utf-8-validate
 
-  '@koishijs/plugin-mock@2.6.5(koishi@4.17.8(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))':
+  '@koishijs/plugin-logger@2.6.8(@koishijs/plugin-console@5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)))(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))':
     dependencies:
-      koishi: 4.17.8(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
+      '@koishijs/console': 5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
+      koishi: 4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
+    optionalDependencies:
+      '@koishijs/plugin-console': 5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
 
   '@koishijs/plugin-proxy-agent@0.3.2(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))':
     dependencies:
@@ -3615,6 +3683,20 @@ snapshots:
     transitivePeerDependencies:
       - encoding
       - supports-color
+
+  '@minatojs/driver-sqlite@4.4.1(minato@3.4.0(cordis@3.16.2))':
+    dependencies:
+      '@minatojs/sql-utils': 5.4.1(minato@3.4.0(cordis@3.16.2))
+      '@minatojs/sql.js': 3.1.0
+      cosmokit: 1.6.2
+      minato: 3.4.0(cordis@3.16.2)
+
+  '@minatojs/sql-utils@5.4.1(minato@3.4.0(cordis@3.16.2))':
+    dependencies:
+      cosmokit: 1.6.2
+      minato: 3.4.0(cordis@3.16.2)
+
+  '@minatojs/sql.js@3.1.0': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -4601,6 +4683,13 @@ snapshots:
 
   es-errors@1.3.0: {}
 
+  esbuild-register@3.5.0(esbuild@0.21.5):
+    dependencies:
+      debug: 4.3.5
+      esbuild: 0.21.5
+    transitivePeerDependencies:
+      - supports-color
+
   esbuild@0.21.5:
     optionalDependencies:
       '@esbuild/aix-ppc64': 0.21.5
@@ -5177,6 +5266,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  koishi-plugin-adapter-onebot@6.5.8(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)):
+    dependencies:
+      koishi: 4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
+      qface: 1.4.1
+
   koishi-plugin-cron@3.1.0(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)):
     dependencies:
       cron-parser: 4.9.0
@@ -5186,17 +5280,6 @@ snapshots:
     dependencies:
       '@koishijs/canvas': 0.2.0(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
       koishi: 4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
-      puppeteer-core: 22.11.0
-      puppeteer-finder: 1.1.1
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
-  koishi-plugin-puppeteer@3.8.4(koishi@4.17.8(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)):
-    dependencies:
-      '@koishijs/canvas': 0.2.0(koishi@4.17.8(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
-      koishi: 4.17.8(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
       puppeteer-core: 22.11.0
       puppeteer-finder: 1.1.1
     transitivePeerDependencies:
@@ -5647,6 +5730,8 @@ snapshots:
   puppeteer-finder@1.1.1: {}
 
   q@1.5.1: {}
+
+  qface@1.4.1: {}
 
   qs@6.12.1:
     dependencies:

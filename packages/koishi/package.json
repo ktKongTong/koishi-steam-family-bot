@@ -2,7 +2,7 @@
   "name": "koishi-plugin-steam-family-bot",
   "description": "一个用于新版 Steam 家庭的库存监控 koishi Bot 插件",
   "version": "0.0.6-dev.01",
-  "main": "src/index.ts",
+  "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
     "lib",
@@ -44,19 +44,31 @@
     }
   },
   "scripts": {
-    "compile": "tsc",
-    "dev": "ts-node index.ts"
+    "compile": "tsc && tsc-alias",
+    "copy-yml-resource": "node scripts/build.mjs",
+    "clean": "rm -rf lib  tsconfig.tsbuildinfo",
+    "build": " pnpm run clean &&  pnpm run copy-yml-resource && pnpm run compile",
+    "dev": "ts-node dev/index.ts",
+    "bd": "pnpm run build & pnpm run dev",
+    "kdev": "koishi start dev/koishi.yml"
   },
   "devDependencies": {
-    "@types/node": "^20.14.2",
-    "koishi": "4.17.7",
-    "koishi-plugin-cron": "^3.1.0",
-    "koishi-plugin-puppeteer": "^3.8.4"
-  },
-  "dependencies": {
     "@koishijs/plugin-console": "^5.29.1",
+    "@koishijs/plugin-database-sqlite": "^4.4.1",
+    "@koishijs/plugin-echo": "^2.2.5",
     "@koishijs/plugin-http": "^0.5.3",
+    "@koishijs/plugin-logger": "^2.6.8",
     "@koishijs/plugin-sandbox": "^3.3.1",
+    "@types/node": "^20.14.2",
+    "esbuild-register": "^3.5.0",
+    "koishi": "4.17.7",
+    "koishi-plugin-adapter-onebot": "^6.5.8",
+    "koishi-plugin-cron": "^3.1.0",
+    "koishi-plugin-puppeteer": "^3.8.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "peerDependencies": {
     "echarts": "^5.5.0",
     "lodash": "^4.17.21",
     "node-steam-family-group-api": "^0.0.4-dev.patch04",
