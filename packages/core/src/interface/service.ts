@@ -64,7 +64,7 @@ export abstract class ISteamService {
       loginSession.accessToken
     )
     const familyId = family.data?.familyGroupid?.toString()
-    if (!family.ok) {
+    if (!family.data) {
       throw Error('cannot find family Id:' + family.message)
     }
     await this.db.Subscription.addFamilyAccountRel([
@@ -164,7 +164,7 @@ export abstract class ISteamService {
     const steamFamily = await this.api.Steam.getSteamFamilyGroup(token)
     const familyId = steamFamily.data.familyGroupid
     const steamSharedLibs = await this.api.Steam.getSteamFamilyGroupLibs(
-      BigInt(account.familyId),
+      familyId,
       token
     )
     const steamAccountId = steamSharedLibs.data.ownerSteamid

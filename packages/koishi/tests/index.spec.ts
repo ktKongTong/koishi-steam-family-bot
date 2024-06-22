@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Context } from 'koishi'
 import mock from '@koishijs/plugin-mock'
 import cron from 'koishi-plugin-cron'

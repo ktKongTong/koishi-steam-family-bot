@@ -15,6 +15,7 @@
     "./interface": "./lib/interface/index.js",
     "./schedules": "./lib/schedules/index.js",
     "./render": "./lib/render/index.js",
+    "./cmd": "./lib/cmd/index.js",
     "./package.json": "./package.json"
   },
   "repository": "https://github.com/ktKongTong/koishi-steam-family-bot",
@@ -30,16 +31,16 @@
     "access": "public"
   },
   "dependencies": {
-    "canvas": "^2.11.2",
     "dayjs": "^1.11.11",
-    "echarts": "^5.5.0",
     "jwt-decode": "^4.0.0",
-    "koishi": "^4.17.4",
     "lodash": "^4.17.21",
+    "steam-session": "^1.7.2",
     "node-steam-family-group-api": "^0.0.4-dev.patch04",
+    "canvas": "^2.11.2",
+    "echarts": "^5.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "steam-session": "^1.7.2"
+    "steamid": "^2.0.0"
   },
   "scripts": {
     "clean": "rm -rf lib tsconfig.tsbuildinfo",

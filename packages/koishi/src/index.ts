@@ -1,17 +1,17 @@
 import { Context } from 'koishi'
 import schedules from './schedules'
-import Cmd, {
-  BindCmd,
-  ClearCmd,
-  InfoCmd,
-  LoginCmd,
-  QueryCmd,
-  refreshCmd,
-  StatisticCmd,
-  SubCmd,
-  UnBindCmd,
-  UnSubCmd,
-} from './cmd'
+// import Cmd, {
+//   BindCmd,
+//   ClearCmd,
+//   InfoCmd,
+//   LoginCmd,
+//   QueryCmd,
+//   refreshCmd,
+//   StatisticCmd,
+//   SubCmd,
+//   UnBindCmd,
+//   UnSubCmd,
+// } from './cmd'
 
 import {
   SteamFamilyLibSubscribe,
@@ -27,6 +27,10 @@ import {} from 'koishi-plugin-cron'
 import {} from 'koishi-plugin-puppeteer'
 import { dbInit } from './db'
 import { SteamAccountFamilyRel } from 'steam-family-bot-core'
+import { steamCommands } from 'steam-family-bot-core'
+import { SteamService } from '@/services'
+import { KSession } from '@/session-impl'
+import { KoishiImgRender } from '@/utils/render'
 export * from './config'
 
 export const name = 'koishi-steam-family-lib-monitor'
@@ -51,18 +55,27 @@ export function apply(ctx: Context, config: Config) {
   // @ts-ignore
   const baseLogger = ctx.logger('steam-family-lib-monitor')
   dbInit(ctx, config)
-  const cmd = new Cmd(ctx, config, baseLogger)
-  cmd
-    .apply(SubCmd)
-    .apply(UnSubCmd)
-    .apply(LoginCmd)
-    .apply(StatisticCmd)
-    .apply(refreshCmd)
-    .apply(ClearCmd)
-    .apply(QueryCmd)
-    .apply(InfoCmd)
-    .apply(BindCmd)
-    .apply(UnBindCmd)
+  // const cmd = new Cmd(ctx, config, baseLogger)
+  const logger = baseLogger.extend('cmd')
+  const steam = new SteamService(ctx, config)
+  const render = new KoishiImgRender(ctx, config)
+  steamCommands.forEach((c, idx: number) => {
+    ctx.command(c.name).action(async ({ session, options }, input) => {
+      const kSession = new KSession(session)
+      await c.callback(render, steam, logger, kSession, options, input, input)
+    })
+  })
+  // cmd
+  // .apply(refreshCmd)
+  // .apply(ClearCmd)
+  // .apply(QueryCmd)
+  // .apply(InfoCmd)
+  // .apply(BindCmd)
+  // .apply(UnBindCmd)
+  // .apply(SubCmd)
+  // .apply(UnSubCmd)
+  // .apply(LoginCmd)
+  // .apply(StatisticCmd)
   ctx
     .command('slm <prompts:text>')
     .alias('slm')

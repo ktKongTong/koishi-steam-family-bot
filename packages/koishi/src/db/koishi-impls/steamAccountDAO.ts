@@ -176,15 +176,15 @@ export class SteamAccountDAO implements ISteamAccountDAO {
   }
 
   async removeUnAuthAccount(accountId: number): Promise<void> {
-    const res = this.db.join(
-      ['SteamAccount', 'SteamRelateChannelInfo'],
-      (account, channel) => {
-        return $.and(
-          $.eq(account.id, channel.refId),
-          $.eq(channel.type, 'account')
-        )
-      }
-    )
+    // const res = this.db.join(
+    //   ['SteamAccount', 'SteamRelateChannelInfo'],
+    //   (account, channel) => {
+    //     return $.and(
+    //       $.eq(account.id, channel.refId),
+    //       $.eq(channel.type, 'account')
+    //     )
+    //   }
+    // )
     await this.db.withTransaction(async (db) => {
       await db.remove('SteamAccount', {
         id: accountId,

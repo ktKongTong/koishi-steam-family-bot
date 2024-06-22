@@ -1,4 +1,4 @@
-import { Context, h, Logger } from 'koishi'
+import { Context, Logger } from 'koishi'
 import { ISteamService, Config } from '../interface'
 
 // todo
