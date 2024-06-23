@@ -1,17 +1,31 @@
-// import { Canvas } from 'skia-canvas'
-import { createCanvas as _createCanvas } from 'canvas'
-// import { createCanvas as _createCanvas } from '@napi-rs/canvas'
-
-export const createCanvas = (widht, height) => {
-  // node-canvas
-  return _createCanvas(widht, height)
-  // skia
-  // return new Canvas(widht, height)
+export const canvasHelper = {
+  createCanvas: (h,w)=>{return ""},
+  enable: false,
+  canvasToDataURL: (canvas)=> ""
 }
 
-export const canvasToDataURL = (canvas) => {
-  // skia
-  // return canvas.toDataURLSync('png')
-  // node / canvas
-  return canvas.toDataURL('image/png')
+const canvasBuilder = async ()=> {
+  try {
+    const {createCanvas: _createCanvas} = await import('canvas')
+    canvasHelper.createCanvas = _createCanvas
+    canvasHelper.canvasToDataURL = (canvas)=> {
+      return canvas.toDataURL('image/png')
+    }
+    canvasHelper.enable = true
+  }catch(err) {
+    try {
+      const {Canvas} = await import('skia-canvas')
+      canvasHelper.createCanvas = (h,w)=> {
+        return new Canvas(h,w)
+      }
+      canvasHelper.canvasToDataURL = (canvas)=> {
+        return canvas.toDataURLSync('image/png')
+      }
+      canvasHelper.enable = true
+    }catch(err) {
+
+    }
+  }
 }
+
+canvasBuilder().then(()=>console.log(`canvas init over: enable: ${canvasHelper.enable}`))

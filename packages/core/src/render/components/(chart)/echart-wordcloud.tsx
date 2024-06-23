@@ -2,6 +2,8 @@
 import { selectableColor } from './playtimeGraph'
 import { random } from 'lodash'
 import { renderCanvasChart } from '../renderChart'
+
+import { Writable, pipeline } from 'stream'
 interface WordCloudProps {
   width: number
   height: number
@@ -67,8 +69,8 @@ export default function EchartWordCloud({
   }
 
   const res = renderCanvasChart(option, {
-    height: 800,
-    width: 800,
+    height: height,
+    width: width,
   })
   return (
     <div

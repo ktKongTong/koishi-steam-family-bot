@@ -3,7 +3,7 @@ import * as echarts from 'echarts'
 import './WordCloudView'
 import './WordCloudSeries'
 import wordCloudLayoutHelper from './wc'
-import { createCanvas } from '../canvas'
+import { canvasHelper } from '../canvas'
 // https://github.com/timdream/wordcloud2.js/blob/c236bee60436e048949f9becc4f0f67bd832dc5c/index.js#L233
 function updateCanvasMask(maskCanvas) {
   var ctx = maskCanvas.getContext('2d')
@@ -105,7 +105,7 @@ export const layoutItems = (seriesModel, api) => {
 
   var data = seriesModel.getData()
 
-  var canvas = createCanvas(800, 800)
+  var canvas = canvasHelper.createCanvas(800, 800)
   const canvasListener = {}
   canvas.addEventListener = function (name, cb) {
     canvasListener[name] = cb

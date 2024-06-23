@@ -8,7 +8,7 @@
  */
 
 // Check if WordCloud can run on this browser
-import { createCanvas } from '../canvas'
+import { canvasHelper } from '../canvas'
 var isSupported = true
 
 // Find out if the browser impose minium font size by
@@ -436,7 +436,7 @@ var WordCloud = function WordCloud(elements, options) {
       fontWeight = settings.fontWeight
     }
 
-    var fcanvas = createCanvas(800, 800)
+    var fcanvas = canvasHelper.createCanvas(800, 800)
     var fctx = fcanvas.getContext('2d', { willReadFrequently: true })
 
     fctx.font =
@@ -998,7 +998,7 @@ var WordCloud = function WordCloud(elements, options) {
       /* Determine bgPixel by creating
            another canvas and fill the specified background color. */
 
-      var bctx = createCanvas(9, 9).getContext('2d')
+      var bctx = canvasHelper.createCanvas(9, 9).getContext('2d')
 
       bctx.fillStyle = settings.backgroundColor
       bctx.fillRect(0, 0, 1, 1)

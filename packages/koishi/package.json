@@ -69,9 +69,7 @@
     "react-dom": "^18.3.1"
   },
   "peerDependencies": {
-    "node-steam-family-group-api": "^0.0.4-dev.patch04",
-    "steam-family-bot-core": "workspace:*",
-    "steam-session": "^1.7.2",
-    "steamid": "^2.0.0"
+    "lodash": "^4.17.21",
+    "steam-family-bot-core": "workspace:*"
   }
 }

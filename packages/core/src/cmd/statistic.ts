@@ -11,7 +11,7 @@ class TmpLock {
     this.tmpFamilyLock.push(familyId)
   }
   outFamilyId(familyId: string) {
-    this.tmpFamilyLock = this.tmpFamilyLock.filter((it) => it === familyId)
+    this.tmpFamilyLock = this.tmpFamilyLock.filter((it) => it !== familyId)
   }
 }
 

@@ -40,10 +40,13 @@ export class KoishiImgRender implements ImgRender {
       height: 1080,
       deviceScaleFactor: 2,
     })
-    await page.goto(`${this.config.SteamHelperAPIHost}/render/${token}`, {
-      timeout: 0,
-      waitUntil: 'domcontentloaded',
-    })
+    await page.goto(
+      `${this.config.SteamHelperAPIHost}/render?access_token=${token}`,
+      {
+        timeout: 0,
+        waitUntil: 'domcontentloaded',
+      }
+    )
     onStart?.()
     await new Promise<void>((resolve, reject) => {
       setTimeout(() => {
