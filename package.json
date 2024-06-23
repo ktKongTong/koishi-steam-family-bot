@@ -3,6 +3,7 @@
   "private": true,
   "description": "一个用于新版 Steam 家庭的库存监控 Bot ",
   "type": "module",
+  "version": "0.0.6-dev.2",
   "license": "MIT",
   "author": {
     "name": "ktKongTong",

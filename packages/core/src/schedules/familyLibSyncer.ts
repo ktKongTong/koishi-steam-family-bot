@@ -7,7 +7,7 @@ import {
   SteamFamilyLibSubscribe,
   SteamRelateChannelInfo,
 } from '../interface'
-import { Config } from '../interface'
+import { Config } from '@/interface'
 import _ from 'lodash'
 import {
   diffLibs,
@@ -15,9 +15,9 @@ import {
   prepareFamilyInfo,
   prepareLibData,
 } from './utils'
-import { getGameCapsule } from '../utils'
-import { Logger } from '../interface/logger'
-import { BotService, Session } from '../interface'
+import { getGameCapsule } from '@/utils'
+import { Logger } from '@/interface/logger'
+import { BotService, Session } from '@/interface'
 
 export const libMonitor =
   <CHANNEL, SESSION extends Session>(
