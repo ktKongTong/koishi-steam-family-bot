@@ -14,8 +14,11 @@ import {
 import {} from 'koishi-plugin-cron'
 import {} from 'koishi-plugin-puppeteer'
 import { dbInit } from '@/db'
-import { SteamAccountFamilyRel } from 'steam-family-bot-core'
-import { steamCommands, Command } from 'steam-family-bot-core'
+import {
+  steamCommands,
+  Command,
+  SteamAccountFamilyRel,
+} from 'steam-family-bot-core'
 import { SteamService } from '@/services'
 import { KSession } from '@/session-impl'
 import { KoishiImgRender } from '@/utils/render'
@@ -44,9 +47,9 @@ export function apply(ctx: Context, config: Config) {
   const baseLogger = ctx.logger('steam-family-lib-monitor')
   dbInit(ctx, config)
   const logger = baseLogger.extend('cmd')
-  const steam = new SteamService(ctx, config)
+  const steam = new SteamService<ChannelInfo>(ctx, config)
   const render = new KoishiImgRender(ctx, config)
-  steamCommands.forEach((c: Command) => {
+  steamCommands<ChannelInfo>().forEach((c: Command<ChannelInfo>) => {
     let cmd = ctx.command(c.name)
     for (const alias of c.aliases) {
       if (alias.option) {

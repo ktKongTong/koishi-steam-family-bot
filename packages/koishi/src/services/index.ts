@@ -11,11 +11,11 @@ import {
   SteamAccount,
 } from 'steam-family-bot-core'
 
-export class SteamService extends ISteamService {
+export class SteamService<T> extends ISteamService<T> {
   ctx: Context
   cfg: Config
   constructor(ctx: Context, config: Config) {
-    const db = new DBService(ctx)
+    const db = new DBService<T>(ctx)
     const api = APIService.createWithoutToken(config)
     super(db, api)
     this.ctx = ctx

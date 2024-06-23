@@ -24,7 +24,7 @@ type OptionType<T extends string> = T extends `${infer L}:${infer R}`
   ? ExtractNullSafeType<R>
   : unknown
 
-export class CommandBuilder<OPT extends {} = {}> {
+export class CommandBuilder<CHANNEL, OPT extends {} = {}> {
   private name: string
   private description: string
   private options: CmdOption[] = []
@@ -35,7 +35,7 @@ export class CommandBuilder<OPT extends {} = {}> {
       description: description,
       type: 'string',
     })
-    return this as CommandBuilder<Extend<OPT, N, OptionType<D>>>
+    return this as CommandBuilder<CHANNEL, Extend<OPT, N, OptionType<D>>>
   }
 
   addAlias(alias: string, option?: object) {
@@ -50,7 +50,7 @@ export class CommandBuilder<OPT extends {} = {}> {
     this.description = description
     return this
   }
-  setExecutor(executor: CmdExecutor<OPT>) {
+  setExecutor(executor: CmdExecutor<CHANNEL, OPT>) {
     return {
       name: this.name,
       description: this.description,

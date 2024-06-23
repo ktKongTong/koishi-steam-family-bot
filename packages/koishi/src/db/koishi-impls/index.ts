@@ -10,12 +10,12 @@ declare module 'koishi' {
   }
 }
 
-export class DBService extends IDBService {
+export class DBService<T> extends IDBService<T> {
   private db: Database<Tables>
   constructor(ctx: Context) {
     const FamilyLib = new SteamFamilyLibDAO(ctx.database)
-    const Subscription = new SubscriptionDAO(ctx.database)
-    const Account = new SteamAccountDAO(ctx.database)
+    const Subscription = new SubscriptionDAO<T>(ctx.database)
+    const Account = new SteamAccountDAO<T>(ctx.database)
     super(Account, FamilyLib, Subscription)
     this.db = ctx.database
   }

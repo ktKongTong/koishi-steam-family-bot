@@ -12,18 +12,19 @@ import Unbind from './unbind'
 import { Command } from './interface'
 export * from './interface'
 
-function applyCommand(...fns: (() => Command)[]) {
+function applyCommand<CHANNEL>(...fns: (() => Command<CHANNEL>)[]) {
   return fns.map((fn) => fn())
 }
-export const steamCommands = applyCommand(
-  Clear,
-  Query,
-  Info,
-  Bind,
-  Login,
-  Refresh,
-  Subscribe,
-  UnSubscribe,
-  Unbind,
-  Statistic
-)
+export const steamCommands = <CHANNEL>() =>
+  applyCommand<CHANNEL>(
+    Clear,
+    Query,
+    Info,
+    Bind,
+    Login,
+    Refresh,
+    Subscribe,
+    UnSubscribe,
+    Unbind,
+    Statistic
+  )

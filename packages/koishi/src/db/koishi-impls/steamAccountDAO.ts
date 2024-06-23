@@ -7,13 +7,13 @@ import {
   SteamRelateChannelInfo,
 } from '../../interface'
 
-export class SteamAccountDAO implements ISteamAccountDAO {
+export class SteamAccountDAO<T> implements ISteamAccountDAO<T> {
   db: Database<Tables>
   constructor(db: Database<Tables>) {
     this.db = db
   }
 
-  async getSteamAccountBySessionUid<T>(
+  async getSteamAccountBySessionUid(
     uid: string
   ): Promise<
     SteamAccountWithFamilyId & { channel: SteamRelateChannelInfo<T> }

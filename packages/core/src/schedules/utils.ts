@@ -3,7 +3,7 @@ import {
   WishItem,
   IAPIService,
   ISteamService,
-} from '../interface'
+} from '@/interface'
 import _ from 'lodash'
 import { CFamilyGroups_GetSharedLibraryApps_Response_SharedApp } from 'node-steam-family-group-api'
 
@@ -65,9 +65,9 @@ export const diffLibs = (
   }
 }
 
-export const prepareFamilyInfo = async (
+export const prepareFamilyInfo = async <CHANNEL>(
   api: IAPIService,
-  steam: ISteamService
+  steam: ISteamService<CHANNEL>
 ) => {
   const family = await api.Steam.getSteamFamilyGroup()
   const memberIds = family.data.familyGroup.members.map((member) =>
@@ -90,9 +90,9 @@ export const prepareFamilyInfo = async (
   }
 }
 
-export const prepareLibData = async (
+export const prepareLibData = async <T>(
   api: IAPIService,
-  steam: ISteamService,
+  steam: ISteamService<T>,
   familyId: string
 ) => {
   const prevLibs = steam.db.FamilyLib.getSteamFamilyLibByFamilyId(

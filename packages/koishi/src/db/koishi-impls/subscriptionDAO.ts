@@ -7,7 +7,7 @@ import {
   ChannelInfo,
 } from '@/interface'
 
-export class SubscriptionDAO implements ISteamFamilyLibSubscribeDAO {
+export class SubscriptionDAO<T> implements ISteamFamilyLibSubscribeDAO<T> {
   db: Database<Tables>
   constructor(db: Database<Tables>) {
     this.db = db

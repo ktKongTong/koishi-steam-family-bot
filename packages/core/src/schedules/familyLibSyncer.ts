@@ -6,7 +6,7 @@ import {
   SteamFamilyLib,
   SteamFamilyLibSubscribe,
   SteamRelateChannelInfo,
-} from '../interface'
+} from '@/interface'
 import { Config } from '@/interface'
 import _ from 'lodash'
 import {
@@ -21,7 +21,7 @@ import { BotService, Session } from '@/interface'
 
 export const libMonitor =
   <CHANNEL, SESSION extends Session>(
-    steam: ISteamService,
+    steam: ISteamService<CHANNEL>,
     botService: BotService<CHANNEL, SESSION>,
     config: Config,
     logger: Logger
@@ -47,11 +47,11 @@ export const libMonitor =
     }
   }
 
-const handleTokenInvalid = async (
+const handleTokenInvalid = async <CHANNEL>(
   logger: Logger,
   item,
   session: Session,
-  steam: ISteamService
+  steam: ISteamService<CHANNEL>
 ) => {
   logger.info(
     `account 「${item.account.id}」steamId「${item.account.steamId}」token is invalid`
@@ -80,7 +80,7 @@ const handleTokenInvalid = async (
 }
 
 const buildMessages = async <CHANNEL>(
-  steam: ISteamService,
+  steam: ISteamService<CHANNEL>,
   api: IAPIService,
   item: {
     account: SteamAccount
@@ -90,11 +90,14 @@ const buildMessages = async <CHANNEL>(
   },
   logger: Logger
 ) => {
-  const { memberDict, wishes, prevWishes } = await prepareFamilyInfo(api, steam)
+  const { memberDict, wishes, prevWishes } = await prepareFamilyInfo<CHANNEL>(
+    api,
+    steam
+  )
   logger.debug(
     `success fetch family info, preWishes: ${prevWishes.length}, curWishes: ${prevWishes.length}`
   )
-  const { prevLibs, libs } = await prepareLibData(
+  const { prevLibs, libs } = await prepareLibData<CHANNEL>(
     api,
     steam,
     item.steamAndFamilyRel.familyId
@@ -245,7 +248,7 @@ const buildMessages = async <CHANNEL>(
 }
 
 const handleSubScribe = async <CHANNEL, SESSION extends Session>(
-  steam: ISteamService,
+  steam: ISteamService<CHANNEL>,
   item: {
     account: SteamAccount
     steamAndFamilyRel: SteamAccountFamilyRel
@@ -270,7 +273,7 @@ const handleSubScribe = async <CHANNEL, SESSION extends Session>(
     return
   }
   if (!apiServiceResult.isSuccess()) {
-    await handleTokenInvalid(logger, item, session, steam)
+    await handleTokenInvalid<CHANNEL>(logger, item, session, steam)
     return
   }
   const msgs = await buildMessages(steam, apiServiceResult.data, item, logger)

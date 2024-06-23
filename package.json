@@ -43,7 +43,9 @@
     "vitepress": "^1.2.2"
   },
   "scripts": {
-    "ci:publish": "pnpm publish -r"
+    "ci:publish": "pnpm publish -r",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs"
   },
   "lint-staged": {
     "*.{ts,vue,jsx,tsx}": [

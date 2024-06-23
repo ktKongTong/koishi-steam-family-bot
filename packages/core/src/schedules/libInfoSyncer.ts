@@ -3,7 +3,8 @@ import { Config, ISteamService } from '@/interface'
 import { Logger } from '@/interface/logger'
 
 export const libInfoSyncer =
-  (logger: Logger, config: Config, steam: ISteamService) => async () => {
+  <CHANNEL>(logger: Logger, config: Config, steam: ISteamService<CHANNEL>) =>
+  async () => {
     logger.info('trigger lib info syncer')
     const libItem = await steam.db.FamilyLib.getUnSyncedLib()
     const libsId = _.uniq(libItem.map((it) => it.appId))

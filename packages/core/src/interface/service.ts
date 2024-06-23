@@ -11,10 +11,10 @@ import { jwtDecode } from '@/utils'
 import { now } from 'lodash'
 import { EAuthTokenPlatformType, LoginSession } from 'steam-session'
 
-export abstract class ISteamService {
-  db: IDBService
+export abstract class ISteamService<T> {
+  db: IDBService<T>
   api: IAPIService
-  protected constructor(db: IDBService, api: IAPIService) {
+  protected constructor(db: IDBService<T>, api: IAPIService) {
     this.db = db
     this.api = api
   }
@@ -49,7 +49,7 @@ export abstract class ISteamService {
     account.steamRefreshToken = session.refreshToken
   }
 
-  async addAccountInfoByLoginSession<T>(
+  async addAccountInfoByLoginSession(
     loginSession: LoginSession,
     channelInfo: T
   ) {
@@ -149,7 +149,7 @@ export abstract class ISteamService {
     }
   }
 
-  async subscribeFamilyLibByAccount<T>(
+  async subscribeFamilyLibByAccount(
     account: SteamAccountWithFamilyId,
     channelInfo: T,
     preferGameImgType: string,

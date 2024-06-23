@@ -3,9 +3,9 @@ import { ImgRender } from '@/render'
 import { ISteamService, Session } from '@/interface'
 import { Logger } from '@/interface/logger'
 
-export type CmdExecutor<OPT extends object = object> = (
+export type CmdExecutor<CHANNEL, OPT extends object = object> = (
   render: ImgRender,
-  steamService: ISteamService,
+  steamService: ISteamService<CHANNEL>,
   logger: Logger,
   session: Session,
   options: OPT,
@@ -24,11 +24,11 @@ export type CmdAlias = {
   alias: string
   option?: object
 }
-export interface Command {
+export interface Command<CHANNEL> {
   name: string
   description: string
   aliases: CmdAlias[]
   options: CmdOption[]
-  callback: CmdExecutor
-  children: Command[]
+  callback: CmdExecutor<CHANNEL>
+  children: Command<CHANNEL>[]
 }

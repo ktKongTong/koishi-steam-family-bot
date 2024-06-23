@@ -16,11 +16,11 @@ export type SteamAccountWithFamilyId = SteamAccount & {
   familyId?: string
 }
 
-export interface ISteamAccountDAO {
+export interface ISteamAccountDAO<T> {
   getAuthedSteamAccountByFamilyId(
     familyId: string
   ): Promise<SteamAccountWithFamilyId>
-  getSteamAccountBySessionUid<T>(
+  getSteamAccountBySessionUid(
     uid: string
   ): Promise<SteamAccountWithFamilyId & { channel: SteamRelateChannelInfo<T> }>
   getSteamAccountBySteamId(steamid: string): Promise<SteamAccountWithFamilyId>
@@ -67,17 +67,17 @@ export interface ISteamFamilySharedLibDAO {
   ): Promise<void>
 }
 
-export interface ISteamFamilyLibSubscribeDAO {
+export interface ISteamFamilyLibSubscribeDAO<T> {
   getSubscriptionBySessionUId(uid: string): Promise<SteamFamilyLibSubscribe>
   removeSubscriptionBySessionUId(uid: string): Promise<void>
   removeSubscriptionBySteamId(uid: string): Promise<void>
   updateSubscription(sub: SteamFamilyLibSubscribe): Promise<void>
   inactiveSubscription(subId: number): Promise<void>
-  getSubscriptionByChannelInfoAndFamilyId<T>(
+  getSubscriptionByChannelInfoAndFamilyId(
     familyId: string,
     channelInfo: T
   ): Promise<SteamFamilyLibSubscribe>
-  addSubscription<T>(
+  addSubscription(
     sub: Partial<SteamFamilyLibSubscribe>,
     channelInfo: T
   ): Promise<void>

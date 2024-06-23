@@ -6,14 +6,14 @@ import {
   SubscribeInfo,
 } from './index'
 
-export abstract class IDBService {
-  Account: ISteamAccountDAO
+export abstract class IDBService<T> {
+  Account: ISteamAccountDAO<T>
   FamilyLib: ISteamFamilySharedLibDAO
-  Subscription: ISteamFamilyLibSubscribeDAO
+  Subscription: ISteamFamilyLibSubscribeDAO<T>
   protected constructor(
-    accountDAO: ISteamAccountDAO,
+    accountDAO: ISteamAccountDAO<T>,
     familyLibDAO: ISteamFamilySharedLibDAO,
-    subscriptionDAO: ISteamFamilyLibSubscribeDAO
+    subscriptionDAO: ISteamFamilyLibSubscribeDAO<T>
   ) {
     this.Account = accountDAO
     this.FamilyLib = familyLibDAO

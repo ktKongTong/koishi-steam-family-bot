@@ -1,5 +1,5 @@
 import { StoreItem } from 'node-steam-family-group-api'
-import { PreferGameImgType } from '../interface'
+import { PreferGameImgType } from '@/interface'
 
 const defaultImg =
   'https://store.akamai.steamstatic.com/public/images/applications/store/defaultappimage.png'
