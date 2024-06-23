@@ -3,7 +3,6 @@
   "private": true,
   "description": "一个用于新版 Steam 家庭的库存监控 Bot ",
   "type": "module",
-  "version": "0.0.6-dev.3",
   "license": "MIT",
   "author": {
     "name": "ktKongTong",
@@ -11,6 +10,7 @@
   },
   "repository": "https://github.com/ktKongTong/koishi-steam-family-bot.git",
   "homepage": "https://koishi-steam-family-bot.vercel.app/",
+
   "keywords": [
     "steam",
     "steam-family",
@@ -18,6 +18,7 @@
     "bot"
   ],
   "devDependencies": {
+    "@changesets/cli": "^2.27.5",
     "@eslint/js": "^9.3.0",
     "@types/chai": "^4.3.16",
     "@types/js-yaml": "^4.0.9",
@@ -42,6 +43,7 @@
     "vitepress": "^1.2.2"
   },
   "scripts": {
+    "ci:publish": "pnpm publish -r"
   },
   "lint-staged": {
     "*.{ts,vue,jsx,tsx}": [

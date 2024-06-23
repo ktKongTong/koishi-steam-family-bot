@@ -19,3 +19,4 @@ tsconfig.tsbuildinfo
 *.njsproj
 *.sln
 packages/koishi/dev
+!/packages/koishi/dev/
