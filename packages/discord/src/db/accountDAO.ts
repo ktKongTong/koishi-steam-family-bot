@@ -6,13 +6,13 @@ import {
   SteamAccountWithFamilyId,
   SteamRelateChannelInfo,
 } from 'steam-family-bot-core'
-import { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
+import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import * as tables from './schema'
 import { and, eq, sql } from 'drizzle-orm'
 import { ChannelInfo } from './index'
 export class DrizzleAccountDAO implements ISteamAccountDAO {
-  private db: PostgresJsDatabase<typeof tables>
-  constructor(db: PostgresJsDatabase<typeof tables>) {
+  private db: NodePgDatabase<typeof tables>
+  constructor(db: NodePgDatabase<typeof tables>) {
     this.db = db
   }
 

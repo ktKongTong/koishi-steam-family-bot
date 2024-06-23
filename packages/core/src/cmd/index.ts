@@ -10,11 +10,11 @@ import UnSubscribe from './unsub'
 import Unbind from './unbind'
 
 import { Command } from './builder'
+export * from './builder'
 
 function applyCommand(...fns: (() => Command)[]) {
   return fns.map((fn) => fn())
 }
-
 export const steamCommands = applyCommand(
   Clear,
   Query,

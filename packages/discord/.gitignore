@@ -21,3 +21,4 @@ tsconfig.tsbuildinfo
 drizzle
 drizzle.config.ts
 migrate.ts
+.env.local

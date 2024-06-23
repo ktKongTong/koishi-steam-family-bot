@@ -1,55 +1,19 @@
-import {
-  REST,
-  Routes,
-  Client,
-  Events,
-  GatewayIntentBits,
-  Collection,
-  CommandInteraction,
-  Interaction,
-  SlashCommandBuilder,
-} from 'discord.js'
-import {
-  APIService,
-  Config,
-  FamilyGames,
-  GameInfo,
-  IAPIService,
-  IDBService,
-  ISteamAccountDAO,
-  ISteamFamilyLibSubscribeDAO,
-  ISteamFamilySharedLibDAO,
-  ISteamService,
-  Msg,
-  Result,
-  Session,
-  SteamAccount,
-  SteamAccountWithFamilyId,
-  steamCommands,
-  SteamFamilyLib,
-  SubscribeInfo,
-} from 'steam-family-bot-core'
-import { Command } from 'steam-family-bot-core/lib/cmd/builder'
-import { ChannelInfo } from './db'
+import { REST, Routes, Client, Events, GatewayIntentBits } from 'discord.js'
+import { Config, steamCommands, Command } from 'steam-family-bot-core'
 import { DiscordSession } from './session'
 import { SteamService } from './service'
-import { ImgRender } from 'steam-family-bot-core/lib/render'
+import { NoOpRender } from '@/noop-render'
 
-const token = ''
-const CLIENT_ID = ''
+const token = process.env.DISCORD_TOKEN
+const CLIENT_ID = process.env.CLIENT_ID
 
 async function main() {
-  // Create a new client instance
   const client = new Client({ intents: [GatewayIntentBits.Guilds] })
-  //
-  // // When the client is ready, run this code (only once).
-  // // The distinction between `client: Client<boolean>` and `readyClient: Client<true>` is important for TypeScript developers.
-  // // It makes some properties non-nullable.
+
   client.once(Events.ClientReady, (readyClient) => {
     console.log(`Ready! Logged in as ${readyClient.user.tag}`)
   })
-  //
-  // // Log in to Discord with your client's token
+
   await client.login(token)
 
   const cmds = new Map<string, Command>()
@@ -116,26 +80,18 @@ async function main() {
     } catch (error) {
       console.error(error)
       if (interaction.replied || interaction.deferred) {
-        // await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true })
+        await interaction.followUp({
+          content: 'There was an error while executing this command!',
+          ephemeral: true,
+        })
       } else {
-        // await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
+        await interaction.reply({
+          content: 'There was an error while executing this command!',
+          ephemeral: true,
+        })
       }
     }
   })
-}
-
-class NoOpRender implements ImgRender {
-  getFamilyStatisticImg(
-    games: FamilyGames,
-    onStart?: () => void,
-    onError?: () => void
-  ): Promise<string> {
-    return Promise.resolve('')
-  }
-
-  screenshotFamilyStatistic(token: string, onStart?: () => void): Promise<any> {
-    return Promise.resolve(undefined)
-  }
 }
 
 main()

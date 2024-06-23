@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib",
+    "target": "es2022",
+    "module": "commonjs",
+    "declaration": true,
+    "composite": true,
+    "incremental": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "allowJs": true,
+    "types": [
+      "node",
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "./src"
+  ]
+}

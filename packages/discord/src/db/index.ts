@@ -1,7 +1,5 @@
 import { IDBService, SteamAccount, SubscribeInfo } from 'steam-family-bot-core'
-import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js'
-//@ts-ignore
-import postgres from 'postgres'
+import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres'
 import * as tables from './schema'
 import { DrizzleAccountDAO } from './accountDAO'
 import { DrizzleSteamFamilySharedLibDAO } from './steamFamilySharedLibDAO'
@@ -13,9 +11,8 @@ export type ChannelInfo = {
 }
 
 export class DBService extends IDBService {
-  private db: PostgresJsDatabase<typeof tables>
-  constructor(c: string) {
-    const client = postgres(c)
+  private db: NodePgDatabase<typeof tables>
+  constructor(client: any) {
     const db = drizzle(client, {
       schema: tables,
     })

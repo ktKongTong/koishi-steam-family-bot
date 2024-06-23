@@ -1,5 +1,5 @@
 import { Msg, Session } from 'steam-family-bot-core'
-import { ChannelInfo } from '../db'
+import { ChannelInfo } from '@/db'
 import { CommandInteraction } from 'discord.js'
 
 export class DiscordSession implements Session<ChannelInfo> {
@@ -21,7 +21,6 @@ export class DiscordSession implements Session<ChannelInfo> {
   }
   private async sendAnyway(msg: any) {
     this.replyCnt++
-    console.log(`reply, ${this.replyCnt}`)
     await this.interaction.followUp(msg)
   }
   async send(msg: string): Promise<void> {
