@@ -19,4 +19,4 @@ tsconfig.tsbuildinfo
 *.njsproj
 *.sln
 dev
-
+dev/*

@@ -1,17 +1,5 @@
 import { Context } from 'koishi'
 import schedules from './schedules'
-// import Cmd, {
-//   BindCmd,
-//   ClearCmd,
-//   InfoCmd,
-//   LoginCmd,
-//   QueryCmd,
-//   refreshCmd,
-//   StatisticCmd,
-//   SubCmd,
-//   UnBindCmd,
-//   UnSubCmd,
-// } from './cmd'
 
 import {
   SteamFamilyLibSubscribe,
@@ -55,7 +43,6 @@ export function apply(ctx: Context, config: Config) {
   // @ts-ignore
   const baseLogger = ctx.logger('steam-family-lib-monitor')
   dbInit(ctx, config)
-  // const cmd = new Cmd(ctx, config, baseLogger)
   const logger = baseLogger.extend('cmd')
   const steam = new SteamService(ctx, config)
   const render = new KoishiImgRender(ctx, config)
@@ -65,17 +52,6 @@ export function apply(ctx: Context, config: Config) {
       await c.callback(render, steam, logger, kSession, options, input, input)
     })
   })
-  // cmd
-  // .apply(refreshCmd)
-  // .apply(ClearCmd)
-  // .apply(QueryCmd)
-  // .apply(InfoCmd)
-  // .apply(BindCmd)
-  // .apply(UnBindCmd)
-  // .apply(SubCmd)
-  // .apply(UnSubCmd)
-  // .apply(LoginCmd)
-  // .apply(StatisticCmd)
   ctx
     .command('slm <prompts:text>')
     .alias('slm')

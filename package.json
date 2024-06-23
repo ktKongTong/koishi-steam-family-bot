@@ -41,19 +41,6 @@
     "vitepress": "^1.2.2"
   },
   "scripts": {
-    "test": "ts-node ../../../tests/index.spec.ts",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
-    "lint": "eslint packages",
-    "lint-fix": "eslint --fix packages",
-    "lint-staged": "lint-staged",
-    "prepare": "husky install",
-    "clean": "rm -rf lib  tsconfig.tsbuildinfo",
-    "copy-yml-resource": "node ../../../scripts/build.mjs",
-    "compile": "tsc && tsc-alias",
-    "build": "npm run clean && npm run copy-yml-resource && npm run compile",
-    "pub": "npm run build && npm publish"
   },
   "lint-staged": {
     "*.{ts,vue,jsx,tsx}": [
