@@ -36,7 +36,9 @@ export class KSession implements Session<ChannelInfo> {
       ])
     )
   }
-
+  async sendImgBuffer(content: any, mimeType?: string): Promise<void> {
+    await this.session.send(h.image(content, mimeType ?? 'image/png'))
+  }
   async sendQueued(msg: string): Promise<void> {
     await this.session.sendQueued(msg)
   }
@@ -63,6 +65,12 @@ export class KoishiSession implements Session<ChannelInfo> {
     )
   }
 
+  async sendImgBuffer(content: any, mimeType?: string): Promise<void> {
+    await this.bot.sendMessage(
+      this.channelInfo.channelId,
+      h.image(content, mimeType ?? 'image/png')
+    )
+  }
   getSessionInfo(): ChannelInfo {
     return this.channelInfo
   }

@@ -3,7 +3,8 @@ import { CommandBuilder } from '@/cmd/builder'
 export default () =>
   new CommandBuilder()
     .setName('slm.unsub')
-    .setDescription('sbunsub')
+    .setDescription('remove subscribe info')
+    .addAlias('sbunsub')
     .addOption('w', 'subWish:boolean?')
     .addOption('l', 'subLib:boolean?')
     .setExecutor(

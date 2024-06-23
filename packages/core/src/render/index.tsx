@@ -1,4 +1,4 @@
-import { FamilyGames, SteamFamilyLib } from '../interface'
+import { FamilyGames, SteamFamilyLib } from '@/interface'
 import React from 'react'
 import * as ReactDOMServer from 'react-dom/server'
 import { App } from '@/render/components/app'

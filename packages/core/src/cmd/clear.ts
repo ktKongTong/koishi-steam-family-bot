@@ -6,7 +6,8 @@ import { CommandBuilder } from '@/cmd/builder'
 export default () =>
   new CommandBuilder()
     .setName('slm.clear')
-    .setDescription('sbclear')
+    .setDescription('clear an auth account relate info')
+    .addAlias('sbclear')
     .setExecutor(
       async (
         render,

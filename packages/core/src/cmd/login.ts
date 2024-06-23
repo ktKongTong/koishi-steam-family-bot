@@ -4,7 +4,8 @@ import { CommandBuilder } from '@/cmd/builder'
 export default () =>
   new CommandBuilder()
     .setName('slm.login')
-    .setDescription('sblogin')
+    .setDescription('login to steam via qrcode')
+    .addAlias('sblogin')
     .setExecutor(
       async (
         render,
@@ -23,8 +24,8 @@ export default () =>
         const qrUrl =
           'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' +
           encodeURIComponent(startResult.qrChallengeUrl)
-        // session.send(h.image(buffer, 'image/png'))
-        await session.sendMsg({ type: 'image', content: qrUrl })
+        const buf = await fetch(qrUrl).then((res) => res.arrayBuffer())
+        await session.sendImgBuffer(Buffer.from(buf))
         await session.send(
           '请在 120s 内通过 steam 手机验证器扫描二维码，并确认登陆'
         )

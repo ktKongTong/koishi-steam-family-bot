@@ -3,9 +3,9 @@ import { CommandBuilder } from '@/cmd/builder'
 export default () =>
   new CommandBuilder()
     .setName('slm.query')
-    // .alias('sbsou')
-    // .alias('sbquery')
-    .setDescription('query')
+    .addAlias('sbsou')
+    .addAlias('sbquery')
+    .setDescription('find game by keywords')
     .setExecutor(
       async (render, steam, logger, session, options, input, rawInput) => {
         if (!input || input.length < 2) {

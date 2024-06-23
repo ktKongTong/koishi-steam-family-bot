@@ -5,7 +5,8 @@ import { CommandBuilder } from '@/cmd/builder'
 export default () =>
   new CommandBuilder()
     .setName('slm.refresh')
-    .setDescription('sbrefresh')
+    .addAlias('sbrefresh')
+    .setDescription('refresh family lib info')
     .addOption('w', 'wish:boolean?')
     .setExecutor(
       async (

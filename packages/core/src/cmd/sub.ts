@@ -4,7 +4,8 @@ import { CommandBuilder } from '@/cmd/builder'
 export default () =>
   new CommandBuilder()
     .setName('slm.sub')
-    .setDescription('sbsub')
+    .setDescription('subscribe steam family update')
+    .addAlias('sbsub')
     .addOption('img', 'preferImg:string?')
     .addOption('w', 'subWish:boolean?')
     .addOption('l', 'subLib:boolean?')

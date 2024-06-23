@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import { Config, ISteamService } from '../interface'
-import { Logger } from '../interface/logger'
+import { Config, ISteamService } from '@/interface'
+import { Logger } from '@/interface/logger'
 
 export const libInfoSyncer =
   (logger: Logger, config: Config, steam: ISteamService) => async () => {

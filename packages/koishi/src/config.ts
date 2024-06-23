@@ -8,7 +8,8 @@ export const Config = Schema.object({
   libMonitorCron: Schema.string().default('*/15 * * * *'),
   libInfoSyncerCron: Schema.string().default('*/7 * * * *'),
 }).i18n({
+  // @ts-ignore
   'zh-CN': require('./locales/zh-CN')._config,
-
+  // @ts-ignore
   'en-US': require('./locales/en-US')._config,
 })

@@ -1,7 +1,7 @@
 {
   "name": "steam-family-bot-core",
   "description": "一个用于新版 Steam 家庭的库存监控 Bot 插件",
-  "version": "0.0.6-dev.2",
+  "version": "0.0.6-dev.3",
   "types": "lib/index.d.ts",
   "files": [ "lib" ],
   "license": "MIT",
@@ -32,11 +32,11 @@
     "lodash": "^4.17.21",
     "steam-session": "^1.7.2",
     "node-steam-family-group-api": "^0.0.4-dev.patch04",
-    "canvas": "^2.11.2",
     "echarts": "^5.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "steamid": "^2.0.0"
+    "steamid": "^2.0.0",
+    "canvas": "^2.11.2"
   },
   "scripts": {
     "clean": "rm -rf lib tsconfig.tsbuildinfo",

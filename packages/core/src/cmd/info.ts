@@ -4,7 +4,8 @@ import { preferImgStringToEnum } from '@/utils'
 export default () =>
   new CommandBuilder()
     .setName('slm.info')
-    .setDescription('sbclear')
+    .setDescription('show steam fmaily subscribe info')
+    .addAlias('sbinfo')
     .setExecutor(
       async (
         render,

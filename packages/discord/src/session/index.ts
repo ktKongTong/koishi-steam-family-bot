@@ -38,6 +38,11 @@ export class DiscordSession implements Session<ChannelInfo> {
     }
   }
 
+  async sendImgBuffer(content: any, mimeType?: string): Promise<void> {
+    await this.sendAnyway({
+      files: [{ attachment: content, name: 'image.png' }],
+    })
+  }
   async sendQueued(msg: string): Promise<void> {
     await this.sendAnyway(msg)
   }

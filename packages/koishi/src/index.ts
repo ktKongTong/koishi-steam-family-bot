@@ -13,9 +13,9 @@ import {
 
 import {} from 'koishi-plugin-cron'
 import {} from 'koishi-plugin-puppeteer'
-import { dbInit } from './db'
+import { dbInit } from '@/db'
 import { SteamAccountFamilyRel } from 'steam-family-bot-core'
-import { steamCommands } from 'steam-family-bot-core'
+import { steamCommands, Command } from 'steam-family-bot-core'
 import { SteamService } from '@/services'
 import { KSession } from '@/session-impl'
 import { KoishiImgRender } from '@/utils/render'
@@ -46,8 +46,29 @@ export function apply(ctx: Context, config: Config) {
   const logger = baseLogger.extend('cmd')
   const steam = new SteamService(ctx, config)
   const render = new KoishiImgRender(ctx, config)
-  steamCommands.forEach((c, idx: number) => {
-    ctx.command(c.name).action(async ({ session, options }, input) => {
+  steamCommands.forEach((c: Command) => {
+    let cmd = ctx.command(c.name)
+    for (const alias of c.aliases) {
+      if (alias.option) {
+        cmd = cmd.alias(alias.alias, alias.option)
+      } else {
+        cmd = cmd.alias(alias.alias)
+      }
+    }
+    for (const option of c.options) {
+      let desc = option.description
+      const regex = /^(.+):(.+?)\??$/
+      const [, fullname, type] = regex.exec(desc)
+      const optional = desc.endsWith('?')
+      desc = `${fullname}:${type}`
+      if (optional) {
+        desc = `[${desc}]`
+      } else {
+        desc = `<${desc}>`
+      }
+      cmd = cmd.option(option.name, desc)
+    }
+    cmd.action(async ({ session, options }, input) => {
       const kSession = new KSession(session)
       await c.callback(render, steam, logger, kSession, options, input, input)
     })

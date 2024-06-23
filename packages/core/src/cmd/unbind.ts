@@ -3,7 +3,8 @@ import { CommandBuilder } from '@/cmd/builder'
 export default () =>
   new CommandBuilder()
     .setName('slm.unbind')
-    .setDescription('sbunbind')
+    .setDescription('remove bind info')
+    .addAlias('sbunbind')
     .setExecutor(
       async (
         render,

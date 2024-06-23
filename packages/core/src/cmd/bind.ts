@@ -2,7 +2,8 @@ import { CommandBuilder } from '@/cmd/builder'
 import SteamID from 'steamid'
 const cmd = new CommandBuilder()
   .setName('slm.bind')
-  .setDescription('bind')
+  .setDescription('bind to an steamid without auth')
+  .addAlias('sbbind')
   .setExecutor(
     async (render, steamService, logger, session, options, input, rawInput) => {
       const steamAccount =

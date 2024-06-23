@@ -19,7 +19,8 @@ const tmpLock = new TmpLock()
 export default () =>
   new CommandBuilder()
     .setName('slm.stats')
-    .setDescription('sbstats')
+    .setDescription('generate stats info for steam family')
+    .addAlias('sbstats')
     .addOption('r', 'remote:boolean?')
     .setExecutor(
       async (

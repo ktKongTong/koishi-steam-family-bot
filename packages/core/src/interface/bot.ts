@@ -16,7 +16,7 @@ export interface Session<T extends any = any> {
   uid: string
   getSessionInfo(): T
   sendMsg(msg: Msg): Promise<void>
-  // send
+  sendImgBuffer(content: any, mimeType?: string): Promise<void>
   send(msg: string): Promise<void>
   sendQueued(msg: string): Promise<void>
   sendQuote(msg: string): Promise<void>

@@ -9,8 +9,8 @@ import Subscribe from './sub'
 import UnSubscribe from './unsub'
 import Unbind from './unbind'
 
-import { Command } from './builder'
-export * from './builder'
+import { Command } from './interface'
+export * from './interface'
 
 function applyCommand(...fns: (() => Command)[]) {
   return fns.map((fn) => fn())
