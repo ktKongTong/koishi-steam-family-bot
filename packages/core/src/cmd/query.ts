@@ -2,7 +2,7 @@ import { CommandBuilder } from '@/cmd/builder'
 
 export default () =>
   new CommandBuilder()
-    .setName('slm.query')
+    .setName('query')
     .addAlias('sbsou')
     .addAlias('sbquery')
     .setDescription('find game by keywords')

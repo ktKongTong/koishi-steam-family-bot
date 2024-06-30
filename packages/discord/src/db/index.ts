@@ -10,7 +10,7 @@ export type ChannelInfo = {
   channelId: string
 }
 
-export class DBService extends IDBService {
+export class DBService<CHANNEL> extends IDBService<CHANNEL> {
   private db: NodePgDatabase<typeof tables>
   constructor(client: any) {
     const db = drizzle(client, {

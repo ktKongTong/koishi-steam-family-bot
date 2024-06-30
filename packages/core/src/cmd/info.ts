@@ -3,7 +3,7 @@ import { preferImgStringToEnum } from '@/utils'
 
 export default () =>
   new CommandBuilder()
-    .setName('slm.info')
+    .setName('info')
     .setDescription('show steam fmaily subscribe info')
     .addAlias('sbinfo')
     .setExecutor(

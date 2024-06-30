@@ -5,7 +5,7 @@ import { CommandBuilder } from '@/cmd/builder'
 //  this is a command for user that need to remove dirty data
 export default () =>
   new CommandBuilder()
-    .setName('slm.clear')
+    .setName('clear')
     .setDescription('clear an auth account relate info')
     .addAlias('sbclear')
     .setExecutor(

@@ -3,6 +3,7 @@ import { Config, steamCommands, Command } from 'steam-family-bot-core'
 import { DiscordSession } from './session'
 import { SteamService } from './service'
 import { NoOpRender } from '@/noop-render'
+import { ChannelInfo } from '@/db'
 
 const token = process.env.DISCORD_TOKEN
 const CLIENT_ID = process.env.CLIENT_ID
@@ -15,9 +16,9 @@ async function main() {
   })
 
   await client.login(token)
-
-  const cmds = new Map<string, Command>()
-  for (const item of steamCommands) {
+  const cmds = new Map<string, Command<ChannelInfo>>()
+  const allCommands = steamCommands<ChannelInfo>()
+  for (const item of allCommands) {
     cmds.set(item.name.split('.')[1], item)
   }
   const commands = [
@@ -26,7 +27,7 @@ async function main() {
       description: 'Replies with Pong!',
     },
   ].concat(
-    steamCommands.map((cmd) => ({
+    allCommands.map((cmd) => ({
       name: cmd.name.split('.')[1],
       description: cmd.description,
       options: [
@@ -54,7 +55,7 @@ async function main() {
     steamDataFetchMode: 'remote',
   } satisfies Config
   const render = new NoOpRender()
-  const steamService = new SteamService(config)
+  const steamService = new SteamService<ChannelInfo>(config)
   client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isChatInputCommand()) return
     await interaction.deferReply({ ephemeral: true })

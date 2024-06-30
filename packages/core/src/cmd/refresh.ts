@@ -4,7 +4,7 @@ import { CommandBuilder } from '@/cmd/builder'
 //  this is a command for user that need to remove dirty data
 export default () =>
   new CommandBuilder()
-    .setName('slm.refresh')
+    .setName('refresh')
     .addAlias('sbrefresh')
     .setDescription('refresh family lib info')
     .addOption('w', 'wish:boolean?')

@@ -9,7 +9,7 @@ import { and, eq, inArray, isNotNull } from 'drizzle-orm'
 import { ChannelInfo } from './index'
 
 export class DrizzleSteamFamilyLibSubscribeDAO
-  implements ISteamFamilyLibSubscribeDAO
+  implements ISteamFamilyLibSubscribeDAO<ChannelInfo>
 {
   private db: NodePgDatabase<typeof tables>
   constructor(db: NodePgDatabase<typeof tables>) {

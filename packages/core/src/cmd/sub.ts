@@ -3,7 +3,7 @@ import { CommandBuilder } from '@/cmd/builder'
 
 export default () =>
   new CommandBuilder()
-    .setName('slm.sub')
+    .setName('sub')
     .setDescription('subscribe steam family update')
     .addAlias('sbsub')
     .addOption('img', 'preferImg:string?')

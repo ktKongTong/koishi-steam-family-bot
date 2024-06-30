@@ -2,7 +2,7 @@ import { CommandBuilder } from '@/cmd/builder'
 
 export default () =>
   new CommandBuilder()
-    .setName('slm.unbind')
+    .setName('unbind')
     .setDescription('remove bind info')
     .addAlias('sbunbind')
     .setExecutor(

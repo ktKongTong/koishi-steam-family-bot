@@ -50,7 +50,7 @@ export function apply(ctx: Context, config: Config) {
   const steam = new SteamService<ChannelInfo>(ctx, config)
   const render = new KoishiImgRender(ctx, config)
   steamCommands<ChannelInfo>().forEach((c: Command<ChannelInfo>) => {
-    let cmd = ctx.command(c.name)
+    let cmd = ctx.command(`slm.${c.name}`)
     for (const alias of c.aliases) {
       if (alias.option) {
         cmd = cmd.alias(alias.alias, alias.option)

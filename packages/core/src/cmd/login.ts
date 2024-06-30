@@ -3,7 +3,7 @@ import { CommandBuilder } from '@/cmd/builder'
 
 export default () =>
   new CommandBuilder()
-    .setName('slm.login')
+    .setName('login')
     .setDescription('login to steam via qrcode')
     .addAlias('sblogin')
     .setExecutor(
