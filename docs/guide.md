@@ -153,7 +153,7 @@ services:
       - 6099:6099
     container_name: napcat
     volumes:
-      - napcat_qq:/root/.config/QQ
+      - napcat_cfg:/root/.config/QQ
     restart: always
     networks:
       - steam-bot
