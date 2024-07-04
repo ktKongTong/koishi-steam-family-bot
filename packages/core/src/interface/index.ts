@@ -4,7 +4,7 @@ import {
   CPlayer_GetPlayerLinkDetails_Response,
   CStoreBrowse_GetItems_Response,
 } from 'node-steam-family-group-api'
-import { GameInfo, SteamFamilyLib } from '../db/interface'
+import { GameInfo, SteamFamilyLib } from '@/db/interface'
 
 export * from './service'
 export * from '../api/interface'
