@@ -10,12 +10,18 @@ export default [
   eslintConfigPrettier,
   eslintPluginPrettierRecommend,
   {
-    // files: ["./src/**/*.ts","./src/**/*.js", "./src/**/*.tsx"],
+    ignores:["**/*.js " , "packages/*/lib/**", "packages/koishi/dev/**"]
+  },
+  {
+    // files: ["packages/*/src/*.ts", "packages/*/src/*.tsx"],
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/ban-ts-comment": "off"
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-require-imports":"off",
+      "@typescript-eslint/no-unnecessary-type-constraint":"off",
+      "@typescript-eslint/no-empty-object-type":"off"
     }
   },
 ];

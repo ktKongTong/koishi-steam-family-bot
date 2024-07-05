@@ -1,0 +1,25 @@
+{
+  "name": "steam-family-bot-discord",
+  "version": "0.0.6",
+  "description": "",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "drizzle-orm": "^0.31.2",
+    "node-steam-family-group-api": "^0.0.4-dev.patch04",
+    "pg": "^8.12.0",
+    "postgres": "^3.4.4",
+    "steam-family-bot-core": "workspace:*"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.22.7",
+    "wrangler": "^3.61.0"
+  }
+}

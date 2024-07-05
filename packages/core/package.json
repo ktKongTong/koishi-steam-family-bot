@@ -1,0 +1,68 @@
+{
+  "name": "steam-family-bot-core",
+  "description": "一个用于新版 Steam 家庭的库存监控 Bot 插件",
+  "version": "0.0.6",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "ktKongTong",
+    "email": "kt@ktlab.io"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./utils": "./lib/utils/index.js",
+    "./interface": "./lib/interface/index.js",
+    "./schedules": "./lib/schedules/index.js",
+    "./render": "./lib/render/index.js",
+    "./cmd": "./lib/cmd/index.js",
+    "./package.json": "./package.json"
+  },
+  "keywords": [
+    "steam",
+    "steam-family"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.11",
+    "echarts": "^5.5.0",
+    "jwt-decode": "^4.0.0",
+    "lodash": "^4.17.21",
+    "node-steam-family-group-api": "^0.0.4-dev.patch04",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "steam-session": "^1.7.2",
+    "steamid": "^2.0.0"
+  },
+  "peerDependencies": {
+    "canvas": "^2.11.2",
+    "skia-canvas": "^1.0.1"
+  },
+  "scripts": {
+    "clean": "rm -rf lib tsconfig.tsbuildinfo",
+    "compile": "tsc && tsc-alias",
+    "build": "pnpm run clean && pnpm run compile",
+    "pub": "pnpm run build && pnpm publish"
+  },
+  "typesVersions": {
+    "*": {
+      "index": [
+        "lib/index.d.ts"
+      ],
+      "schedules": [
+        "lib/schedules/index.d.ts"
+      ],
+      "render": [
+        "lib/render/index.d.ts"
+      ],
+      "interface": [
+        "lib/interface/index.d.ts"
+      ]
+    }
+  }
+}

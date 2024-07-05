@@ -18,5 +18,7 @@ tsconfig.tsbuildinfo
 *.ntvs*
 *.njsproj
 *.sln
-packages/koishi/dev
-!/packages/koishi/dev/
+drizzle
+drizzle.config.ts
+migrate.ts
+.env.local
