@@ -1,5 +1,11 @@
 # steam-family-bot-core
 
+## 0.0.7-dev.1
+
+### Patch Changes
+
+- optional puppeteer deps
+
 ## 0.0.7-dev.0
 
 ### Patch Changes

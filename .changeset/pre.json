@@ -7,6 +7,7 @@
     "koishi-plugin-steam-family-bot": "0.0.6"
   },
   "changesets": [
+    "long-pens-refuse",
     "thirty-dots-occur"
   ]
 }

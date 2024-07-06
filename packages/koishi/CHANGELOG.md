@@ -1,5 +1,13 @@
 # koishi-plugin-steam-family-bot
 
+## 0.0.7-dev.1
+
+### Patch Changes
+
+- optional puppeteer deps
+- Updated dependencies
+  - steam-family-bot-core@0.0.7-dev.1
+
 ## 0.0.7-dev.0
 
 ### Patch Changes
