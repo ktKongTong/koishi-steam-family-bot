@@ -73,6 +73,7 @@
   "peerDependencies": {
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
+    "koishi": "^4.17.4",
     "node-steam-family-group-api": "^0.0.4-dev.patch04",
     "steam-family-bot-core": "workspace:*"
   }
