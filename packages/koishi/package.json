@@ -29,9 +29,11 @@
     "preview": true,
     "service": {
       "required": [
-        "puppeteer",
         "database",
         "cron"
+      ],
+      "optional": [
+        "puppeteer"
       ]
     },
     "locales": [

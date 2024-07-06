@@ -40,6 +40,7 @@ commands:
     error: 刷新失败，原因未知，如有需要请检查日志
   statistic:
     description: generate stats info for steam family
+    no-render: 没有安装图片渲染所需的依赖，无法生成数据统计图
     no-binding: 你还没有绑定 steam 账户，暂时无法获取统计信息
     no-family: 你还不在 steam 家庭中，暂时无法获取统计信息
     repeat-render: 当前家庭「{{familyId}}」已有一个渲染中任务，请勿重复调用
@@ -56,7 +57,7 @@ commands:
     update-success: 成功更新订阅信息。
     subscribe-success: |
       hello，「{{familyName}}」的成员，成功订阅。订阅信息：
-      xx{{subLib ? '✅' : '❌'}} 订阅库存信息{{subLib ? '，共计 {{familyLibSize}} 项' : ''}}
+      {{subLib ? '✅' : '❌'}} 订阅库存信息{{subLib ? '，共计 {{familyLibSize}} 项' : ''}}
       {{subWish ? '✅' : '❌'}} 订阅愿望单信息{{subWish ? '，共计 {{familyWishesSize}} 项' : ''}}
       游戏封面偏好类型：{{preferGameImgType}}
   unbind:

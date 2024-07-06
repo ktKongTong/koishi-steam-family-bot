@@ -32,6 +32,10 @@ export default () =>
         input,
         rawInput
       ) => {
+        if (!render.isRenderEnable()) {
+          session.sendQueued(session.text('commands.statistic.no-render'))
+          return
+        }
         const tmp = await steamService.db.Account.getSteamAccountBySessionUid(
           session.uid
         )

@@ -13,7 +13,6 @@ import {
 } from './interface'
 
 import {} from 'koishi-plugin-cron'
-import {} from 'koishi-plugin-puppeteer'
 import { dbInit } from '@/db'
 import {
   steamCommands,
