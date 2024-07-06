@@ -1,4 +1,4 @@
-import { BotService, Msg, Session } from '@/interface'
+import { BotService, Msg, Session, tran } from '@/interface'
 import { Bot, Context, h, Session as KoiSession } from 'koishi'
 import { ChannelInfo } from '@/interface'
 
@@ -12,9 +12,11 @@ export class KSession implements Session<ChannelInfo> {
   // create a session Object?
   private readonly session: KoiSession
   uid: string
+  lang: string
   constructor(session: KoiSession) {
     this.session = session
     this.uid = session.uid
+    this.lang = 'zh-cn'
   }
   getSessionInfo(): ChannelInfo {
     return {
@@ -46,12 +48,19 @@ export class KSession implements Session<ChannelInfo> {
   async sendQuote(msg: string): Promise<void> {
     await this.session.sendQueued(msg)
   }
+
+  text(path: string, params: object = {}): string {
+    const res = tran(path, params, this.lang)
+    return res ?? path
+  }
 }
 export class KoishiSession implements Session<ChannelInfo> {
   bot: Bot
   channelInfo: ChannelInfo
   uid: string
+  lang: string
   constructor(bot: Bot, channelInfo: ChannelInfo) {
+    this.lang = 'zh-cn'
     this.bot = bot
     this.uid = channelInfo.uid
     this.channelInfo = channelInfo
@@ -85,6 +94,11 @@ export class KoishiSession implements Session<ChannelInfo> {
 
   sendQuote(msg: string): Promise<void> {
     return Promise.resolve(undefined)
+  }
+
+  text(path: string, params: object = {}): string {
+    const res = tran(path, params, 'zh-cn')
+    return res ?? path
   }
 }
 

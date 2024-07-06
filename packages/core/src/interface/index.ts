@@ -42,6 +42,8 @@ export interface Config {
   SteamHelperAPIHost: string
   libMonitorCron: string
   libInfoSyncerCron: string
+  //assume value is yaml
+  i18nMap: Record<string, string>
   steamDataFetchMode: 'remote' | 'local'
 }
 

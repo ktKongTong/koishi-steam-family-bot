@@ -13,4 +13,7 @@ export class NoOpRender implements ImgRender {
   screenshotFamilyStatistic(token: string, onStart?: () => void): Promise<any> {
     return Promise.resolve(undefined)
   }
+  isRenderEnable(): boolean {
+    return false
+  }
 }

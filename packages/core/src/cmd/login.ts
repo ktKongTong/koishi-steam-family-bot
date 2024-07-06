@@ -26,12 +26,7 @@ export default () =>
           encodeURIComponent(startResult.qrChallengeUrl)
         const buf = await fetch(qrUrl).then((res) => res.arrayBuffer())
         await session.sendImgBuffer(Buffer.from(buf))
-        await session.send(
-          '请在 120s 内通过 steam 手机验证器扫描二维码，并确认登陆'
-        )
-        // loginSession.on('remoteInteraction', () => {
-        //   // session.send(`做得好👍，你已成功扫描二维码，现在只需确认登陆就可以成功绑定 steam 账户，预计有效期为六个月`)
-        // });
+        await session.send(session.text('commands.login.start-login'))
         let status = 'wait'
         loginSession.on('authenticated', async () => {
           status = 'success'
@@ -43,19 +38,23 @@ export default () =>
             .catch((e) => {
               logger.error('login error', e)
               session.send(
-                '登陆出错，数据没能成功新增，可能是因为你目前不在家庭中'
+                session.text('commands.login.login-success-but-add-failed')
               )
             })
-          await session.send(`登陆成功，你好 ${loginSession.accountName}`)
+          await session.send(
+            session.text('commands.login.login-success', {
+              accountName: loginSession.accountName,
+            })
+          )
         })
 
         loginSession.on('timeout', async () => {
-          await session.send('登陆失败，已超时')
+          await session.send(session.text('commands.login.timeout'))
           status = 'failed'
         })
 
         loginSession.on('error', async (err) => {
-          await session.send('登陆出错，暂时无法登陆')
+          await session.send(session.text('commands.login.error'))
           status = 'failed'
         })
 

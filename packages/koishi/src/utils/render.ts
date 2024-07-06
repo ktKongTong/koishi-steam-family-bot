@@ -67,4 +67,8 @@ export class KoishiImgRender implements ImgRender {
   ): Promise<string> {
     return this._render(() => getStatHtml(games), onStart, onError)
   }
+
+  isRenderEnable(): boolean {
+    return false
+  }
 }

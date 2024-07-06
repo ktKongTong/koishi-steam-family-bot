@@ -8,14 +8,15 @@ const cmd = new CommandBuilder()
     async (render, steamService, logger, session, options, input, rawInput) => {
       const steamAccount =
         await steamService.db.Account.getSteamAccountBySteamId(input)
-      // platform.getSessionInfo
       if (steamAccount) {
-        session.sendQueued(`「${input}」已被绑定`)
+        session.sendQueued(
+          session.text('commands.bind.conflict', { steamId: input })
+        )
         return
       }
       const id = new SteamID(input)
       if (!id.isValid()) {
-        session.sendQueued(`「${input}」似乎不是一个 steamID`)
+        session.sendQueued(session.text('commands.bind.not-steamid', { input }))
         return
       }
       const account = await steamService.db.Account.getSteamAccountBySessionUid(
@@ -23,7 +24,7 @@ const cmd = new CommandBuilder()
       )
       if (account && account.status !== 'un-auth') {
         session.sendQueued(
-          `你当前已经绑定了一个经过验证的账号「${account.steamId}」，目前还不支持多账号绑定。`
+          session.text('commands.bind.bind-auth', { steamId: account.steamId })
         )
         return
       }
@@ -36,7 +37,9 @@ const cmd = new CommandBuilder()
         },
         session.getSessionInfo()
       )
-      session.sendQueued(`成功新增账号「${input}」`)
+      session.sendQueued(
+        session.text('commands.bind.bind-success', { steamId: input })
+      )
     }
   )
 

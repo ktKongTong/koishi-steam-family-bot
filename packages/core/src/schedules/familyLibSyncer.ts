@@ -88,7 +88,8 @@ const buildMessages = async <CHANNEL>(
     steamAndFamilyRel: SteamAccountFamilyRel
     channel: CHANNEL
   },
-  logger: Logger
+  logger: Logger,
+  trans: (...args) => string
 ) => {
   const { memberDict, wishes, prevWishes } = await prepareFamilyInfo<CHANNEL>(
     api,
@@ -166,7 +167,11 @@ const buildMessages = async <CHANNEL>(
     const names = newWish.wishers.map(
       (ownerId) => `「${memberDict[ownerId]?.personaName}」`
     )
-    const text = `库存愿望单 + 1。${newWish.itemInfo?.name}，by：${names.join('，')}`
+    // const text = `库存愿望单 + 1。${newWish.itemInfo?.name}，by：${names.join('，')}`
+    const text = trans('schedule.lib-syncer.wishes-increase-one', {
+      name: newWish.itemInfo?.name,
+      owners: names.join('，'),
+    })
     return { text: text, relateAppId: newWish.appId.toString() }
   })
 
@@ -174,7 +179,11 @@ const buildMessages = async <CHANNEL>(
     const names = deletedWish?.steamIds
       ?.split(',')
       ?.map((ownerId) => `「${memberDict[ownerId]?.personaName}」`)
-    const text = `库存愿望单 - 1。${deletedWish.name}，by：${names.join('，')}`
+    // const text = `库存愿望单 - 1。${deletedWish.name}，by：${names.join('，')}`
+    const text = trans('schedule.lib-syncer.wishes-decrease-one', {
+      name: deletedWish.name,
+      owners: names.join('，'),
+    })
     return { text: text, relateAppId: deletedWish.appId.toString() }
   })
 
@@ -192,10 +201,22 @@ const buildMessages = async <CHANNEL>(
     const names = newlySteamIds.map(
       (id) => `「${memberDict[id]?.personaName}」`
     )
-    let text = `愿望单副本 + ${add}。${modifiedWish.itemInfo?.name}，by：${names.join('，')}，当前愿望数：${newWisherIds.length}`
-    if (add <= 0) {
-      text = `愿望单变动，${modifiedWish.itemInfo?.name} 副本 ${add}。当前愿望数 ${newWisherIds.length}`
-    }
+
+    const text = trans(
+      add > 0
+        ? 'schedule.lib-syncer.wishes-copy-increase'
+        : 'schedule.lib-syncer.wishes-copy-decrease',
+      {
+        name: modifiedWish.itemInfo?.name,
+        cnt: Math.abs(add),
+        owners: names.join('，'),
+        totalCount: newlySteamIds.length,
+      }
+    )
+    // if (add <= 0) {
+    //   text = `愿望单变动，${modifiedWish.itemInfo?.name} 副本 ${add}。当前愿望数 ${newWisherIds.length}`
+    // }
+
     return { text: text, relateAppId: modifiedWish.appId.toString() }
   })
 
@@ -203,15 +224,22 @@ const buildMessages = async <CHANNEL>(
     const names = newlib.ownerSteamids.map(
       (ownerId) => `「${memberDict[String(ownerId)]?.personaName}」`
     )
-    let text = `感谢富哥${names.join('，')}，库存喜+1。${newlib.name}`
-    if (names.length > 1) {
-      text += '当前副本数 ' + names.length
-    }
+    // let text = `感谢富哥${names.join('，')}，库存喜+1。${newlib.name}`
+    // if (names.length > 1) {
+    //   text += '当前副本数 ' + names.length
+    // }
+    const text = trans('schedule.lib-syncer.lib-increase-one', {
+      name: newlib.name,
+      totalCount: names.length,
+      owners: names.join('，'),
+    })
     return { text: text, relateAppId: newlib.appid.toString() }
   })
 
   const deleteLibMsg = deletedLibs.map((deletedLib) => ({
-    text: `库存变动，库存 -1。${deletedLib.name}`,
+    text: trans('schedule.lib-syncer.lib-decrease-one', {
+      name: deletedLib.name,
+    }),
     relateAppId: deletedLib.appId.toString(),
   }))
 
@@ -229,10 +257,22 @@ const buildMessages = async <CHANNEL>(
     const names = newlySteamIds.map(
       (id) => `「${memberDict[String(id)]?.personaName}」`
     )
-    let text = `感谢富哥${names.join('，')}，副本喜+${add}。${modifiedLib.name}，当前副本数 ${newOwnerIds.length}`
-    if (add <= 0) {
-      text = `库存变动，${modifiedLib.name} 副本 ${add}。当前副本数 ${newOwnerIds.length}`
-    }
+
+    const text = trans(
+      add > 0
+        ? 'schedule.lib-syncer.wishes-copy-increase'
+        : 'schedule.lib-syncer.wishes-copy-decrease',
+      {
+        name: modifiedLib?.name,
+        cnt: Math.abs(add),
+        owners: names.join('，'),
+        totalCount: newOwnerIds.length,
+      }
+    )
+    // let text = `感谢富哥${names.join('，')}，副本喜+${add}。${modifiedLib.name}，当前副本数 ${newOwnerIds.length}`
+    // if (add <= 0) {
+    //   text = `库存变动，${modifiedLib.name} 副本 ${add}。当前副本数 ${newOwnerIds.length}`
+    // }
     return {
       text,
       relateAppId: modifiedLib.appid.toString(),
@@ -272,11 +312,19 @@ const handleSubScribe = async <CHANNEL, SESSION extends Session>(
     )
     return
   }
+  // eslint-disable-next-line prefer-spread
+  const trans = (...args) => session.text.apply(session, args)
   if (!apiServiceResult.isSuccess()) {
     await handleTokenInvalid<CHANNEL>(logger, item, session, steam)
     return
   }
-  const msgs = await buildMessages(steam, apiServiceResult.data, item, logger)
+  const msgs = await buildMessages(
+    steam,
+    apiServiceResult.data,
+    item,
+    logger,
+    trans
+  )
   logger.info(
     `steam 家庭「${item.subscription.steamFamilyId}」库存/愿望单变更 ${msgs.length}`
   )
@@ -313,10 +361,13 @@ const handleMessage = (msgs: Msg[], session: Session) => {
   if (msgs.length > 5) {
     msgs.slice(0, 3).forEach((msg) => send(msg))
     const size = msgs.length - 3
-    const t = size > 30 ? '30项' : ''
+    const t = size > 30 ? 30 : size
     session.sendMsg({
       type: 'string',
-      content: `愿望单/库存短时间内发生大量变更,共 ${msgs.length} 项，为防止刷屏，仅播报${t}简略信息。`,
+      content: session.text('schedule.lib-syncer.big-change', {
+        totalCount: msgs.length,
+        shortSize: t,
+      }),
     })
     const chunkedText = _.chunk(msgs.slice(3), 10)
       .slice(0, 3)

@@ -33,4 +33,5 @@ export interface ImgRender {
     onStart?: () => void,
     onError?: () => void
   ): Promise<string>
+  isRenderEnable(): boolean
 }

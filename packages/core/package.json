@@ -44,9 +44,10 @@
     "skia-canvas": "^1.0.1"
   },
   "scripts": {
+    "copy-yml-resource": "node scripts/build.mjs",
     "clean": "rm -rf lib tsconfig.tsbuildinfo",
     "compile": "tsc && tsc-alias",
-    "build": "pnpm run clean && pnpm run compile",
+    "build": "pnpm run clean && pnpm run copy-yml-resource && pnpm run compile",
     "pub": "pnpm run build && pnpm publish"
   },
   "typesVersions": {
