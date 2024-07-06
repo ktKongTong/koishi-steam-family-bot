@@ -1,5 +1,11 @@
 # koishi-plugin-steam-family-bot
 
+## 0.0.7-dev.2
+
+### Patch Changes
+
+- fix: add koishi peerDependencies
+
 ## 0.0.7-dev.1
 
 ### Patch Changes
