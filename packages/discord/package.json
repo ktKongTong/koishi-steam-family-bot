@@ -1,6 +1,6 @@
 {
   "name": "steam-family-bot-discord",
-  "version": "0.0.7-dev.2",
+  "version": "0.0.7-dev.3",
   "description": "",
   "private": true,
   "main": "index.js",

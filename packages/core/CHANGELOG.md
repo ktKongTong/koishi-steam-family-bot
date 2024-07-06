@@ -1,5 +1,11 @@
 # steam-family-bot-core
 
+## 0.0.7-dev.3
+
+### Patch Changes
+
+- fix: make koishi-plugin-puppeteer optional
+
 ## 0.0.7-dev.1
 
 ### Patch Changes
