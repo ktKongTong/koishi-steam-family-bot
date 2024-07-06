@@ -27,7 +27,10 @@ export * from './config'
 
 export const name = 'koishi-steam-family-lib-monitor'
 
-export const inject = ['database', 'puppeteer', 'cron']
+export const inject = {
+  required: ['database', 'cron'],
+  optional: ['puppeteer'],
+}
 
 declare module 'koishi' {
   interface Tables {
