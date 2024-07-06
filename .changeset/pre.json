@@ -1,0 +1,12 @@
+{
+  "mode": "pre",
+  "tag": "dev",
+  "initialVersions": {
+    "steam-family-bot-core": "0.0.6",
+    "steam-family-bot-discord": "0.0.6",
+    "koishi-plugin-steam-family-bot": "0.0.6"
+  },
+  "changesets": [
+    "thirty-dots-occur"
+  ]
+}
