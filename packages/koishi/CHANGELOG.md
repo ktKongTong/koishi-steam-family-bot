@@ -1,5 +1,13 @@
 # koishi-plugin-steam-family-bot
 
+## 0.0.7-dev.6
+
+### Patch Changes
+
+- fix: fix session import
+- Updated dependencies
+  - steam-family-bot-core@0.0.7-dev.6
+
 ## 0.0.7-dev.5
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # steam-family-bot-core
 
+## 0.0.7-dev.6
+
+### Patch Changes
+
+- fix: fix session import
+
 ## 0.0.7-dev.5
 
 ### Patch Changes
