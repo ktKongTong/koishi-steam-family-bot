@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      steam-family-bot-core:
-        specifier: ^0.0.7-dev.3
-        version: 0.0.7-dev.3(canvas@2.11.2)(skia-canvas@1.0.1)
     devDependencies:
       '@changesets/cli':
         specifier: ^2.27.5
@@ -83,7 +79,7 @@ importers:
         version: 8.0.0-alpha.30(eslint@9.5.0)(typescript@5.4.5)
       vitepress:
         specifier: ^1.2.2
-        version: 1.2.3(@algolia/client-search@4.23.3)(@types/node@20.14.2)(@types/react@18.3.3)(jwt-decode@4.0.0)(postcss@8.4.38)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)(typescript@5.4.5)
+        version: 1.2.3(@algolia/client-search@4.23.3)(@types/node@20.14.2)(@types/react@18.3.3)(jwt-decode@4.0.0)(postcss@8.4.38)(react-dom@18.3.1(react@0.14.10))(react@0.14.10)(search-insights@2.14.0)(typescript@5.4.5)
 
   packages/core:
     dependencies:
@@ -4142,12 +4138,6 @@ packages:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
     engines: {node: '>= 0.8'}
 
-  steam-family-bot-core@0.0.7-dev.3:
-    resolution: {integrity: sha512-JPKWdFPwwPFRjQpc7J3GJJFPg/XhsQH21q/Gg8DbPk6vRTSMzCq2IgDBPC7S1NE/QpKtAoFB8ubb+QcaXSkJWA==}
-    peerDependencies:
-      canvas: ^2.11.2
-      skia-canvas: ^1.0.1
-
   steam-session@1.7.2:
     resolution: {integrity: sha512-BfOhwKqrzuiX9xeZ0X9IUhd3cwsZYzfGSkk51Oah7FM7JqDCDlcMrdv/1Q+YT7pBWpPCnnrncVkxiZ5mrRToCg==}
     engines: {node: '>=12.22.0'}
@@ -5122,9 +5112,9 @@ snapshots:
 
   '@docsearch/css@3.6.0': {}
 
-  '@docsearch/js@3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)':
+  '@docsearch/js@3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@0.14.10))(react@0.14.10)(search-insights@2.14.0)':
     dependencies:
-      '@docsearch/react': 3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)
+      '@docsearch/react': 3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@0.14.10))(react@0.14.10)(search-insights@2.14.0)
       preact: 10.22.0
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -5133,7 +5123,7 @@ snapshots:
       - react-dom
       - search-insights
 
-  '@docsearch/react@3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)':
+  '@docsearch/react@3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@0.14.10))(react@0.14.10)(search-insights@2.14.0)':
     dependencies:
       '@algolia/autocomplete-core': 1.9.3(@algolia/client-search@4.23.3)(algoliasearch@4.23.3)(search-insights@2.14.0)
       '@algolia/autocomplete-preset-algolia': 1.9.3(@algolia/client-search@4.23.3)(algoliasearch@4.23.3)
@@ -5141,8 +5131,8 @@ snapshots:
       algoliasearch: 4.23.3
     optionalDependencies:
       '@types/react': 18.3.3
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      react: 0.14.10
+      react-dom: 18.3.1(react@0.14.10)
       search-insights: 2.14.0
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -8435,6 +8425,13 @@ snapshots:
     dependencies:
       react: 0.14.10
 
+  react-dom@18.3.1(react@0.14.10):
+    dependencies:
+      loose-envify: 1.4.0
+      react: 0.14.10
+      scheduler: 0.23.2
+    optional: true
+
   react-dom@18.3.1(react@18.3.1):
     dependencies:
       loose-envify: 1.4.0
@@ -8809,22 +8806,6 @@ snapshots:
 
   statuses@2.0.1: {}
 
-  steam-family-bot-core@0.0.7-dev.3(canvas@2.11.2)(skia-canvas@1.0.1):
-    dependencies:
-      canvas: 2.11.2
-      dayjs: 1.11.11
-      echarts: 5.5.0
-      jwt-decode: 4.0.0
-      lodash: 4.17.21
-      node-steam-family-group-api: 0.0.4-dev.patch04
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      skia-canvas: 1.0.1
-      steam-session: 1.7.2
-      steamid: 2.0.0
-    transitivePeerDependencies:
-      - supports-color
-
   steam-session@1.7.2:
     dependencies:
       '@doctormckay/stdlib': 2.10.0
@@ -9168,10 +9149,10 @@ snapshots:
       '@types/node': 20.14.2
       fsevents: 2.3.3
 
-  vitepress@1.2.3(@algolia/client-search@4.23.3)(@types/node@20.14.2)(@types/react@18.3.3)(jwt-decode@4.0.0)(postcss@8.4.38)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)(typescript@5.4.5):
+  vitepress@1.2.3(@algolia/client-search@4.23.3)(@types/node@20.14.2)(@types/react@18.3.3)(jwt-decode@4.0.0)(postcss@8.4.38)(react-dom@18.3.1(react@0.14.10))(react@0.14.10)(search-insights@2.14.0)(typescript@5.4.5):
     dependencies:
       '@docsearch/css': 3.6.0
-      '@docsearch/js': 3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)
+      '@docsearch/js': 3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@0.14.10))(react@0.14.10)(search-insights@2.14.0)
       '@shikijs/core': 1.6.5
       '@shikijs/transformers': 1.6.5
       '@types/markdown-it': 14.1.1
