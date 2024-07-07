@@ -12,13 +12,42 @@
     "email": "kt@ktlab.io"
   },
   "exports": {
-    ".": "./lib/index.js",
-    "./utils": "./lib/utils/index.js",
-    "./interface": "./lib/interface/index.js",
-    "./schedules": "./lib/schedules/index.js",
-    "./render": "./lib/render/index.js",
-    "./cmd": "./lib/cmd/index.js",
-    "./package.json": "./package.json"
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib/index.js",
+      "types": "./src/index.ts",
+      "development": "./src/index.ts"
+    },
+    "./utils": {
+      "require": "./lib/utils/index.js",
+      "default": "./lib/utils/index.js",
+      "types": "./src/utils/index.ts",
+      "development": "./src/utils/index.ts"
+    },
+    "./interface": {
+      "require": "./lib/interface/index.js",
+      "default": "./lib/interface/index.js",
+      "types": "./src/interface/index.ts",
+      "development": "./src/interface/index.ts"
+    },
+    "./schedules": {
+      "require": "./lib/schedules/index.js",
+      "default": "./lib/schedules/index.js",
+      "types": "./src/schedules/index.ts",
+      "development": "./src/schedules/index.ts"
+    },
+    "./render": {
+      "require": "./lib/render/index.js",
+      "default": "./lib/render/index.js",
+      "types": "./src/render/index.ts",
+      "development": "./src/render/index.ts"
+    },
+    "./cmd": {
+      "require": "./lib/cmd/index.js",
+      "default": "./lib/cmd/index.js",
+      "types": "./src/cmd/index.ts",
+      "development": "./src/cmd/index.ts"
+    }
   },
   "keywords": [
     "steam",
@@ -46,8 +75,8 @@
   "scripts": {
     "copy-yml-resource": "node scripts/build.mjs",
     "clean": "rm -rf lib tsconfig.tsbuildinfo",
-    "compile": "tsc && tsc-alias",
-    "build": "pnpm run clean && pnpm run copy-yml-resource && pnpm run compile",
+    "compile": "tsc -p tsconfig.build.json && tsc-alias",
+    "build": "pnpm run copy-yml-resource && pnpm run compile",
     "pub": "pnpm run build && pnpm publish"
   },
   "typesVersions": {

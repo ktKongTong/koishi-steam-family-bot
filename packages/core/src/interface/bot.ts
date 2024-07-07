@@ -5,19 +5,12 @@ export interface BotService<T extends ChannelInfo, S extends Session<T>> {
   getSessionByChannelInfo(channelInfo: T): S
 }
 
-export interface Msg {
-  type: 'string' | 'image'
-  content: string
-  // quote
-}
-
 // @ts-ignore
 export interface Session<T extends any = any> {
   uid: string
   getSessionInfo(): T
-  sendMsg(msg: Msg): Promise<void>
   sendImgBuffer(content: any, mimeType?: string): Promise<void>
-  // sendImgUrl(url: string): Promise<void>
+  sendImgUrl(url: string): Promise<void>
   // i18n
   text(path: string, params?: object): string
   send(msg: string): Promise<void>

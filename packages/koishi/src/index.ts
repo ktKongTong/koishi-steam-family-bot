@@ -60,7 +60,7 @@ export function apply(ctx: Context, config: Config) {
   })
   dbInit(ctx, config)
   const logger = baseLogger.extend('cmd')
-  const steam = new SteamService<ChannelInfo>(ctx, config)
+  const steamService = new SteamService<ChannelInfo>(ctx, config)
   const render = new KoishiImgRender(ctx, config)
   steamCommands<ChannelInfo>().forEach((c: Command<ChannelInfo>) => {
     let cmd = ctx.command(`slm.${c.name}`)
@@ -82,7 +82,15 @@ export function apply(ctx: Context, config: Config) {
     }
     cmd.action(async ({ session, options }, input) => {
       const kSession = new KSession(session)
-      await c.callback(render, steam, logger, kSession, options, input, input)
+      await c.callback({
+        render,
+        steamService,
+        logger,
+        session: kSession,
+        options,
+        input,
+        rawInput: input,
+      })
     })
   })
   ctx

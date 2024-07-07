@@ -66,15 +66,13 @@ const handleTokenInvalid = async <CHANNEL>(
   }
   if (times >= 3) {
     await steam.db.clearAccountInfo(item.account)
-    session.sendMsg({
-      type: 'string',
-      content: `steam account 「${item.account.steamId}」token has expired, now this account binding and subscription has deleted due to none response`,
-    })
+    session.send(
+      `steam account 「${item.account.steamId}」token has expired, now this account binding and subscription has deleted due to none response`
+    )
   } else {
-    session.sendMsg({
-      type: 'string',
-      content: `steam account 「${item.account.steamId}」token has expired, please dm me and follow the instruction with [renew] cmd to refresh it`,
-    })
+    session.send(
+      `steam account 「${item.account.steamId}」token has expired, please dm me and follow the instruction with [renew] cmd to refresh it`
+    )
     await steam.db.invalidAccount(item.account.id, item.subscription)
   }
 }
@@ -355,20 +353,19 @@ interface Msg {
 
 const handleMessage = (msgs: Msg[], session: Session) => {
   const send = (msg: Msg) => {
-    session.sendMsg({ type: 'string', content: msg.text })
-    session.sendMsg({ type: 'image', content: msg.img })
+    session.send(msg.text)
+    session.sendImgUrl(msg.img)
   }
   if (msgs.length > 5) {
     msgs.slice(0, 3).forEach((msg) => send(msg))
     const size = msgs.length - 3
     const t = size > 30 ? 30 : size
-    session.sendMsg({
-      type: 'string',
-      content: session.text('schedule.lib-syncer.big-change', {
+    session.send(
+      session.text('schedule.lib-syncer.big-change', {
         totalCount: msgs.length,
         shortSize: t,
-      }),
-    })
+      })
+    )
     const chunkedText = _.chunk(msgs.slice(3), 10)
       .slice(0, 3)
       .map((appTexts, index) =>
@@ -376,9 +373,7 @@ const handleMessage = (msgs: Msg[], session: Session) => {
           .map((appText, idx) => `${index * 10 + idx + 1}. ${appText.text}`)
           .join('\n')
       )
-    chunkedText.forEach((text) => {
-      session.sendMsg({ type: 'string', content: text })
-    })
+    chunkedText.forEach(session.send)
   } else {
     msgs.forEach((msg) => send(msg))
   }

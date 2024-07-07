@@ -35,13 +35,16 @@ export class KoishiImgRender implements ImgRender {
       await new Promise<void>((resolve, reject) => {
         setTimeout(resolve, 5000)
       })
-      return page
-        .$('body')
-        .then(next)
-        .catch((e) => {
-          onError?.()
-          return ''
-        })
+      return (
+        page
+          .$('body')
+          // @ts-ignore
+          .then(next)
+          .catch((e) => {
+            onError?.()
+            return ''
+          })
+      )
     })
     return buf
   }
@@ -70,7 +73,7 @@ export class KoishiImgRender implements ImgRender {
       }, 20000)
     })
     const elm = await page.waitForSelector('#data-graph', { timeout: 20000 })
-    const buffer = await elm.screenshot({})
+    const buffer = await elm!.screenshot({})
     await page.close()
     const image = h.image(buffer, 'image/png')
     return image

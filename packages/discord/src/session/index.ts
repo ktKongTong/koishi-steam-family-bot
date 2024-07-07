@@ -1,4 +1,4 @@
-import { Msg, Session } from 'steam-family-bot-core'
+import { Session } from 'steam-family-bot-core'
 import { ChannelInfo } from '@/db'
 import { CommandInteraction } from 'discord.js'
 
@@ -27,15 +27,11 @@ export class DiscordSession implements Session<ChannelInfo> {
     await this.sendAnyway(msg)
   }
 
-  async sendMsg(msg: Msg): Promise<void> {
-    if (msg.type === 'image') {
-      const buf = await fetch(msg.content).then((res) => res.arrayBuffer())
-      await this.sendAnyway({
-        files: [{ attachment: Buffer.from(buf), name: 'image.png' }],
-      })
-    } else {
-      await this.sendAnyway(msg.content)
-    }
+  async sendImageUrl(url: string): Promise<void> {
+    const buf = await fetch(url).then((res) => res.arrayBuffer())
+    await this.sendAnyway({
+      files: [{ attachment: Buffer.from(buf), name: 'image.png' }],
+    })
   }
 
   async sendImgBuffer(content: any, mimeType?: string): Promise<void> {
@@ -49,5 +45,13 @@ export class DiscordSession implements Session<ChannelInfo> {
 
   async sendQuote(msg: string): Promise<void> {
     await this.sendAnyway(msg)
+  }
+
+  text(path: string, params?: object): string {
+    return ''
+  }
+
+  sendImgUrl(url: string): Promise<void> {
+    return Promise.resolve(undefined)
   }
 }

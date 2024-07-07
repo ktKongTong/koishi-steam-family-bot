@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    /* Basic Options */
+    "incremental": true,
+    "declaration": true,
+    "allowJs": true,
+    "noEmit": true,
+    "target": "es2022",
+    "module": "commonjs",
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strictPropertyInitialization": false,
+    "noImplicitThis": false,
+    "resolveJsonModule": true,
+
+    /* Experimental Options */
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false
+  }
+}

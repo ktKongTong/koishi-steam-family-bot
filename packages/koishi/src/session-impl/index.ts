@@ -1,4 +1,4 @@
-import { BotService, Msg, Session, tran } from '@/interface'
+import { BotService, Session, tran } from '@/interface'
 import { Bot, Context, h, Session as KoiSession } from 'koishi'
 import { ChannelInfo } from '@/interface'
 
@@ -30,13 +30,8 @@ export class KSession implements Session<ChannelInfo> {
   async send(msg: string): Promise<void> {
     await this.session.send(msg)
   }
-
-  async sendMsg(msg: Msg): Promise<void> {
-    await this.session.send(
-      h('message', [
-        msg.type == 'image' ? h('img', { src: msg.content }) : msg.content,
-      ])
-    )
+  async sendImgUrl(url: string): Promise<void> {
+    await this.session.send(h('message', [h('img', { src: url })]))
   }
   async sendImgBuffer(content: any, mimeType?: string): Promise<void> {
     await this.session.send(h.image(content, mimeType ?? 'image/png'))
@@ -54,6 +49,7 @@ export class KSession implements Session<ChannelInfo> {
     return res ?? path
   }
 }
+
 export class KoishiSession implements Session<ChannelInfo> {
   bot: Bot
   channelInfo: ChannelInfo
@@ -65,15 +61,13 @@ export class KoishiSession implements Session<ChannelInfo> {
     this.uid = channelInfo.uid
     this.channelInfo = channelInfo
   }
-  async sendMsg(msg: Msg): Promise<void> {
+
+  async sendImgUrl(url: string): Promise<void> {
     await this.bot.sendMessage(
       this.channelInfo.channelId,
-      h('message', [
-        msg.type == 'image' ? h('img', { src: msg.content }) : msg.content,
-      ])
+      h('message', [h('img', { src: url })])
     )
   }
-
   async sendImgBuffer(content: any, mimeType?: string): Promise<void> {
     await this.bot.sendMessage(
       this.channelInfo.channelId,

@@ -46,20 +46,23 @@
     }
   },
   "scripts": {
-    "compile": "tsc && tsc-alias",
+    "typecheck": "tsc",
+    "compile": "tsc -p tsconfig.build.json  && tsc-alias",
     "copy-yml-resource": "node scripts/build.mjs",
     "clean": "rm -rf lib  tsconfig.tsbuildinfo",
-    "build": " pnpm run clean &&  pnpm run copy-yml-resource && pnpm run compile",
-    "dev": "ts-node dev/index.ts",
+    "build": "pnpm run copy-yml-resource && pnpm run compile",
+    "dev": "ts-node dev/index.ts && tsc-alias --debug",
     "bd": "pnpm run build & pnpm run dev",
     "kdev": "koishi start dev/koishi.yml"
   },
   "devDependencies": {
+    "@koishijs/loader": "^4.5.9",
     "@koishijs/plugin-console": "^5.29.1",
     "@koishijs/plugin-database-sqlite": "^4.4.1",
     "@koishijs/plugin-echo": "^2.2.5",
     "@koishijs/plugin-http": "^0.5.3",
     "@koishijs/plugin-logger": "^2.6.8",
+    "@koishijs/plugin-mock": "^2.6.6",
     "@koishijs/plugin-sandbox": "^3.3.1",
     "@types/node": "^20.14.2",
     "esbuild-register": "^3.5.0",
@@ -72,9 +75,9 @@
   },
   "peerDependencies": {
     "js-yaml": "^4.1.0",
-    "lodash": "^4.17.21",
     "koishi": "^4.17.4",
     "koishi-plugin-cron": "^3.1.0",
+    "lodash": "^4.17.21",
     "node-steam-family-group-api": "^0.0.4-dev.patch04",
     "steam-family-bot-core": "workspace:*"
   }

@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "./packages",
+    "paths": {
+      "@steam-family-bot/core": ["core/src"],
+      "@steam-family-bot/koishi": ["koishi/src"],
+      "@steam-family-bot/discord": ["discord/src"]
+    }
+  },
+  "include": ["**/*", ".*.js"]
+}

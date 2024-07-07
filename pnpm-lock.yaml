@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      steam-family-bot-core:
+        specifier: ^0.0.7-dev.3
+        version: 0.0.7-dev.3(canvas@2.11.2)(skia-canvas@1.0.1)
     devDependencies:
       '@changesets/cli':
         specifier: ^2.27.5
@@ -68,6 +72,9 @@ importers:
       tsc-alias:
         specifier: ^1.8.10
         version: 1.8.10
+      tsx:
+        specifier: ^4.16.2
+        version: 4.16.2
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -76,7 +83,7 @@ importers:
         version: 8.0.0-alpha.30(eslint@9.5.0)(typescript@5.4.5)
       vitepress:
         specifier: ^1.2.2
-        version: 1.2.3(@algolia/client-search@4.23.3)(@types/node@20.14.2)(@types/react@18.3.3)(jwt-decode@4.0.0)(postcss@8.4.38)(react-dom@18.3.1(react@0.14.10))(react@0.14.10)(search-insights@2.14.0)(typescript@5.4.5)
+        version: 1.2.3(@algolia/client-search@4.23.3)(@types/node@20.14.2)(@types/react@18.3.3)(jwt-decode@4.0.0)(postcss@8.4.38)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)(typescript@5.4.5)
 
   packages/core:
     dependencies:
@@ -144,6 +151,9 @@ importers:
 
   packages/koishi:
     dependencies:
+      js-yaml:
+        specifier: ^4.1.0
+        version: 4.1.0
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -154,6 +164,9 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
+      '@koishijs/loader':
+        specifier: ^4.5.9
+        version: 4.5.9(@koishijs/core@4.17.7)
       '@koishijs/plugin-console':
         specifier: ^5.29.1
         version: 5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
@@ -169,6 +182,9 @@ importers:
       '@koishijs/plugin-logger':
         specifier: ^2.6.8
         version: 2.6.8(@koishijs/plugin-console@5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)))(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
+      '@koishijs/plugin-mock':
+        specifier: ^2.6.6
+        version: 2.6.6(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
       '@koishijs/plugin-sandbox':
         specifier: ^3.3.1
         version: 3.3.1(@koishijs/plugin-console@5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)))(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
@@ -1122,6 +1138,11 @@ packages:
     peerDependencies:
       '@koishijs/core': 4.17.7
 
+  '@koishijs/loader@4.5.9':
+    resolution: {integrity: sha512-km6HGc1SoGGcQc3zWksAqkhRU6joiqQ/yIJMwR9sOpgzjq2Hlf6Hb4fsOveclNO07g4mMbXqQF2dSJf3uCGfQQ==}
+    peerDependencies:
+      '@koishijs/core': 4.17.9
+
   '@koishijs/plugin-console@5.29.1':
     resolution: {integrity: sha512-oio5txymTs9X0Vd6K88wCPKPvXVBcINV018tFYBpAOeCkl5LQKtxghxO5YgUqstc2pep6Un2ZBFCWTbFAKyI+g==}
     peerDependencies:
@@ -1154,6 +1175,11 @@ packages:
     peerDependenciesMeta:
       '@koishijs/plugin-console':
         optional: true
+
+  '@koishijs/plugin-mock@2.6.6':
+    resolution: {integrity: sha512-cf6aNCnGszeF3ZIJ/zOtLBynMO0F/Euyt2JAxg4JNTPVitdp9WAIIFyRdgNbB4vuWRz5t36inxFi4aMkPFygjQ==}
+    peerDependencies:
+      koishi: ^4.17.9
 
   '@koishijs/plugin-proxy-agent@0.3.2':
     resolution: {integrity: sha512-aBDWWIIVi+Als8tQs70PzMCLgqZivS3ufTQ92fdA4EEnK6KWCSOIm4aByu2v7fkw5GHz5yglYj2fOueqfmLOkQ==}
@@ -4116,6 +4142,12 @@ packages:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
     engines: {node: '>= 0.8'}
 
+  steam-family-bot-core@0.0.7-dev.3:
+    resolution: {integrity: sha512-JPKWdFPwwPFRjQpc7J3GJJFPg/XhsQH21q/Gg8DbPk6vRTSMzCq2IgDBPC7S1NE/QpKtAoFB8ubb+QcaXSkJWA==}
+    peerDependencies:
+      canvas: ^2.11.2
+      skia-canvas: ^1.0.1
+
   steam-session@1.7.2:
     resolution: {integrity: sha512-BfOhwKqrzuiX9xeZ0X9IUhd3cwsZYzfGSkk51Oah7FM7JqDCDlcMrdv/1Q+YT7pBWpPCnnrncVkxiZ5mrRToCg==}
     engines: {node: '>=12.22.0'}
@@ -4296,6 +4328,11 @@ packages:
   tsscmp@1.0.6:
     resolution: {integrity: sha512-LxhtAkPDTkVCMQjt2h6eBVY28KCjikZqZfMcC15YBeNjkgUpdCfBu5HoiOTDu86v6smE8yOjyEktJ8hlbANHQA==}
     engines: {node: '>=0.6.x'}
+
+  tsx@4.16.2:
+    resolution: {integrity: sha512-C1uWweJDgdtX2x600HjaFaucXTilT7tgUZHbOE4+ypskZ1OP8CRCSDkCxG6Vya9EwaFIVagWwpaVAn5wzypaqQ==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
 
   tty-table@4.2.3:
     resolution: {integrity: sha512-Fs15mu0vGzCrj8fmJNP7Ynxt5J7praPXqFN0leZeZBXJwkMxv9cb2D454k1ltrtUSJbZ4yH4e0CynsHLxmUfFA==}
@@ -5085,9 +5122,9 @@ snapshots:
 
   '@docsearch/css@3.6.0': {}
 
-  '@docsearch/js@3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@0.14.10))(react@0.14.10)(search-insights@2.14.0)':
+  '@docsearch/js@3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)':
     dependencies:
-      '@docsearch/react': 3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@0.14.10))(react@0.14.10)(search-insights@2.14.0)
+      '@docsearch/react': 3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)
       preact: 10.22.0
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -5096,7 +5133,7 @@ snapshots:
       - react-dom
       - search-insights
 
-  '@docsearch/react@3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@0.14.10))(react@0.14.10)(search-insights@2.14.0)':
+  '@docsearch/react@3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)':
     dependencies:
       '@algolia/autocomplete-core': 1.9.3(@algolia/client-search@4.23.3)(algoliasearch@4.23.3)(search-insights@2.14.0)
       '@algolia/autocomplete-preset-algolia': 1.9.3(@algolia/client-search@4.23.3)(algoliasearch@4.23.3)
@@ -5104,8 +5141,8 @@ snapshots:
       algoliasearch: 4.23.3
     optionalDependencies:
       '@types/react': 18.3.3
-      react: 0.14.10
-      react-dom: 18.3.1(react@0.14.10)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
       search-insights: 2.14.0
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -5498,6 +5535,13 @@ snapshots:
       js-yaml: 4.1.0
       ns-require: 1.1.4
 
+  '@koishijs/loader@4.5.9(@koishijs/core@4.17.7)':
+    dependencies:
+      '@koishijs/core': 4.17.7
+      dotenv: 16.4.5
+      js-yaml: 4.1.0
+      ns-require: 1.1.4
+
   '@koishijs/plugin-console@5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))':
     dependencies:
       '@koishijs/console': 5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
@@ -5535,6 +5579,10 @@ snapshots:
       koishi: 4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
     optionalDependencies:
       '@koishijs/plugin-console': 5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
+
+  '@koishijs/plugin-mock@2.6.6(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))':
+    dependencies:
+      koishi: 4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
 
   '@koishijs/plugin-proxy-agent@0.3.2(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))':
     dependencies:
@@ -8387,13 +8435,6 @@ snapshots:
     dependencies:
       react: 0.14.10
 
-  react-dom@18.3.1(react@0.14.10):
-    dependencies:
-      loose-envify: 1.4.0
-      react: 0.14.10
-      scheduler: 0.23.2
-    optional: true
-
   react-dom@18.3.1(react@18.3.1):
     dependencies:
       loose-envify: 1.4.0
@@ -8768,6 +8809,22 @@ snapshots:
 
   statuses@2.0.1: {}
 
+  steam-family-bot-core@0.0.7-dev.3(canvas@2.11.2)(skia-canvas@1.0.1):
+    dependencies:
+      canvas: 2.11.2
+      dayjs: 1.11.11
+      echarts: 5.5.0
+      jwt-decode: 4.0.0
+      lodash: 4.17.21
+      node-steam-family-group-api: 0.0.4-dev.patch04
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      skia-canvas: 1.0.1
+      steam-session: 1.7.2
+      steamid: 2.0.0
+    transitivePeerDependencies:
+      - supports-color
+
   steam-session@1.7.2:
     dependencies:
       '@doctormckay/stdlib': 2.10.0
@@ -8965,6 +9022,13 @@ snapshots:
 
   tsscmp@1.0.6: {}
 
+  tsx@4.16.2:
+    dependencies:
+      esbuild: 0.21.5
+      get-tsconfig: 4.7.5
+    optionalDependencies:
+      fsevents: 2.3.3
+
   tty-table@4.2.3:
     dependencies:
       chalk: 4.1.2
@@ -9104,10 +9168,10 @@ snapshots:
       '@types/node': 20.14.2
       fsevents: 2.3.3
 
-  vitepress@1.2.3(@algolia/client-search@4.23.3)(@types/node@20.14.2)(@types/react@18.3.3)(jwt-decode@4.0.0)(postcss@8.4.38)(react-dom@18.3.1(react@0.14.10))(react@0.14.10)(search-insights@2.14.0)(typescript@5.4.5):
+  vitepress@1.2.3(@algolia/client-search@4.23.3)(@types/node@20.14.2)(@types/react@18.3.3)(jwt-decode@4.0.0)(postcss@8.4.38)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)(typescript@5.4.5):
     dependencies:
       '@docsearch/css': 3.6.0
-      '@docsearch/js': 3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@0.14.10))(react@0.14.10)(search-insights@2.14.0)
+      '@docsearch/js': 3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.14.0)
       '@shikijs/core': 1.6.5
       '@shikijs/transformers': 1.6.5
       '@types/markdown-it': 14.1.1
