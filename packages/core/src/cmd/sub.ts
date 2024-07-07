@@ -88,7 +88,7 @@ export default () =>
           familyWishesSize: familyWishes.length,
           subLib: subLib,
           subWishes: subWish,
-          preferImgType: preferImgStringToEnum(preferGameImgType),
+          preferGameImgType: preferImgStringToEnum(preferGameImgType),
         })
         await session.sendQueued(text)
       } else {
@@ -101,13 +101,13 @@ export default () =>
         )
 
         await session.sendQuote(
-          session.text('commands.subscribe.update-success', {
-            familyId: account.familyId,
+          session.text('commands.subscribe.subscribe-success', {
+            familyName: res.familyName,
             familyLibSize: res.libSize,
             familyWishesSize: res.wishSize,
             subLib: subLib,
             subWishes: subWish,
-            preferImgType: preferImgStringToEnum(preferGameImgType),
+            preferGameImgType: preferImgStringToEnum(preferGameImgType),
           })
         )
       }

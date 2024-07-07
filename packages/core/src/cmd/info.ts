@@ -52,7 +52,7 @@ export default () =>
         familyWishesSize: familyWishes.length,
         subLib: sub.subLib,
         subWishes: sub.subWishes,
-        preferImgType: preferImgStringToEnum(sub.preferGameImgType),
+        preferGameImgType: preferImgStringToEnum(sub.preferGameImgType),
       })
 
       session.sendQueued(text)

@@ -37,10 +37,11 @@ export function loadI18nConfig(lang: string, obj: any) {
 }
 
 function safeEval(expr, context) {
-  const fn = new Function(...Object.keys(context), `return ${expr}`)
   try {
+    const fn = new Function(...Object.keys(context), `return ${expr}`)
     return fn(...Object.values(context))
   } catch (e) {
+    console.error(expr, context, e)
     return expr
   }
 }
@@ -66,7 +67,7 @@ export function tran(path: string, params = {}, lang = 'zh-cn'): string {
 
 function interpolateString(str, context) {
   // 正则表达式匹配三元表达式
-  const regex = /\{\{(.*?)\?\s*'(.*?)'\s*:\s*'(.*?)'\}\}/g
+  const regex = /\{\{(.*?)\?\s*'(.*?)'\s*:\s*'(.*?)'\s*\}\}/
   let match
 
   // 递归解析
@@ -78,7 +79,10 @@ function interpolateString(str, context) {
     const resolvedFalseValue = interpolateString(falseValue, context)
 
     // 计算条件表达式
-    const result = safeEval(condition, context)
+    let result = safeEval(condition, context)
+    if (typeof result === 'string') {
+      result = false
+    }
     const replacement = result ? resolvedTrueValue : resolvedFalseValue
 
     // 替换匹配到的三元表达式

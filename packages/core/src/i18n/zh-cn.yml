@@ -14,11 +14,10 @@ commands:
     no-binding: 你暂未绑定Steam账号，无法获取更多信息
     no-sub-in-channel: 当前账号「{{steamId}}」在该频道暂无订阅信息
     info: |
-      当前家庭「{{familyId}}」，库存共计 {{familyLibSize}} 项，愿望单共计 {{familyWishesSize}} 项
-      订阅信息：
-      {{ subLib ? '✅' : '❌' }} 订阅库存信息
-      {{ subWishes ? '✅' : '❌' }} 订阅库存信息
-      游戏封面偏好类型：{{preferImgType}}
+      家庭「{{familyId}}」订阅信息：
+      {{ subLib ? '✅' : '❌' }} 订阅库存信息{{subLib ? '，共计 {{familyLibSize}} 项' : ''}}
+      {{ subWishes ? '✅' : '❌' }} 订阅愿望单信息{{subWishes ? '，共计 {{familyWishesSize}} 项' : ''}}
+      游戏封面偏好类型：{{preferGameImgType}}
   login:
     description: login to steam via qrcode
     start-login: 请在 120s 内通过 steam 手机验证器扫描二维码，并确认登陆
@@ -54,11 +53,15 @@ commands:
     no-binding: 你暂未绑定Steam账号，无法获取家庭信息，暂时无法进行家庭库订阅
     no-auth: 仅经过验证的用户可以进行家庭库订阅修改操作
     invalid-token: 当前账号的 token 已失效，若需继续使用，请通过 login 指令更新该账号的 token
-    update-success: 成功更新订阅信息。
-    subscribe-success: |
-      hello，「{{familyName}}」的成员，成功订阅。订阅信息：
+    update-success: |
+      成功更新「{{familyId}}」订阅信息：
       {{subLib ? '✅' : '❌'}} 订阅库存信息{{subLib ? '，共计 {{familyLibSize}} 项' : ''}}
-      {{subWish ? '✅' : '❌'}} 订阅愿望单信息{{subWish ? '，共计 {{familyWishesSize}} 项' : ''}}
+      {{subWishes ? '✅' : '❌'}} 订阅愿望单信息{{subWishes ? '，共计 {{familyWishesSize}} 项' : ''}}
+      游戏封面偏好类型：{{preferGameImgType}}
+    subscribe-success: |
+      hello，「{{familyName}}」的成员，成功订阅：
+      {{subLib ? '✅' : '❌'}} 订阅库存信息{{subLib ? '，共计 {{familyLibSize}} 项' : ''}}
+      {{subWishes ? '✅' : '❌'}} 订阅愿望单信息{{subWishes ? '，共计 {{familyWishesSize}} 项' : ''}}
       游戏封面偏好类型：{{preferGameImgType}}
   unbind:
     no-binding: 你还没有绑定 steamID
