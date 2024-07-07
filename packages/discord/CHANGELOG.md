@@ -1,5 +1,13 @@
 # steam-family-bot-discord
 
+## 0.0.7-dev.7
+
+### Patch Changes
+
+- update docs & fix unsub command delete account
+- Updated dependencies
+  - steam-family-bot-core@0.0.7-dev.7
+
 ## 0.0.7-dev.6
 
 ### Patch Changes
