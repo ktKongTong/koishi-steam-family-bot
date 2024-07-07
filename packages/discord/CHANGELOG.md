@@ -1,5 +1,25 @@
 # steam-family-bot-discord
 
+## 0.0.7
+
+### Patch Changes
+
+- 1bd27e3: update docs & fix unsub command delete account
+- i18n & bug fix
+- bde33d0: refactor: improve code structure
+- dc16917: fix: make koishi-plugin-puppeteer optional
+- 3268030: fix: fix session import
+- 9fe4021: refactor: improve code structure
+- Updated dependencies [1bd27e3]
+- Updated dependencies
+- Updated dependencies [e665e74]
+- Updated dependencies [bde33d0]
+- Updated dependencies [dc16917]
+- Updated dependencies [3268030]
+- Updated dependencies [9fe4021]
+- Updated dependencies [c580188]
+  - steam-family-bot-core@0.0.7
+
 ## 0.0.7-dev.7
 
 ### Patch Changes

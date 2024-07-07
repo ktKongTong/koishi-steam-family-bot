@@ -1,5 +1,18 @@
 # steam-family-bot-core
 
+## 0.0.7
+
+### Patch Changes
+
+- 1bd27e3: update docs & fix unsub command delete account
+- i18n & bug fix
+- e665e74: optional puppeteer deps
+- bde33d0: refactor: improve code structure
+- dc16917: fix: make koishi-plugin-puppeteer optional
+- 3268030: fix: fix session import
+- 9fe4021: refactor: improve code structure
+- c580188: i18n support
+
 ## 0.0.7-dev.7
 
 ### Patch Changes
