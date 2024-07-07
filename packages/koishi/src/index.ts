@@ -20,7 +20,7 @@ import {
   SteamAccountFamilyRel,
 } from 'steam-family-bot-core'
 import { SteamService } from '@/services'
-import { KSession } from '@/session-impl'
+import { KSession } from 'session'
 import { KoishiImgRender } from '@/utils/render'
 import { load } from 'js-yaml'
 export * from './config'
