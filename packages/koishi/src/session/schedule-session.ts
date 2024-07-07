@@ -30,12 +30,12 @@ export class KoishiSession implements Session<ChannelInfo> {
     return this.channelInfo
   }
 
-  send(msg: string): Promise<void> {
-    return Promise.resolve(undefined)
+  async send(msg: string): Promise<void> {
+    await this.bot.sendMessage(this.channelInfo.channelId, msg)
   }
 
-  sendQueued(msg: string): Promise<void> {
-    return Promise.resolve(undefined)
+  async sendQueued(msg: string): Promise<void> {
+    await this.bot.sendMessage(this.channelInfo.channelId, msg)
   }
 
   sendQuote(msg: string): Promise<void> {
