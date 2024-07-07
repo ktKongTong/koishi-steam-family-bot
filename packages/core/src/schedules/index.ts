@@ -1,2 +1,2 @@
-export * from './familyLibSyncer'
+export * from './family-lib-syncer'
 export * from './libInfoSyncer'

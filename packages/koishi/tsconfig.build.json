@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.build.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "lib",
@@ -16,7 +16,7 @@
   },
   "include": ["src/**/*"],
   "exclude": ["**/*.spec.ts"],
-//  for koishi build tool: prevent yakomo-tsc copy source js to output file
+  //  for koishi build tool: prevent yakomo-tsc copy source js to output file
   "atsc": {
     "loaders": [".yaml",".yml",".js"]
   }

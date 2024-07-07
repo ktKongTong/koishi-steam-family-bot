@@ -204,3 +204,126 @@ for v0.0.3
 ![alt text](public/image-8.png)
 
 1. 你需要在一个手机上登陆微信bot账号，不可退出登陆，一旦手机退出登陆微信账号，桌面微信也会被强制退出。因此推荐双开微信。
+
+
+## i18n
+
+通过合理的插件配置，可以控制对应响应的对应文本
+
+### 示例
+
+在koishi 的插件配置文件中`koishi.yml`，
+按照模板添加 language 和自定义文本的键值对，目前文本需要采用严格的string类型的 yaml 格式，因此不方便直接在配置中修改（配置中只支持编辑 json，对于 i18n 场景不如 yaml 方便）如下：
+
+![img.png](public/koishi-config-example.png)
+
+效果如图：
+
+![img.png](public/koishi-i18n-config-showcase.png)
+
+当配置不符合要求时，会在日志中报错，文本会回退为默认文本。
+
+### 插值
+形如`{{ param }}` 内容会被视为参数插槽，发送时会被替换为对应参数（如果有），如果是一个非参数值，则会忽略，但会将 `{{}}`移除。
+
+支持形如`{{ subLib ? '✅' : '❌' }}` 的简单的三元表达式，通过 `subLib` 的值决定使用哪一项文本，使得自定义文本更加灵活。
+
+### 模板
+
+```yaml
+commands:
+  bind:
+    conflict: 「{{steamId}}」 已被绑定
+    not-steamid: 「{{input}}」似乎不是一个 steamID
+    bind-auth: 你当前已经绑定了一个经过验证的账号「{{steamId}}」，目前还不支持多账号绑定。
+    bind-success: 成功新增账号绑定「{{steamId}}」
+  clear:
+    description: clear an auth account relate info
+    no-binding: 你还没有绑定 steam 账户，暂时不需要清除数据
+    no-auth-binding: 没有找到经过验证的 steam 账户，无需使用 clear 指令。如需清除当前账号，使用 unbind 指令
+    clear-success: 清除完成，已移除账户「{{accountName}}({{accountId}})」
+  info:
+    description: show steam family subscribe info
+    no-binding: 你暂未绑定Steam账号，无法获取更多信息
+    no-sub-in-channel: 当前账号「{{steamId}}」在该频道暂无订阅信息
+    info: |
+      家庭「{{familyId}}」订阅信息：
+      {{ subLib ? '✅' : '❌' }} 订阅库存信息{{subLib ? '，共计 {{familyLibSize}} 项' : ''}}
+      {{ subWishes ? '✅' : '❌' }} 订阅愿望单信息{{subWishes ? '，共计 {{familyWishesSize}} 项' : ''}}
+      游戏封面偏好类型：{{preferGameImgType}}
+  login:
+    description: login to steam via qrcode
+    start-login: 请在 120s 内通过 steam 手机验证器扫描二维码，并确认登陆
+    login-success-but-add-failed: 登陆出错，数据没能成功新增，可能是因为你目前不在家庭中
+    login-success: 登陆成功，你好 {{accountName}}
+    timeout: 登陆失败，已超时
+    error: 登陆出错，暂时无法登陆
+  query:
+    keyword-too-long: 为了更精确的找到你要查询的游戏，查询关键词的长度不应小于二，tips：空格查询会忽略不计
+    no-binding: 你还没有绑定 steam 账户，暂时无法查询家庭库存
+    not-found: 没有查询到关键词为「{{input}}」的游戏，tips:不推荐使用简称，当查询无结果时，可以考虑英文名查询。
+    result-too-long: 匹配的结果似乎有点太多了，共 {{size}} 项，仅显示前 10 项，如果没有找到你所需要的游戏，可以试试换个关键词。
+    result: 库存中包含以下这些关键词为「{{input}}」的游戏： {{games}}
+  refresh:
+    no-binding: 你还没有绑定 steam 账户，暂时不需要刷新数据
+    no-auth-binding: 你还没有绑定经过验证的 steam 账户，无法刷新数据
+    token-invalid: 当前账号的 token 已失效，若需继续使用，请通过 login 指令更新该账号的 token
+    refresh-success: 家庭「{{familyId}}」库存刷新成功，共 {{libSize}} 项{{ wishes ? '，愿望单 {wishesSize} 项':'' }}
+    error: 刷新失败，原因未知，如有需要请检查日志
+  statistic:
+    description: generate stats info for steam family
+    no-render: 没有安装图片渲染所需的依赖，无法生成数据统计图
+    no-binding: 你还没有绑定 steam 账户，暂时无法获取统计信息
+    no-family: 你还不在 steam 家庭中，暂时无法获取统计信息
+    repeat-render: 当前家庭「{{familyId}}」已有一个渲染中任务，请勿重复调用
+    token-invalid: 当前账号的 token 已失效
+    render-start: 开始渲染了，请耐心等待 5s
+    render-error: 出现了意外错误，如有需要请查看日志
+    need-wait-long-time: 开始渲染了，因为需要获取大量数据并进行计算，请耐心等待 20s
+    render-remote-error: 渲染出错，详情可查看日志
+    fetching-steam-data: 正在从 Steam 获取数据，请稍等
+  subscribe:
+    no-binding: 你暂未绑定Steam账号，无法获取家庭信息，暂时无法进行家庭库订阅
+    no-auth: 仅经过验证的用户可以进行家庭库订阅修改操作
+    invalid-token: 当前账号的 token 已失效，若需继续使用，请通过 login 指令更新该账号的 token
+    # 参数说明
+    # subLib：是否订阅库存更新，目前恒为 true。
+    # subWishes：是否订阅愿望单更新，true/false。
+    update-success: |
+      成功更新「{{familyId}}」订阅信息：
+      {{subLib ? '✅' : '❌'}} 订阅库存信息{{subLib ? '，共计 {{familyLibSize}} 项' : ''}}
+      {{subWishes ? '✅' : '❌'}} 订阅愿望单信息{{subWishes ? '，共计 {{familyWishesSize}} 项' : ''}}
+      游戏封面偏好类型：{{preferGameImgType}}
+    subscribe-success: |
+      hello，「{{familyName}}」的成员，成功订阅：
+      {{subLib ? '✅' : '❌'}} 订阅库存信息{{subLib ? '，共计 {{familyLibSize}} 项' : ''}}
+      {{subWishes ? '✅' : '❌'}} 订阅愿望单信息{{subWishes ? '，共计 {{familyWishesSize}} 项' : ''}}
+      游戏封面偏好类型：{{preferGameImgType}}
+  unbind:
+    no-binding: 你还没有绑定 steamID
+    authed: 「{{steamId}}」是经过验证的账户，不应该使用 unbind 指令，应使用 clear 指令
+    success: 成功移除账号信息「{{steamId}}」
+  unsub:
+    no-binding: 你暂未绑定Steam账号，暂时无法进行家庭库订阅/取消操作
+    no-auth: 仅经过验证的用户可以取消家庭库订阅
+    no-sub: 没有任何家庭库订阅，暂时无法进行家庭库订阅/取消操作
+    success: 成功取消订阅
+    unsub-wishes-success: 成功取消愿望单订阅
+
+schedule:
+  lib-syncer:
+    # 参数说明
+    #    cnt：副本变动数量，取绝对值。
+    #    name：游戏名称
+    #    owners：愿望单含有该游戏的用户名称，通过逗号拼接。
+    #    totalCount，库存/愿望单副本总数
+    wishes-increase-one: 库存愿望单 + 1。{{name}}，by：{{owners}}
+    wishes-decrease-one: 库存愿望单 - 1。{{name}}，by：{{owners}}
+    wishes-copy-increase: 愿望单副本 + {{cnt}}。{{name}}，by：{{owners}}，当前愿望数：{{totalCount}}
+    wishes-copy-decrease: 愿望单变动，{{name}} 副本 - {{cnt}}。当前愿望数：{{totalCount}}
+    lib-increase-one: 感谢富哥{{owners}}，库存喜 + 1。{{name}}, {{totalCount}}
+    lib-decrease-one: 库存变动，{{name}} 库存 - 1。
+    lib-copy-increase: 感谢富哥{{owners}}，副本喜 + {{cnt}}。{{name}}，当前副本数 {{totalCount}}
+    lib-copy-decrease: 库存变动，{{name}} 副本 - {{cnt}}。当前副本数 {{totalCount}}
+    big-change: 愿望单/库存短时间内发生大量变更,共 {{totalCount}} 项，为防止刷屏，仅播报 30 项简略信息
+```

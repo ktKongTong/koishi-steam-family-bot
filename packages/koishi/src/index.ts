@@ -9,10 +9,10 @@ import {
   GameInfo,
   ChannelInfo,
   Config,
+  loadI18nConfig,
 } from './interface'
 
 import {} from 'koishi-plugin-cron'
-import {} from 'koishi-plugin-puppeteer'
 import { dbInit } from '@/db'
 import {
   steamCommands,
@@ -20,13 +20,17 @@ import {
   SteamAccountFamilyRel,
 } from 'steam-family-bot-core'
 import { SteamService } from '@/services'
-import { KSession } from '@/session-impl'
+import { KSession } from '@/session'
 import { KoishiImgRender } from '@/utils/render'
+import { load } from 'js-yaml'
 export * from './config'
 
 export const name = 'koishi-steam-family-lib-monitor'
 
-export const inject = ['database', 'puppeteer', 'cron']
+export const inject = {
+  required: ['database', 'cron'],
+  optional: ['puppeteer'],
+}
 
 declare module 'koishi' {
   interface Tables {
@@ -45,9 +49,18 @@ declare module 'koishi' {
 export function apply(ctx: Context, config: Config) {
   // @ts-ignore
   const baseLogger = ctx.logger('steam-family-lib-monitor')
+  const i18n = config.i18nMap
+  Object.keys(i18n).forEach((k) => {
+    try {
+      const v = i18n[k]
+      loadI18nConfig(k, load(v))
+    } catch (e) {
+      baseLogger.error(`load i18n ${k} error`, e)
+    }
+  })
   dbInit(ctx, config)
   const logger = baseLogger.extend('cmd')
-  const steam = new SteamService<ChannelInfo>(ctx, config)
+  const steamService = new SteamService<ChannelInfo>(ctx, config)
   const render = new KoishiImgRender(ctx, config)
   steamCommands<ChannelInfo>().forEach((c: Command<ChannelInfo>) => {
     let cmd = ctx.command(`slm.${c.name}`)
@@ -64,16 +77,20 @@ export function apply(ctx: Context, config: Config) {
       const [, fullname, type] = regex.exec(desc)
       const optional = desc.endsWith('?')
       desc = `${fullname}:${type}`
-      if (optional) {
-        desc = `[${desc}]`
-      } else {
-        desc = `<${desc}>`
-      }
+      desc = optional ? `[${desc}]` : `<${desc}>`
       cmd = cmd.option(option.name, desc)
     }
     cmd.action(async ({ session, options }, input) => {
       const kSession = new KSession(session)
-      await c.callback(render, steam, logger, kSession, options, input, input)
+      await c.callback({
+        render,
+        steamService,
+        logger,
+        session: kSession,
+        options,
+        input,
+        rawInput: input,
+      })
     })
   })
   ctx

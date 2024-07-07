@@ -68,6 +68,9 @@ importers:
       tsc-alias:
         specifier: ^1.8.10
         version: 1.8.10
+      tsx:
+        specifier: ^4.16.2
+        version: 4.16.2
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -144,6 +147,9 @@ importers:
 
   packages/koishi:
     dependencies:
+      js-yaml:
+        specifier: ^4.1.0
+        version: 4.1.0
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -154,6 +160,9 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
+      '@koishijs/loader':
+        specifier: ^4.5.9
+        version: 4.5.9(@koishijs/core@4.17.7)
       '@koishijs/plugin-console':
         specifier: ^5.29.1
         version: 5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
@@ -169,6 +178,9 @@ importers:
       '@koishijs/plugin-logger':
         specifier: ^2.6.8
         version: 2.6.8(@koishijs/plugin-console@5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)))(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
+      '@koishijs/plugin-mock':
+        specifier: ^2.6.6
+        version: 2.6.6(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
       '@koishijs/plugin-sandbox':
         specifier: ^3.3.1
         version: 3.3.1(@koishijs/plugin-console@5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)))(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
@@ -1122,6 +1134,11 @@ packages:
     peerDependencies:
       '@koishijs/core': 4.17.7
 
+  '@koishijs/loader@4.5.9':
+    resolution: {integrity: sha512-km6HGc1SoGGcQc3zWksAqkhRU6joiqQ/yIJMwR9sOpgzjq2Hlf6Hb4fsOveclNO07g4mMbXqQF2dSJf3uCGfQQ==}
+    peerDependencies:
+      '@koishijs/core': 4.17.9
+
   '@koishijs/plugin-console@5.29.1':
     resolution: {integrity: sha512-oio5txymTs9X0Vd6K88wCPKPvXVBcINV018tFYBpAOeCkl5LQKtxghxO5YgUqstc2pep6Un2ZBFCWTbFAKyI+g==}
     peerDependencies:
@@ -1154,6 +1171,11 @@ packages:
     peerDependenciesMeta:
       '@koishijs/plugin-console':
         optional: true
+
+  '@koishijs/plugin-mock@2.6.6':
+    resolution: {integrity: sha512-cf6aNCnGszeF3ZIJ/zOtLBynMO0F/Euyt2JAxg4JNTPVitdp9WAIIFyRdgNbB4vuWRz5t36inxFi4aMkPFygjQ==}
+    peerDependencies:
+      koishi: ^4.17.9
 
   '@koishijs/plugin-proxy-agent@0.3.2':
     resolution: {integrity: sha512-aBDWWIIVi+Als8tQs70PzMCLgqZivS3ufTQ92fdA4EEnK6KWCSOIm4aByu2v7fkw5GHz5yglYj2fOueqfmLOkQ==}
@@ -4297,6 +4319,11 @@ packages:
     resolution: {integrity: sha512-LxhtAkPDTkVCMQjt2h6eBVY28KCjikZqZfMcC15YBeNjkgUpdCfBu5HoiOTDu86v6smE8yOjyEktJ8hlbANHQA==}
     engines: {node: '>=0.6.x'}
 
+  tsx@4.16.2:
+    resolution: {integrity: sha512-C1uWweJDgdtX2x600HjaFaucXTilT7tgUZHbOE4+ypskZ1OP8CRCSDkCxG6Vya9EwaFIVagWwpaVAn5wzypaqQ==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+
   tty-table@4.2.3:
     resolution: {integrity: sha512-Fs15mu0vGzCrj8fmJNP7Ynxt5J7praPXqFN0leZeZBXJwkMxv9cb2D454k1ltrtUSJbZ4yH4e0CynsHLxmUfFA==}
     engines: {node: '>=8.0.0'}
@@ -5498,6 +5525,13 @@ snapshots:
       js-yaml: 4.1.0
       ns-require: 1.1.4
 
+  '@koishijs/loader@4.5.9(@koishijs/core@4.17.7)':
+    dependencies:
+      '@koishijs/core': 4.17.7
+      dotenv: 16.4.5
+      js-yaml: 4.1.0
+      ns-require: 1.1.4
+
   '@koishijs/plugin-console@5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))':
     dependencies:
       '@koishijs/console': 5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
@@ -5535,6 +5569,10 @@ snapshots:
       koishi: 4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
     optionalDependencies:
       '@koishijs/plugin-console': 5.29.1(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))
+
+  '@koishijs/plugin-mock@2.6.6(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))':
+    dependencies:
+      koishi: 4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)
 
   '@koishijs/plugin-proxy-agent@0.3.2(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2)(koishi@4.17.7(@cordisjs/plugin-http@0.5.3(cordis@3.16.2))(cordis@3.16.2))':
     dependencies:
@@ -8964,6 +9002,13 @@ snapshots:
   tslib@2.6.3: {}
 
   tsscmp@1.0.6: {}
+
+  tsx@4.16.2:
+    dependencies:
+      esbuild: 0.21.5
+      get-tsconfig: 4.7.5
+    optionalDependencies:
+      fsevents: 2.3.3
 
   tty-table@4.2.3:
     dependencies:

@@ -85,6 +85,7 @@ export class SubscriptionDAO<T> implements ISteamFamilyLibSubscribeDAO<T> {
       })
       await db.remove('SteamRelateChannelInfo', {
         refId: res.map((it) => it.SteamFamilyLibSubscribe.id),
+        type: 'sub',
       })
     })
   }

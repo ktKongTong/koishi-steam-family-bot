@@ -1,9 +1,10 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.build.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "lib",
     "jsx": "react-jsx",
+    "sourceMap": true,
     "jsxImportSource": "react",
     "types": [
       "node",

@@ -6,7 +6,7 @@ import { NoOpRender } from '@/noop-render'
 import { ChannelInfo } from '@/db'
 
 const token = process.env.DISCORD_TOKEN
-const CLIENT_ID = process.env.CLIENT_ID
+const CLIENT_ID = process.env.DISCORD_CLIENT_ID
 
 async function main() {
   const client = new Client({ intents: [GatewayIntentBits.Guilds] })
@@ -19,7 +19,7 @@ async function main() {
   const cmds = new Map<string, Command<ChannelInfo>>()
   const allCommands = steamCommands<ChannelInfo>()
   for (const item of allCommands) {
-    cmds.set(item.name.split('.')[1], item)
+    cmds.set(item.name, item)
   }
   const commands = [
     {
@@ -28,7 +28,7 @@ async function main() {
     },
   ].concat(
     allCommands.map((cmd) => ({
-      name: cmd.name.split('.')[1],
+      name: cmd.name,
       description: cmd.description,
       options: [
         {
@@ -53,6 +53,7 @@ async function main() {
     libMonitorCron: '',
     libInfoSyncerCron: '',
     steamDataFetchMode: 'remote',
+    i18nMap: {},
   } satisfies Config
   const render = new NoOpRender()
   const steamService = new SteamService<ChannelInfo>(config)
@@ -69,15 +70,15 @@ async function main() {
     }
     try {
       // @ts-ignore
-      await cmd.callback(
+      await cmd.callback({
         render,
         steamService,
-        console,
-        new DiscordSession(interaction),
-        {},
-        interaction.options.getString('input'),
-        interaction.options.getString('input')
-      )
+        logger: console,
+        session: new DiscordSession(interaction),
+        options: {},
+        input: interaction.options.getString('input'),
+        rawInput: interaction.options.getString('input'),
+      })
     } catch (error) {
       console.error(error)
       if (interaction.replied || interaction.deferred) {

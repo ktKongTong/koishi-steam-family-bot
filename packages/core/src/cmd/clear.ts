@@ -8,32 +8,25 @@ export default () =>
     .setName('clear')
     .setDescription('clear an auth account relate info')
     .addAlias('sbclear')
-    .setExecutor(
-      async (
-        render,
-        steamService,
-        logger,
-        session,
-        options,
-        input,
-        rawInput
-      ) => {
-        const account =
-          await steamService.db.Account.getSteamAccountBySessionUid(session.uid)
-        if (!account) {
-          session.sendQueued('你还没有绑定 steam 账户，暂时不需要清除数据')
-          return
-        }
-        if (account.status == 'un-auth') {
-          session.sendQueued(
-            '没有找到经过验证的 steam 账户，无需使用 clear 指令。如需清除当前账号，使用 unbind 指令'
-          )
-          return
-        }
-        await steamService.db.clearAccountInfo(account)
-        session.sendQueued(
-          `清除完成，已移除账户「${account.accountName}(${account.steamId})」`
-        )
+    .setExecutor(async (c) => {
+      const { steamService, logger, session, options, input } = c
+      const account = await steamService.db.Account.getSteamAccountBySessionUid(
+        session.uid
+      )
+      if (!account) {
+        session.sendQueued(session.text('commands.clear.no-binding'))
         return
       }
-    )
+      if (account.status == 'un-auth') {
+        session.sendQueued(session.text('commands.clear.no-auth-binding'))
+        return
+      }
+      await steamService.db.clearAccountInfo(account)
+      session.sendQueued(
+        session.text('commands.clear.clear-success', {
+          accountName: account.accountName,
+          accountId: account.steamId,
+        })
+      )
+      return
+    })

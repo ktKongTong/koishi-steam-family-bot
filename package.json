@@ -10,7 +10,6 @@
   },
   "repository": "https://github.com/ktKongTong/koishi-steam-family-bot.git",
   "homepage": "https://koishi-steam-family-bot.vercel.app/",
-
   "keywords": [
     "steam",
     "steam-family",
@@ -38,11 +37,14 @@
     "mocha": "^10.4.0",
     "react-jsx": "^1.0.0",
     "tsc-alias": "^1.8.10",
+    "tsx": "^4.16.2",
     "typescript": "^5.4.5",
     "typescript-eslint": "^8.0.0-alpha.24",
     "vitepress": "^1.2.2"
   },
   "scripts": {
+    "clean": "pnpm run -r clean",
+    "build": "pnpm run -r build",
     "ci:publish": "pnpm publish -r",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs"

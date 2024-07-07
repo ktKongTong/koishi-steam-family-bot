@@ -67,21 +67,26 @@ export const diffLibs = (
 
 export const prepareFamilyInfo = async <CHANNEL>(
   api: IAPIService,
-  steam: ISteamService<CHANNEL>
+  steam: ISteamService<CHANNEL>,
+  withWishes: boolean
 ) => {
   const family = await api.Steam.getSteamFamilyGroup()
   const memberIds = family.data.familyGroup.members.map((member) =>
     member.steamid?.toString()
   )
   const [wishes, members] = await Promise.all([
-    (await api.Steam.getSteamWishesByPlayerIds(memberIds)).data,
+    withWishes
+      ? (await api.Steam.getSteamWishesByPlayerIds(memberIds)).data
+      : [],
     (await api.Steam.getFamilyMembers(memberIds)).data,
   ])
   const m = members.accounts.map((acc) => acc.publicData)
   const memberDict = _.keyBy(m, 'steamid')
-  const prevWishes = await steam.db.FamilyLib.getFamilyWishes(
-    family.data.familyGroupid.toString()
-  )
+  const prevWishes = withWishes
+    ? await steam.db.FamilyLib.getFamilyWishes(
+        family.data.familyGroupid.toString()
+      )
+    : []
   return {
     family,
     memberDict,
