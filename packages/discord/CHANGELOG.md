@@ -1,5 +1,13 @@
 # steam-family-bot-discord
 
+## 0.0.7-dev.4
+
+### Patch Changes
+
+- refactor: improve code structure
+- Updated dependencies
+  - steam-family-bot-core@0.0.7-dev.4
+
 ## 0.0.7-dev.3
 
 ### Patch Changes
