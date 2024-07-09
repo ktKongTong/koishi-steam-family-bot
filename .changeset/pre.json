@@ -1,0 +1,12 @@
+{
+  "mode": "pre",
+  "tag": "dev",
+  "initialVersions": {
+    "steam-family-bot-core": "0.0.7",
+    "steam-family-bot-discord": "0.0.7",
+    "koishi-plugin-steam-family-bot": "0.0.7"
+  },
+  "changesets": [
+    "loud-pots-begin"
+  ]
+}
