@@ -6,7 +6,7 @@ interface Msg {
   img: string
 }
 
-export const sendMessages = (msgs: Msg[], session: Session) => {
+export const sendMessages = async (msgs: Msg[], session: Session) => {
   const send = (msg: Msg) => {
     session.send(msg.text)
     session.sendImgUrl(msg.img)
@@ -15,7 +15,7 @@ export const sendMessages = (msgs: Msg[], session: Session) => {
     msgs.slice(0, 3).forEach((msg) => send(msg))
     const size = msgs.length - 3
     const t = size > 30 ? 30 : size
-    session.send(
+    await session.sendQueued(
       session.text('schedule.lib-syncer.big-change', {
         totalCount: msgs.length,
         shortSize: t,

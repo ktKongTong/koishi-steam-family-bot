@@ -136,5 +136,5 @@ const handleSubScribe = async <CHANNEL, SESSION extends Session>(
       img: img,
     }
   })
-  sendMessages(mappedMsgs, session)
+  await sendMessages(mappedMsgs, session)
 }
