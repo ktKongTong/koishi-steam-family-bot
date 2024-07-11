@@ -1,5 +1,11 @@
 # steam-family-bot-core
 
+## 0.0.8-dev.2
+
+### Patch Changes
+
+- fix: i18n commands.query.not-found
+
 ## 0.0.8-dev.1
 
 ### Patch Changes
