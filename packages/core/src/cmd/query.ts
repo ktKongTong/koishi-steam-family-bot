@@ -28,7 +28,7 @@ export default () =>
       )
 
       if (res.length == 0) {
-        session.sendQueued(session.text('commands.query.no-found', { input }))
+        session.sendQueued(session.text('commands.query.not-found', { input }))
         return
       } else if (res.length > 10) {
         session.sendQueued(
