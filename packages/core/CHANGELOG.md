@@ -1,5 +1,11 @@
 # steam-family-bot-core
 
+## 0.0.8-dev.1
+
+### Patch Changes
+
+- fix await send
+
 ## 0.0.8-dev.0
 
 ### Patch Changes
