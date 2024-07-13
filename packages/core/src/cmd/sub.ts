@@ -66,6 +66,7 @@ export default () =>
           steamFamilyId: account.familyId,
           subWishes: subWish,
           subLib,
+          active: true,
           preferGameImgType,
         })
         const familyLibAndWishes =
