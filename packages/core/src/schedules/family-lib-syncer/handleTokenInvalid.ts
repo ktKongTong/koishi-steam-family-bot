@@ -27,6 +27,6 @@ export const handleTokenInvalid = async <CHANNEL>(
     session.send(
       `steam account 「${item.account.steamId}」token has expired, please dm me and follow the instruction with [renew] cmd to refresh it`
     )
-    await steam.db.invalidAccount(item.account.id, item.subscription)
+    await steam.db.invalidAccount(item.account.id, item.subscription.id)
   }
 }
