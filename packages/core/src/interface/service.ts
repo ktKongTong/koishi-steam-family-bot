@@ -11,6 +11,16 @@ import { jwtDecode } from '@/utils'
 import { now } from 'lodash'
 import { EAuthTokenPlatformType, LoginSession } from 'steam-session'
 
+function tokenNeedRefresh(token: string): boolean {
+  try {
+    const res = jwtDecode(token)
+    const nt = now()
+    return (res.exp - 900) * 1000 < nt
+  } catch (e) {
+    return true
+  }
+}
+
 export abstract class ISteamService<T> {
   db: IDBService<T>
   api: IAPIService
@@ -21,9 +31,7 @@ export abstract class ISteamService<T> {
 
   async validAccount(account: SteamAccount): Promise<boolean> {
     try {
-      const res = jwtDecode(account.steamAccessToken)
-      const nt = now()
-      const needRefresh = (res.exp - 900) * 1000 < nt
+      const needRefresh = tokenNeedRefresh(account.steamAccessToken)
       if (needRefresh) {
         await this.renewAccountToken(account)
       }
@@ -38,9 +46,14 @@ export abstract class ISteamService<T> {
 
   async renewAccountToken(account: SteamAccount) {
     const session = new LoginSession(EAuthTokenPlatformType.SteamClient)
+    session.accessToken = account.steamAccessToken
     session.refreshToken = account.steamRefreshToken
-    await session.refreshAccessToken()
-    // await session.renewRefreshToken()
+    const needRefresh = tokenNeedRefresh(account.steamRefreshToken)
+    if (needRefresh) {
+      await session.renewRefreshToken()
+    } else {
+      await session.refreshAccessToken()
+    }
     await this.db.Account.updateSteamAccountToken(account.id, {
       steamAccessToken: session.accessToken,
       steamRefreshToken: session.refreshToken,
