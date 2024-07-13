@@ -30,7 +30,9 @@ commands:
     no-binding: 你还没有绑定 steam 账户，暂时无法查询家庭库存
     not-found: 没有查询到关键词为「{{input}}」的游戏，tips:不推荐使用简称，当查询无结果时，可以考虑英文名查询。
     result-too-long: 匹配的结果似乎有点太多了，共 {{size}} 项，仅显示前 10 项，如果没有找到你所需要的游戏，可以试试换个关键词。
-    result: 库存中包含以下这些关键词为「{{input}}」的游戏： {{games}}
+    result: ｜
+      库存中包含以下这些关键词为「{{input}}」的游戏：
+      {{games}}
   refresh:
     no-binding: 你还没有绑定 steam 账户，暂时不需要刷新数据
     no-auth-binding: 你还没有绑定经过验证的 steam 账户，无法刷新数据
