@@ -1,5 +1,11 @@
 # steam-family-bot-core
 
+## 0.0.8-dev.3
+
+### Patch Changes
+
+- fix token refresh issue
+
 ## 0.0.8-dev.2
 
 ### Patch Changes

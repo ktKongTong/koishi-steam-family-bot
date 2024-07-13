@@ -1,5 +1,13 @@
 # koishi-plugin-steam-family-bot
 
+## 0.0.8-dev.3
+
+### Patch Changes
+
+- fix token refresh issue
+- Updated dependencies
+  - steam-family-bot-core@0.0.8-dev.3
+
 ## 0.0.8-dev.2
 
 ### Patch Changes
