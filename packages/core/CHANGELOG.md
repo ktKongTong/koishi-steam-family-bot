@@ -1,5 +1,11 @@
 # steam-family-bot-core
 
+## 0.0.8-dev.4
+
+### Patch Changes
+
+- some refactor
+
 ## 0.0.8-dev.3
 
 ### Patch Changes
