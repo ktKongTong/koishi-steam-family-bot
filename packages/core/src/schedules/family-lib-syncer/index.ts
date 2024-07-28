@@ -4,6 +4,7 @@ import {
   SteamAccountFamilyRel,
   SteamFamilyLibSubscribe,
   SteamRelateChannelInfo,
+  SubscribeInfo,
 } from '@/interface'
 import { Config } from '@/interface'
 import _ from 'lodash'
@@ -27,8 +28,7 @@ export const libMonitor =
   ) =>
   async () => {
     logger.info('trigger lib monitor')
-    const subscribes =
-      await steam.db.getAllSubscription<SteamRelateChannelInfo<CHANNEL>>()
+    const subscribes = await steam.db.getAllSubscription()
     for (const item of subscribes) {
       try {
         await handleSubScribe<CHANNEL, SESSION>(
@@ -48,12 +48,7 @@ export const libMonitor =
 
 const handleSubScribe = async <CHANNEL, SESSION extends Session>(
   steam: ISteamService<CHANNEL>,
-  item: {
-    account: SteamAccount
-    steamAndFamilyRel: SteamAccountFamilyRel
-    subscription: SteamFamilyLibSubscribe
-    channel: SteamRelateChannelInfo<CHANNEL>
-  },
+  item: SubscribeInfo<CHANNEL>,
   botService: BotService<CHANNEL, SESSION>,
   config: Config,
   logger: Logger
@@ -67,13 +62,14 @@ const handleSubScribe = async <CHANNEL, SESSION extends Session>(
   const session = botService.getSessionByChannelInfo(item.channel)
   if (!session) {
     logger.info(
-      `it's seem that bot for family 「${item.steamAndFamilyRel.familyId}」have down. skip it`
+      `it's seem that bot [${JSON.stringify(item.channel)}] for family 「${item.steamAndFamilyRel.familyId}」have down. skip it`
     )
     return
   }
   // eslint-disable-next-line prefer-spread
   const trans = (...args) => session.text.apply(session, args)
   if (!apiServiceResult.isSuccess()) {
+    logger.error(`token invalid ${apiServiceResult.message}`)
     await handleTokenInvalid<CHANNEL>(logger, item, session, steam)
     return
   }

@@ -1,7 +1,6 @@
 import { Context } from 'koishi'
 import { DBService } from '@/db/koishi-impls'
-import { jwtDecode } from 'steam-family-bot-core'
-import { now } from 'lodash'
+
 import {
   APIService,
   IAPIService,
@@ -9,6 +8,7 @@ import {
   Config,
   ISteamService,
   SteamAccount,
+  tokenNeedRefresh,
 } from 'steam-family-bot-core'
 
 export class SteamService<T> extends ISteamService<T> {
@@ -26,9 +26,7 @@ export class SteamService<T> extends ISteamService<T> {
     account: SteamAccount
   ): Promise<Result<IAPIService>> {
     try {
-      const res = jwtDecode(account.steamAccessToken)
-      const nt = now()
-      const needRefresh = (res.exp - 900) * 1000 < nt
+      const needRefresh = tokenNeedRefresh(account.steamAccessToken)
       if (needRefresh) {
         await this.renewAccountToken(account)
       }

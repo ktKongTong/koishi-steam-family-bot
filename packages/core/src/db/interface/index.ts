@@ -16,6 +16,8 @@ export type SteamAccountWithFamilyId = SteamAccount & {
   familyId?: string
 }
 
+export type FamilyLib = SteamFamilyLib & { info: GameInfo }
+
 export interface ISteamAccountDAO<T> {
   getAuthedSteamAccountByFamilyId(
     familyId: string
@@ -49,12 +51,12 @@ export interface ISteamFamilySharedLibDAO {
   getSteamFamilyLibByFamilyId(
     familyId: string,
     type?: 'lib' | 'wish'
-  ): Promise<(SteamFamilyLib & { info: GameInfo })[]>
+  ): Promise<FamilyLib[]>
   getUnSyncedLib(limit?: number): Promise<SteamFamilyLib[]>
   getLibByKeywordAndFamilyId(
     familyId: string,
     queryKey: string
-  ): Promise<SteamFamilyLib[]>
+  ): Promise<FamilyLib[]>
   getFamilyWishes(familyId: string): Promise<SteamFamilyLib[]>
   batchRemoveByAppIdAndFamilyId(
     steamFamilyId: string,

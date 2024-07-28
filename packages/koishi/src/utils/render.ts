@@ -1,9 +1,9 @@
 import { Context, h } from 'koishi'
 import { Config, FamilyGames } from '@/interface'
 import { ImgRender, getStatHtml } from 'steam-family-bot-core/render'
+import { delay } from '@/utils/delay'
 
 let enable = false
-// import {} from 'koishi-plugin-puppeteer'
 
 async function init() {
   try {
@@ -32,9 +32,7 @@ export class KoishiImgRender implements ImgRender {
     // @ts-ignore
     const buf = await this.ctx.puppeteer.render(res, async (page, next) => {
       onStart?.()
-      await new Promise<void>((resolve, reject) => {
-        setTimeout(resolve, 5000)
-      })
+      await delay(5000)
       return (
         page
           .$('body')
@@ -52,7 +50,6 @@ export class KoishiImgRender implements ImgRender {
     token: string,
     onStart?: () => void
   ): Promise<any> {
-    // @ts-ignore
     const page = await this.ctx.puppeteer.page()
     await page.setViewport({
       width: 1920,
@@ -67,11 +64,7 @@ export class KoishiImgRender implements ImgRender {
       }
     )
     onStart?.()
-    await new Promise<void>((resolve, reject) => {
-      setTimeout(() => {
-        resolve()
-      }, 20000)
-    })
+    await delay(20000)
     const elm = await page.waitForSelector('#data-graph', { timeout: 20000 })
     const buffer = await elm!.screenshot({})
     await page.close()
@@ -88,6 +81,6 @@ export class KoishiImgRender implements ImgRender {
   }
 
   isRenderEnable(): boolean {
-    return enable
+    return enable || this?.ctx?.puppeteer?.render !== undefined
   }
 }

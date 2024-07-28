@@ -131,21 +131,25 @@ const getPreferImgByPreferType = (
 }
 
 export const preferImgStringToEnum = (str: string) => {
-  let preferGameImgType = PreferGameImgType.Library2X
+  let preferGameImgType = PreferGameImgType.Header
   switch (str) {
     case 'header':
       preferGameImgType = PreferGameImgType.Header
       break
     case 'mainCapsule':
+    case 'main':
       preferGameImgType = PreferGameImgType.Main
       break
     case 'smallCapsule':
+    case 'small':
       preferGameImgType = PreferGameImgType.Small
       break
     case 'libraryCapsule':
+    case 'library':
       preferGameImgType = PreferGameImgType.Library
       break
     case 'libraryCapsule2x':
+    case 'library2x':
       preferGameImgType = PreferGameImgType.Library2X
       break
     case 'heroCapsule':

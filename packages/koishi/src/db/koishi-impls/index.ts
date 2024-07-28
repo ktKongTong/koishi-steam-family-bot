@@ -65,7 +65,7 @@ export class DBService<T> extends IDBService<T> {
     })
   }
 
-  async getAllSubscription<T>(): Promise<SubscribeInfo<T>[]> {
+  async getAllSubscription(): Promise<SubscribeInfo<T>[]> {
     const selection = this.db.join(
       [
         'SteamAccount',

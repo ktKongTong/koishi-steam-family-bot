@@ -1,4 +1,4 @@
-import { DBItem } from '@/schedules/family-lib-syncer/interface'
+import { SubscribeInfo } from '@/db/interface'
 
 export const buildMessages = async <CHANNEL>(
   memberDict,
@@ -10,7 +10,7 @@ export const buildMessages = async <CHANNEL>(
   modifiedLibs,
   deletedLibs,
   libDict,
-  item: DBItem<CHANNEL>,
+  item: SubscribeInfo<CHANNEL>,
   trans: (...args) => string
 ) => {
   const newWishMsg = newWishes.map((newWish) => {

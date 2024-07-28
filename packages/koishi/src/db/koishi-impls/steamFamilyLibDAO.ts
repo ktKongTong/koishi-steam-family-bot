@@ -1,9 +1,10 @@
 import {
+  FamilyLib,
   GameInfo,
   ISteamFamilySharedLibDAO,
   PartialBy,
   SteamFamilyLib,
-} from '../../interface'
+} from '@/interface'
 import { $, Database, Tables } from 'koishi'
 
 export class SteamFamilyLibDAO implements ISteamFamilySharedLibDAO {
@@ -16,7 +17,6 @@ export class SteamFamilyLibDAO implements ISteamFamilySharedLibDAO {
     familyId: string,
     type?: 'lib' | 'wish'
   ): Promise<(SteamFamilyLib & { info: GameInfo })[]> {
-    let condition
     const res = await this.db
       .join(
         ['SteamFamilyLib', 'SteamGameInfo'],
@@ -69,7 +69,7 @@ export class SteamFamilyLibDAO implements ISteamFamilySharedLibDAO {
   async getLibByKeywordAndFamilyId(
     familyId: string,
     queryKey: string
-  ): Promise<SteamFamilyLib[]> {
+  ): Promise<FamilyLib[]> {
     const res = await this.db
       .join(
         ['SteamFamilyLib', 'SteamGameInfo'],
@@ -94,7 +94,7 @@ export class SteamFamilyLibDAO implements ISteamFamilySharedLibDAO {
         )
       })
       .execute()
-    return res.map((it) => it.SteamFamilyLib)
+    return res.map((it) => ({ ...it.SteamFamilyLib, info: it.SteamGameInfo }))
   }
 
   getFamilyWishes(familyId: string): Promise<SteamFamilyLib[]> {

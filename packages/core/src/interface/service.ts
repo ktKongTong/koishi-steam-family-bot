@@ -7,19 +7,9 @@ import {
   SteamFamilyLibSubscribe,
 } from '@/db/interface'
 import { IAPIService, Result } from '../interface'
-import { jwtDecode } from '@/utils'
-import { now } from 'lodash'
-import { EAuthTokenPlatformType, LoginSession } from 'steam-session'
+import { tokenNeedRefresh } from '@/utils'
 
-function tokenNeedRefresh(token: string): boolean {
-  try {
-    const res = jwtDecode(token)
-    const nt = now()
-    return (res.exp - 900) * 1000 < nt
-  } catch (e) {
-    return true
-  }
-}
+import { EAuthTokenPlatformType, LoginSession } from 'steam-session'
 
 export abstract class ISteamService<T> {
   db: IDBService<T>
@@ -83,11 +73,13 @@ export abstract class ISteamService<T> {
     await this.db.Subscription.addFamilyAccountRel([
       { familyId, steamId: account.steamId },
     ])
-    const res = await this.db.Account.getSteamAccountBySteamId(account.steamId)
+
     let accountData: Partial<SteamAccount> = {
       status: 'valid',
       ...account,
     }
+    // todo: 重复 login 应当无效，这会导致不同账号左右互搏，需要重新考量多账号体系
+    const res = await this.db.Account.getSteamAccountBySteamId(account.steamId)
     if (res) {
       accountData = { ...accountData, id: res?.id }
     }

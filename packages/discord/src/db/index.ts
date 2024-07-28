@@ -81,7 +81,7 @@ export class DBService<CHANNEL> extends IDBService<CHANNEL> {
     })
   }
 
-  async getAllSubscription<T>(): Promise<SubscribeInfo<T>[]> {
+  async getAllSubscription(): Promise<SubscribeInfo<CHANNEL>[]> {
     const subscribe = await this.db
       .select()
       .from(tables.accounts)
@@ -123,7 +123,7 @@ export class DBService<CHANNEL> extends IDBService<CHANNEL> {
           account: item.steam_account,
           steamAndFamilyRel: item.account_family_rel,
           channel: item.steam_relate_channel_info,
-        }) as unknown as SubscribeInfo<T>
+        }) as unknown as SubscribeInfo<CHANNEL>
     )
   }
 }

@@ -1,5 +1,6 @@
 // @ts-nocheck
 import {
+  FamilyLib,
   GameInfo,
   ISteamFamilySharedLibDAO,
   PartialBy,
@@ -95,7 +96,7 @@ export class DrizzleSteamFamilySharedLibDAO
   async getLibByKeywordAndFamilyId(
     familyId: string,
     queryKey: string
-  ): Promise<SteamFamilyLib[]> {
+  ): Promise<FamilyLib[]> {
     // const condition = Number.isNaN(parseInt(queryKey)) ? eq(tables.SteamFamilyLib.appId, parseInt(queryKey)) : isNotNull(tables.SteamFamilyLib.appId)
     const res = await this.db
       .select()

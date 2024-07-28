@@ -4,13 +4,12 @@ import {
   prepareFamilyInfo,
   prepareLibData,
 } from '@/schedules/family-lib-syncer/utils'
-import { SteamFamilyLib } from '@/db/interface'
-import { DBItem } from '@/schedules/family-lib-syncer/interface'
+import { SteamFamilyLib, SubscribeInfo } from '@/db/interface'
 
 export const getChangedLibs = async <CHANNEL>(
   api,
   steam,
-  item: DBItem<CHANNEL>,
+  item: SubscribeInfo<CHANNEL>,
   logger
 ) => {
   const { memberDict, wishes, prevWishes } = await prepareFamilyInfo<CHANNEL>(
@@ -50,7 +49,7 @@ export const getChangedLibs = async <CHANNEL>(
 }
 
 export const updateDB = async <T>(
-  item: DBItem<T>,
+  item: SubscribeInfo<T>,
   logger,
   steam,
   newWishes,

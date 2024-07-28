@@ -39,7 +39,7 @@ export class KoishiSession implements Session<ChannelInfo> {
   }
 
   sendQuote(msg: string): Promise<void> {
-    return Promise.resolve(undefined)
+    throw Error('unsupport quote reply in passive msg')
   }
 
   text(path: string, params: object = {}): string {
