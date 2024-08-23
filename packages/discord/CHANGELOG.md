@@ -1,5 +1,13 @@
 # steam-family-bot-discord
 
+## 0.0.8-dev.5
+
+### Patch Changes
+
+- fix: get app image failed
+- Updated dependencies
+  - steam-family-bot-core@0.0.8-dev.5
+
 ## 0.0.8-dev.4
 
 ### Patch Changes
