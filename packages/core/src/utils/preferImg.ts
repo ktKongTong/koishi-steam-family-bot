@@ -1,17 +1,20 @@
 import { StoreItem } from 'node-steam-family-group-api'
-import { PreferGameImgType } from '@/interface'
+import { PreferGameImgType, Result } from '@/interface'
 
 const defaultImg =
   'https://store.akamai.steamstatic.com/public/images/applications/store/defaultappimage.png'
 
 export const getGameCapsule = (game: StoreItem, preferImgType: string) => {
   const preferGameImgType = preferImgStringToEnum(preferImgType)
-  const filename =
-    getPreferImgByPreferType(game, preferGameImgType) ?? defaultImg
-  const format = game.assets?.assetUrlFormat
-  const prefix = 'https://cdn.akamai.steamstatic.com/'
-  const url = format?.replace('${FILENAME}', filename)
-  return prefix + url
+  try {
+    const filename = getPreferImgByPreferType(game, preferGameImgType)
+    const format = game.assets?.assetUrlFormat
+    const prefix = 'https://cdn.akamai.steamstatic.com/'
+    const url = format?.replace('${FILENAME}', filename)
+    return prefix + url
+  } catch (e) {
+    return defaultImg
+  }
 }
 const getPreferImgByPreferType = (
   game: StoreItem,

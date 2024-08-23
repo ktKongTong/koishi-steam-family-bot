@@ -37,16 +37,16 @@ export interface StoreItem {
 
 export interface Assets {
   assetUrlFormat: string
-  communityIcon: string
-  header: string
-  heroCapsule: string
-  libraryCapsule: string
-  libraryCapsule2x: string
-  libraryHero: string
+  communityIcon?: string
+  header?: string
+  heroCapsule?: string
+  libraryCapsule?: string
+  libraryCapsule2x?: string
+  libraryHero?: string
   libraryHero2x?: string
-  mainCapsule: string
-  pageBackground: string
-  smallCapsule: string
+  mainCapsule?: string
+  pageBackground?: string
+  smallCapsule?: string
   [property: string]: any
 }
 

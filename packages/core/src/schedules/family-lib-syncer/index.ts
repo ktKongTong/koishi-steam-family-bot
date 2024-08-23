@@ -40,7 +40,7 @@ export const libMonitor =
         )
       } catch (e) {
         logger.error(
-          `some error occur during handle steam subscription familyId: ${item.steamAndFamilyRel.familyId}, ${e}`
+          `some error occur during handle steam subscription familyId: ${item.steamAndFamilyRel.familyId}, ${e?.stack}`
         )
       }
     }
@@ -57,8 +57,6 @@ const handleSubScribe = async <CHANNEL, SESSION extends Session>(
     `start handle family subscribe ${item.steamAndFamilyRel.familyId}`
   )
 
-  // if invalid, will auto-renew account token
-  const apiServiceResult = await steam.createAPIWithCurAccount(item.account)
   const session = botService.getSessionByChannelInfo(item.channel)
   if (!session) {
     logger.info(
@@ -66,6 +64,8 @@ const handleSubScribe = async <CHANNEL, SESSION extends Session>(
     )
     return
   }
+  // if invalid, will auto-renew account token
+  const apiServiceResult = await steam.createAPIWithCurAccount(item.account)
   // eslint-disable-next-line prefer-spread
   const trans = (...args) => session.text.apply(session, args)
   if (!apiServiceResult.isSuccess()) {

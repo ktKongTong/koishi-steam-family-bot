@@ -7,11 +7,6 @@ import {
 import { ISteamFamilyAPI, ProxiedAPIResponse } from '../interface'
 import { GameBaseInfoResp } from '../../interface'
 
-const sleep = (sec: number = 1) => {
-  return new Promise<void>((resolve, reject) => {
-    setTimeout(resolve, sec * 1000)
-  })
-}
 export class LocalFamilyAPI extends ISteamFamilyAPI {
   steamAPI: SteamAPI
   helperAPIHost: string
