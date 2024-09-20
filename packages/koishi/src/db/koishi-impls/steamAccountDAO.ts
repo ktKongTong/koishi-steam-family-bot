@@ -186,4 +186,9 @@ export class SteamAccountDAO<T> implements ISteamAccountDAO<T> {
       })
     })
   }
+
+  async getAllSteamAccount(): Promise<SteamAccount[]> {
+    const res = await this.db.select('SteamAccount').execute()
+    return res
+  }
 }

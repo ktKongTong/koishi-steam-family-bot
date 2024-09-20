@@ -47,9 +47,12 @@ export abstract class ISteamService<T> {
     await this.db.Account.updateSteamAccountToken(account.id, {
       steamAccessToken: session.accessToken,
       steamRefreshToken: session.refreshToken,
+      status: 'valid',
     })
     account.steamAccessToken = session.accessToken
     account.steamRefreshToken = session.refreshToken
+    account.status = 'valid'
+    return account
   }
 
   async addAccountInfoByLoginSession(

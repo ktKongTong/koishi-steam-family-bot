@@ -1,8 +1,8 @@
 import { Context, Logger } from 'koishi'
 import { ChannelInfo, Config } from '@/interface'
 import { SteamService } from '@/services'
-import { libInfoSyncer, libMonitor } from 'steam-family-bot-core/schedules'
-import { KoishiBotService, KoishiSession } from '@/session'
+import { getScheduleTasks } from 'steam-family-bot-core/schedules'
+import { KoishiBotService } from '@/session'
 
 export default function schedules(
   ctx: Context,
@@ -12,17 +12,17 @@ export default function schedules(
   const steam = new SteamService<ChannelInfo>(ctx, config)
   const botService = new KoishiBotService(ctx)
   const logger = baseLogger.extend('schedules')
-  ctx.cron(
-    config.libMonitorCron,
-    libMonitor<ChannelInfo, KoishiSession>(
-      steam,
-      botService,
-      config,
-      logger.extend('lib-monitor')
-    )
-  )
-  ctx.cron(
-    config.libInfoSyncerCron,
-    libInfoSyncer(logger.extend('lib-info-syncer'), config, steam)
-  )
+  const baseCtx = {
+    config: config,
+    botService: botService,
+    steam,
+  }
+  const tasks = getScheduleTasks(config).filter((it) => it.enable)
+  for (const task of tasks) {
+    const scheduleContext = {
+      ...baseCtx,
+      logger: logger.extend(task.name),
+    }
+    ctx.cron(task.cron, () => task.handler(scheduleContext))
+  }
 }

@@ -19,6 +19,8 @@ export type SteamAccountWithFamilyId = SteamAccount & {
 export type FamilyLib = SteamFamilyLib & { info: GameInfo }
 
 export interface ISteamAccountDAO<T> {
+  getAllSteamAccount(): Promise<SteamAccount[]>
+
   getAuthedSteamAccountByFamilyId(
     familyId: string
   ): Promise<SteamAccountWithFamilyId>

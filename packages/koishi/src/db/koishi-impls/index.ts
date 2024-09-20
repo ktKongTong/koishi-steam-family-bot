@@ -22,7 +22,7 @@ export class DBService<T> extends IDBService<T> {
 
   async invalidAccount(id: number, subId: number) {
     await this.db.withTransaction(async (db) => {
-      await this.Subscription.inactiveSubscription(subId)
+      // await this.Subscription.inactiveSubscription(subId)
       await this.Account.invalidAccount(id)
     })
   }

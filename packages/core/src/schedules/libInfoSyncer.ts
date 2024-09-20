@@ -1,10 +1,12 @@
 import _ from 'lodash'
 import { Config, ISteamService } from '@/interface'
 import { Logger } from '@/interface/logger'
+import { ScheduleTaskCtx } from '@/interface/schedule'
 
-export const libInfoSyncer =
-  <CHANNEL>(logger: Logger, config: Config, steam: ISteamService<CHANNEL>) =>
-  async () => {
+export const libInfoSyncer = async <CHANNEL>(c: ScheduleTaskCtx<CHANNEL>) =>
+  // async () =>
+  {
+    const { steam, botService, config, logger } = c
     logger.info('trigger lib info syncer')
     const libItem = await steam.db.FamilyLib.getUnSyncedLib()
     const libsId = _.uniq(libItem.map((it) => it.appId))

@@ -38,10 +38,16 @@ export type GameBaseInfoResp = {
   createdAt: string
 }[]
 
+interface ScheduleTaskConfig {
+  cron: string
+  enable: boolean
+}
+
 export interface Config {
   SteamHelperAPIHost: string
-  libMonitorCron: string
-  libInfoSyncerCron: string
+  libMonitorCron: ScheduleTaskConfig
+  libInfoSyncerCron: ScheduleTaskConfig
+  tokenRefreshCron: ScheduleTaskConfig
   //assume value is yaml
   i18nMap: Record<string, string>
   steamDataFetchMode: 'remote' | 'local'

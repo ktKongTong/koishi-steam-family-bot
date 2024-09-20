@@ -18,26 +18,18 @@ import {
   getChangedLibs,
   updateDB,
 } from '@/schedules/family-lib-syncer/getLibChange'
+import { ScheduleTaskCtx } from '@/interface/schedule'
 
-export const libMonitor =
-  <CHANNEL, SESSION extends Session>(
-    steam: ISteamService<CHANNEL>,
-    botService: BotService<CHANNEL, SESSION>,
-    config: Config,
-    logger: Logger
-  ) =>
-  async () => {
+export const libMonitor = async <CHANNEL>(c: ScheduleTaskCtx<CHANNEL>) =>
+  // async () =>
+  {
+    const { steam, botService, config, logger } = c
+
     logger.info('trigger lib monitor')
     const subscribes = await steam.db.getAllSubscription()
     for (const item of subscribes) {
       try {
-        await handleSubScribe<CHANNEL, SESSION>(
-          steam,
-          item,
-          botService,
-          config,
-          logger
-        )
+        await handleSubScribe<CHANNEL>(steam, item, botService, config, logger)
       } catch (e) {
         logger.error(
           `some error occur during handle steam subscription familyId: ${item.steamAndFamilyRel.familyId}, ${e?.stack}`
@@ -46,10 +38,10 @@ export const libMonitor =
     }
   }
 
-const handleSubScribe = async <CHANNEL, SESSION extends Session>(
+const handleSubScribe = async <CHANNEL>(
   steam: ISteamService<CHANNEL>,
   item: SubscribeInfo<CHANNEL>,
-  botService: BotService<CHANNEL, SESSION>,
+  botService: BotService<CHANNEL, Session<CHANNEL>>,
   config: Config,
   logger: Logger
 ) => {
