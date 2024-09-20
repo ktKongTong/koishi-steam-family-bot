@@ -1,5 +1,11 @@
 # steam-family-bot-core
 
+## 0.0.8-dev.6
+
+### Patch Changes
+
+- feat: add cron task to automatically refresh steam token
+
 ## 0.0.8-dev.5
 
 ### Patch Changes

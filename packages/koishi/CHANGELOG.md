@@ -1,5 +1,13 @@
 # koishi-plugin-steam-family-bot
 
+## 0.0.8-dev.6
+
+### Patch Changes
+
+- feat: add cron task to automatically refresh steam token
+- Updated dependencies
+  - steam-family-bot-core@0.0.8-dev.6
+
 ## 0.0.8-dev.5
 
 ### Patch Changes
