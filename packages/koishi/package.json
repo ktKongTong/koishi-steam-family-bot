@@ -78,6 +78,7 @@
     "koishi": "^4.17.4",
     "koishi-plugin-cron": "^3.1.0",
     "lodash": "^4.17.21",
+    "puppeteer-core": "^23.4.1",
     "node-steam-family-group-api": "^0.0.4-dev.patch04",
     "steam-family-bot-core": "workspace:*"
   }

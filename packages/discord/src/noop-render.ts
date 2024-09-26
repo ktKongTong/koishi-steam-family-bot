@@ -6,11 +6,14 @@ export class NoOpRender implements ImgRender {
     games: FamilyGames,
     onStart?: () => void,
     onError?: () => void
-  ): Promise<string> {
-    return Promise.resolve('')
+  ): Promise<Buffer> {
+    return Promise.resolve(undefined)
   }
 
-  screenshotFamilyStatistic(token: string, onStart?: () => void): Promise<any> {
+  screenshotFamilyStatistic(
+    token: string,
+    onStart?: () => void
+  ): Promise<Buffer> {
     return Promise.resolve(undefined)
   }
   isRenderEnable(): boolean {

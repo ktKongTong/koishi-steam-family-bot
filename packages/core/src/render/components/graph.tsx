@@ -41,7 +41,7 @@ export default function Graph({
 
   return (
     <div
-      className={'relative z-10 overflow-hidden w-full h-full'}
+      className={'relative z-10 overflow-hidden w-fit h-full '}
       id={'data-graph'}
     >
       <div
@@ -86,12 +86,6 @@ export default function Graph({
       </div>
       <img
         src={bg}
-        crossOrigin="anonymous"
-        style={{
-          objectFit: 'cover',
-          inset: 0,
-          height: '100%',
-        }}
         className={'inset-0 absolute -z-10 object-cover h-full'}
         loading={'eager'}
       />

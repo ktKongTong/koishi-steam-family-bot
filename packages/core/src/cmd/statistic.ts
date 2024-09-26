@@ -77,7 +77,7 @@ export default () =>
               session.text('commands.statistic.need-wait-long-time')
             )
           })
-          await session.sendQueued(res)
+          await session.sendImgBuffer(res)
         } catch (e) {
           logger.error(`render error ${e}`)
           await session.sendQueued(
@@ -90,9 +90,13 @@ export default () =>
           const familyGames = await steamService.getLibStatistic(
             account.steamAccessToken
           )
-          await session.sendQueued(
-            await render.getFamilyStatisticImg(familyGames, onStart, onError)
+
+          const buffer = await render.getFamilyStatisticImg(
+            familyGames,
+            onStart,
+            onError
           )
+          await session.sendImgBuffer(buffer)
         } catch (e) {
           logger.error(`render error ${e}`)
           await session.sendQueued(

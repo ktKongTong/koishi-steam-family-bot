@@ -27,11 +27,14 @@ export function getStatHtml(games: FamilyGames) {
 }
 
 export interface ImgRender {
-  screenshotFamilyStatistic(token: string, onStart?: () => void): Promise<any>
+  screenshotFamilyStatistic(
+    token: string,
+    onStart?: () => void
+  ): Promise<Buffer>
   getFamilyStatisticImg(
     games: FamilyGames,
     onStart?: () => void,
     onError?: () => void
-  ): Promise<string>
+  ): Promise<Buffer>
   isRenderEnable(): boolean
 }

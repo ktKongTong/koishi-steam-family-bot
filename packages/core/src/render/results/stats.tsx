@@ -72,7 +72,11 @@ export function Stats({ familyGames }: { familyGames: FamilyGames }) {
   const player = getPlayer(familyGames.familyInfo, familyGames.members)
   const recentAppDetail = familyGames.recentAppDetail.storeItems
   return (
-    <div className={'flex min-h-screen flex-col items-center justify-between'}>
+    <div
+      className={
+        'flex min-h-screen w-fit flex-col items-center justify-between bg-red-500'
+      }
+    >
       <Graph
         players={player}
         libsPlaytime={getPlaytime(familyGames.playtimeSummary)}

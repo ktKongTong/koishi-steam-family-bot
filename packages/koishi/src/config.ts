@@ -21,6 +21,9 @@ export const Config = Schema.object({
     enable: Schema.boolean().default(false),
     cron: Schema.string().default('0 4 * * *'),
   }),
+  // 'local-plugin' | 'remote'
+  preferPuppeteerMode: Schema.string().default('local-plugin'),
+  broswerlessWSEndpoint: Schema.string().default(''),
   // assume value is yaml
   i18nMap: Schema.dict(Schema.string()).default({}),
 }).i18n({

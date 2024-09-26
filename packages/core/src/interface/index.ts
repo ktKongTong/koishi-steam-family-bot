@@ -45,6 +45,8 @@ interface ScheduleTaskConfig {
 
 export interface Config {
   SteamHelperAPIHost: string
+  preferPuppeteerMode: 'local-plugin' | 'remote'
+  broswerlessWSEndpoint: string
   libMonitorCron: ScheduleTaskConfig
   libInfoSyncerCron: ScheduleTaskConfig
   tokenRefreshCron: ScheduleTaskConfig
