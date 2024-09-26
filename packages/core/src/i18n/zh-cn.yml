@@ -78,12 +78,12 @@ commands:
 
 schedule:
   lib-syncer:
-    wishes-increase-one: 库存愿望单 + 1。{{name}}，by：{{owners}}
-    wishes-decrease-one: 库存愿望单 - 1。{{name}}，by：{{owners}}
-    wishes-copy-increase: 愿望单副本 + {{cnt}}。{{name}}，by：{{owners}}，当前愿望数：{{totalCount}}
-    wishes-copy-decrease: 愿望单变动，{{name}} 副本 - {{cnt}}。当前愿望数：{{totalCount}}
-    lib-increase-one: 感谢富哥{{owners}}，库存喜 + 1。{{name}}, {{totalCount}}
-    lib-decrease-one: 库存变动，{{name}} 库存 - 1。
-    lib-copy-increase: 感谢富哥{{owners}}，副本喜 + {{cnt}}。{{name}}，当前副本数 {{totalCount}}
-    lib-copy-decrease: 库存变动，{{name}} 副本 - {{cnt}}。当前副本数 {{totalCount}}
-    big-change: 愿望单/库存短时间内发生大量变更,共 {{totalCount}} 项，为防止刷屏，仅播报 {{shortSize}} 项简略信息
+    wishes-increase-one: ✨库存愿望单 + 1。{{name}}，by：{{owners}}
+    wishes-decrease-one: 😊库存愿望单 - 1。{{name}}，by：{{owners}}
+    wishes-copy-increase: 🥰愿望单副本 + {{cnt}}。{{name}}，by：{{owners}}，当前愿望数：{{totalCount}}
+    wishes-copy-decrease: 😗愿望单变动，{{name}} 副本 - {{cnt}}。当前愿望数：{{totalCount}}
+    lib-increase-one: 🥳感谢富哥{{owners}}，库存喜 + 1。{{name}}, {{totalCount}}
+    lib-decrease-one: 😉库存变动，{{name}} 库存 - 1。
+    lib-copy-increase: 🥵感谢富哥{{owners}}，副本喜 + {{cnt}}。{{name}}，当前副本数 {{totalCount}}
+    lib-copy-decrease: 😋库存变动，{{name}} 副本 - {{cnt}}。当前副本数 {{totalCount}}
+    big-change: 🤯愿望单/库存短时间内发生大量变更,共 {{totalCount}} 项，为防止刷屏，仅播报 {{shortSize}} 项简略信息

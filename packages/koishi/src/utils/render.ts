@@ -95,8 +95,10 @@ class PuppeteerRender {
   async renderHTML(
     html: string,
     selector: string,
+    onStart?: () => void,
     screenShotOption?: (clip: ScreenshotClip) => ScreenshotOptions
   ) {
+    onStart?.()
     const page = await this.browser.newPage()
     await page.setContent(html)
     await page.setViewport({
@@ -118,7 +120,12 @@ class PuppeteerRender {
     return buffer
   }
 
-  async screenshotURL(url: string, selector: string): Promise<Buffer> {
+  async screenshotURL(
+    url: string,
+    selector: string,
+    onStart?: () => void
+  ): Promise<Buffer> {
+    onStart?.()
     const page = await this.browser.newPage()
     await page.setViewport({
       width: 1920,
@@ -127,9 +134,10 @@ class PuppeteerRender {
     })
     await page.goto(url, { timeout: 0, waitUntil: 'domcontentloaded' })
 
+    await delay(5000)
     const elm = await page.waitForSelector(selector, { timeout: 20000 })
     // wait for potential animation
-    await delay(1000)
+    await delay(5000)
     const buffer = await elm!.screenshot({})
     await page.close()
     return Buffer.from(buffer)
@@ -149,7 +157,8 @@ export class KoishiImgRender implements ImgRender {
   ): Promise<Buffer> {
     const buffer = await this.puppeteerRender.screenshotURL(
       `${this.config.SteamHelperAPIHost}/render?access_token=${token}`,
-      '#data-graph'
+      '#data-graph',
+      onStart
     )
     return Buffer.from(buffer)
   }
@@ -161,7 +170,8 @@ export class KoishiImgRender implements ImgRender {
   ): Promise<Buffer> {
     const buf = await this.puppeteerRender.renderHTML(
       getStatHtml(games),
-      '#data-graph'
+      '#data-graph',
+      onStart
     )
     return Buffer.from(buf)
   }
