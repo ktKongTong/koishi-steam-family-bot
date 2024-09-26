@@ -1,5 +1,13 @@
 # steam-family-bot-discord
 
+## 0.0.8-dev.8
+
+### Patch Changes
+
+- feat: add onStart hook on render img
+- Updated dependencies
+  - steam-family-bot-core@0.0.8-dev.8
+
 ## 0.0.8-dev.7
 
 ### Patch Changes
