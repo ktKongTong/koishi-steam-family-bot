@@ -1,5 +1,11 @@
 # steam-family-bot-core
 
+## 0.0.8-dev.7
+
+### Patch Changes
+
+- feat: enable config remote puppeteer
+
 ## 0.0.8-dev.6
 
 ### Patch Changes
