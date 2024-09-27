@@ -1,5 +1,13 @@
 # koishi-plugin-steam-family-bot
 
+## 0.0.8-dev.10
+
+### Patch Changes
+
+- fix: remote render box error
+- Updated dependencies
+  - steam-family-bot-core@0.0.8-dev.10
+
 ## 0.0.8-dev.9
 
 ### Patch Changes
