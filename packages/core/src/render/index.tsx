@@ -1,12 +1,12 @@
 import { FamilyGames, SteamFamilyLib } from '@/interface'
 import React from 'react'
-import * as ReactDOMServer from 'react-dom/server'
 import { App } from '@/render/components/app'
 import { Stats } from '@/render/results/stats'
+import { renderToString } from 'react-dom/server'
 
 export * from './results/stats'
-
 export * from './components/app'
+
 export interface SteamFamilyLibForStats extends SteamFamilyLib {
   ownerSteamids: string[]
   mappedTags: string[]
@@ -14,7 +14,7 @@ export interface SteamFamilyLibForStats extends SteamFamilyLib {
 }
 
 export const renderComponent = (child: React.ReactNode) => {
-  let res = ReactDOMServer.renderToString(<App>{child}</App>)
+  let res = renderToString(<App>{child}</App>)
   res = ` <!DOCTYPE html>` + res
   return res
 }

@@ -1,6 +1,7 @@
 export * from './preferImg'
 export * from './jwt'
-
+export * from './puppeteer'
+export * from './s3'
 export const cooldownDurationTostring = (duration: number) => {
   if (duration == 0) return '暂无冷静期'
   if (duration < 24 * 3600) {

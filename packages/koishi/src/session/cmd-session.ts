@@ -1,4 +1,4 @@
-import { Session, tran } from 'steam-family-bot-core'
+import { Session, tran, TmpFileStorage } from 'steam-family-bot-core'
 import { ChannelInfo } from '@/interface'
 
 import { h, Session as KoiSession } from 'koishi'
@@ -7,10 +7,15 @@ export class KSession implements Session<ChannelInfo> {
   private readonly session: KoiSession
   uid: string
   lang: string
-  constructor(session: KoiSession) {
+  store: TmpFileStorage | undefined
+  constructor(
+    session: KoiSession,
+    tmpFileStorage?: TmpFileStorage | undefined
+  ) {
     this.session = session
     this.uid = session.uid
     this.lang = 'zh-cn'
+    this.store = tmpFileStorage
   }
   getSessionInfo(): ChannelInfo {
     return {
@@ -28,6 +33,10 @@ export class KSession implements Session<ChannelInfo> {
     await this.session.send(h('message', [h('img', { src: url })]))
   }
   async sendImgBuffer(content: any, mimeType?: string): Promise<void> {
+    if (this.store) {
+      const url = await this.store.uploadImg(content, mimeType)
+      return await this.sendImgUrl(url)
+    }
     await this.session.send(h.image(content, mimeType ?? 'image/png'))
   }
   async sendQueued(msg: string): Promise<void> {

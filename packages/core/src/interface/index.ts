@@ -45,14 +45,24 @@ interface ScheduleTaskConfig {
 
 export interface Config {
   SteamHelperAPIHost: string
-  preferPuppeteerMode: 'local-plugin' | 'remote'
-  broswerlessWSEndpoint: string
   libMonitorCron: ScheduleTaskConfig
   libInfoSyncerCron: ScheduleTaskConfig
   tokenRefreshCron: ScheduleTaskConfig
   //assume value is yaml
   i18nMap: Record<string, string>
   steamDataFetchMode: 'remote' | 'local'
+  preferPuppeteerMode: 'local-plugin' | 'remote'
+  broswerlessWSEndpoint: string
+  uploadImageToS3: {
+    enable: boolean
+    s3AccessKey: string
+    s3SecretKey: string
+    endpoint: string
+    region: string | undefined
+    bucketName: string
+    keyPrefix: string
+    baseURL: string
+  }
 }
 
 export * from './bot'

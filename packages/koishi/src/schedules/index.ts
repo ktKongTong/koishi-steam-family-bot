@@ -10,7 +10,7 @@ export default function schedules(
   baseLogger: Logger
 ) {
   const steam = new SteamService<ChannelInfo>(ctx, config)
-  const botService = new KoishiBotService(ctx)
+  const botService = new KoishiBotService(ctx, config)
   const logger = baseLogger.extend('schedules')
   const baseCtx = {
     config: config,
