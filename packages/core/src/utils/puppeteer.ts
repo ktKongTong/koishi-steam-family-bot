@@ -93,14 +93,9 @@ export class PuppeteerRender {
     // wait for potential animation
     await sleep(1000)
     const clip = await elm.boundingBox()
-    const buffer = await elm!.screenshot(
-      screenShotOption
-        ? screenShotOption(clip)
-        : {
-            clip: clip,
-            type: 'png',
-          }
-    )
+    const buffer = await elm!.screenshot({
+      type: 'png',
+    })
     await page.close()
     return Buffer.from(buffer)
   }
