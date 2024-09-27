@@ -7,6 +7,7 @@
     "koishi-plugin-steam-family-bot": "0.0.7"
   },
   "changesets": [
+    "clever-adults-destroy",
     "heavy-plants-serve",
     "kind-jeans-give",
     "loud-pots-begin",

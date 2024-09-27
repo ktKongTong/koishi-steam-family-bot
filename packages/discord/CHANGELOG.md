@@ -1,5 +1,13 @@
 # steam-family-bot-discord
 
+## 0.0.8-dev.11
+
+### Patch Changes
+
+- fix: remote render box error
+- Updated dependencies
+  - steam-family-bot-core@0.0.8-dev.11
+
 ## 0.0.8-dev.10
 
 ### Patch Changes

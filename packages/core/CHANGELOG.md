@@ -1,5 +1,11 @@
 # steam-family-bot-core
 
+## 0.0.8-dev.11
+
+### Patch Changes
+
+- fix: remote render box error
+
 ## 0.0.8-dev.10
 
 ### Patch Changes
