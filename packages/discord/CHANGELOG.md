@@ -1,5 +1,13 @@
 # steam-family-bot-discord
 
+## 0.0.8-dev.9
+
+### Patch Changes
+
+- feat: add remote puppeteer & option to upload image before send
+- Updated dependencies
+  - steam-family-bot-core@0.0.8-dev.9
+
 ## 0.0.8-dev.8
 
 ### Patch Changes
