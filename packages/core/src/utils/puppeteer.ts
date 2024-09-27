@@ -56,8 +56,8 @@ export class PuppeteerRender {
     const page = await this.browser.newPage()
     await page.setContent(html)
     await page.setViewport({
-      width: 1920,
-      height: 1080,
+      width: 3840,
+      height: 2160,
       deviceScaleFactor: 2,
     })
     const elm = await page.waitForSelector(selector, { timeout: 5000 })
@@ -83,8 +83,8 @@ export class PuppeteerRender {
     onStart?.()
     const page = await this.browser.newPage()
     await page.setViewport({
-      width: 1920,
-      height: 1080,
+      width: 3840,
+      height: 2160,
       deviceScaleFactor: 2,
     })
     await page.goto(url, { timeout: 0, waitUntil: 'domcontentloaded' })
@@ -92,7 +92,6 @@ export class PuppeteerRender {
     const elm = await page.waitForSelector(selector, { timeout: 20000 })
     // wait for potential animation
     await sleep(1000)
-    const clip = await elm.boundingBox()
     const buffer = await elm!.screenshot({
       type: 'png',
     })
