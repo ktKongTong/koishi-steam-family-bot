@@ -1,5 +1,13 @@
 # koishi-plugin-steam-family-bot
 
+## 0.0.8-dev.14
+
+### Patch Changes
+
+- chore(canvas): add log while import canvas
+- Updated dependencies
+  - steam-family-bot-core@0.0.8-dev.14
+
 ## 0.0.8-dev.13
 
 ### Patch Changes
