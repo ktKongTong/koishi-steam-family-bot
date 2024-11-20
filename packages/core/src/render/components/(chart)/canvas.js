@@ -19,6 +19,7 @@ const canvasBuilder = async ()=> {
     canvasHelper.enable = true
 
   }catch(err) {
+    console.error(err)
     try {
       const {createCanvas: _createCanvas} = await import('canvas')
       canvasHelper.createCanvas = _createCanvas
@@ -28,6 +29,7 @@ const canvasBuilder = async ()=> {
       canvasHelper.enable = true
 
     }catch(err) {
+      console.error(err)
       const {Canvas} = await import('skia-canvas')
       canvasHelper.createCanvas = (h,w)=> {
         return new Canvas(h,w)
