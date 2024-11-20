@@ -3,13 +3,15 @@ export const canvasHelper = {
   enable: false,
   canvasToDataURL: (canvas)=> ""
 }
-
+const __dirname = import.meta.dirname
 const canvasBuilder = async ()=> {
   try {
 
     const { createCanvas: _createCanvas, GlobalFonts } = await import('@napi-rs/canvas')
     const {join} = await import('path')
-    GlobalFonts.registerFromPath(join(__dirname, '.', 'fonts', 'MaShanZheng-Regular.ttf'), 'CJK')
+    const p = join(__dirname, '.', 'fonts', 'MaShanZheng-Regular.ttf')
+    console.debug(p)
+    GlobalFonts.registerFromPath(p, 'CJK')
     canvasHelper.createCanvas = _createCanvas
     // MaShanZheng-Regular.ttf
     GlobalFonts.register()
