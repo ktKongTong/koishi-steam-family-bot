@@ -3,7 +3,6 @@ export const canvasHelper = {
   enable: false,
   canvasToDataURL: (canvas)=> ""
 }
-const __dirname = import.meta.dirname
 const canvasBuilder = async ()=> {
   try {
 
@@ -14,7 +13,6 @@ const canvasBuilder = async ()=> {
     GlobalFonts.registerFromPath(p, 'CJK')
     canvasHelper.createCanvas = _createCanvas
     // MaShanZheng-Regular.ttf
-    GlobalFonts.register()
     canvasHelper.canvasToDataURL = (canvas)=> {
       return canvas.toDataURL('image/png')
     }
