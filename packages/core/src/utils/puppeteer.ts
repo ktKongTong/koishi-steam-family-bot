@@ -7,25 +7,32 @@ import { sleep } from './index'
 import { Config } from '@/interface'
 
 export interface PuppeteerProvider {
-  browser: Browser
+  browser: () => Promise<Browser>
   ok: boolean
 }
 
 export class RemotePuppeteerProvider implements PuppeteerProvider {
-  browser: Browser
+  _browser: Browser
+  endpoint: string
+  _ok: boolean = true
+  async browser(): Promise<Browser> {
+    if (this._browser?.connected) {
+      return this._browser
+    }
+    try {
+      this._browser = await puppeteer.connect({
+        browserWSEndpoint: this.endpoint,
+      })
+      return this._browser
+    } catch (e) {
+      this._ok = false
+    }
+  }
   constructor(config: Config) {
-    puppeteer
-      .connect({ browserWSEndpoint: config.broswerlessWSEndpoint })
-      .then((res) => {
-        console.log('connect to browser successful')
-        this.browser = res
-      })
-      .catch((e) => {
-        console.error('connection error', e)
-      })
+    this.endpoint = config.broswerlessWSEndpoint
   }
   get ok() {
-    return this.browser != null || this.browser != undefined
+    return this._ok
   }
 }
 
@@ -34,15 +41,14 @@ export class PuppeteerRender {
   get browser() {
     const provider = this.browserHolders.find((it) => it.ok)
     if (provider) {
-      return provider.browser
+      return provider.browser()
     }
     throw Error('NoSuitablePuppeteerProviderFound')
   }
   get ok() {
-    return this.browserHolders.find((it) => it.ok) != undefined
+    return !!this.browserHolders.find((it) => it.ok)
   }
   constructor(providers: PuppeteerProvider[]) {
-    // unsafe singleton, but enough for now
     this.browserHolders = providers
   }
 
@@ -53,16 +59,12 @@ export class PuppeteerRender {
     screenShotOption?: (clip: ScreenshotClip) => ScreenshotOptions
   ) {
     onStart?.()
-    const page = await this.browser.newPage()
+    const browser = await this.browser
+    const page = await browser.newPage()
     await page.setContent(html)
-    await page.setViewport({
-      width: 3840,
-      height: 2160,
-      deviceScaleFactor: 2,
-    })
     const elm = await page.waitForSelector(selector, { timeout: 5000 })
     const clip = await elm.boundingBox()
-    const u8Arr = await elm.screenshot(
+    const u8Arr = await elm!.screenshot(
       screenShotOption
         ? screenShotOption(clip)
         : {
@@ -81,15 +83,12 @@ export class PuppeteerRender {
     screenShotOption?: (clip: ScreenshotClip) => ScreenshotOptions
   ): Promise<Buffer> {
     onStart?.()
-    const page = await this.browser.newPage()
-    await page.setViewport({
-      width: 3840,
-      height: 2160,
-      deviceScaleFactor: 2,
-    })
+
+    const browser = await this.browser
+    const page = await browser.newPage()
     await page.goto(url, { timeout: 0, waitUntil: 'domcontentloaded' })
 
-    const elm = await page.waitForSelector(selector, { timeout: 20000 })
+    const elm = await page.waitForSelector(selector, { timeout: 10000 })
     // wait for potential animation
     await sleep(1000)
     const buffer = await elm!.screenshot({
