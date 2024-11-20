@@ -1,5 +1,13 @@
 # koishi-plugin-steam-family-bot
 
+## 0.0.8-dev.12
+
+### Patch Changes
+
+- replace api impl & add docker ci
+- Updated dependencies
+  - steam-family-bot-core@0.0.8-dev.12
+
 ## 0.0.8-dev.11
 
 ### Patch Changes

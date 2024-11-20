@@ -11,7 +11,7 @@ on:
         description: 'docker password'
         required: true
 env:
-  DOCKERHUB_SLUG: aktdocker/koishi-beatsaber-bot-lite
+  DOCKERHUB_SLUG: aktdocker/koishi-steam-family-bot-lite
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -23,7 +23,7 @@ jobs:
       - name: Create matrix
         id: platforms
         run: |
-          echo "matrix=$(docker buildx bake -f ./.github/docker/docker-bake-lite.hcl koishi-beatsaber-bot-lite --print | jq -cr '.target."koishi-beatsaber-bot-lite".platforms')" >>${GITHUB_OUTPUT}
+          echo "matrix=$(docker buildx bake -f ./.github/docker/docker-bake-lite.hcl koishi-steam-family-bot-lite --print | jq -cr '.target."koishi-steam-family-bot-lite".platforms')" >>${GITHUB_OUTPUT}
       - name: Show matrix
         run: |
           echo ${{ steps.platforms.outputs.matrix }}
@@ -39,7 +39,7 @@ jobs:
             type=sha,prefix=sha-
             type=match,pattern=v(.*),group=1
           labels: |
-            org.opencontainers.image.title=koishi-beatsaber-bot-lite
+            org.opencontainers.image.title=koishi-steam-family-bot-lite
             org.opencontainers.image.vendor=aktdocker
       - name: Rename meta bake definition file
         run: |
@@ -104,7 +104,7 @@ jobs:
           files: |
             ./.github/docker/docker-bake-lite.hcl
             /tmp/bake-meta-lite.json
-          targets: koishi-beatsaber-bot-lite
+          targets: koishi-steam-family-bot-lite
           set: |
             *.tags=
             *.platform=${{ matrix.platform }}
@@ -116,7 +116,7 @@ jobs:
           mkdir -p /tmp/digests-lite
           echo '${{ steps.bake.outputs.metadata }}'
           echo '${{ steps.bake.outputs.metadata }}' > metadata.json
-          digest="${{ fromJSON(steps.bake.outputs.metadata)['koishi-beatsaber-bot-lite']['containerimage.digest'] }}"
+          digest="${{ fromJSON(steps.bake.outputs.metadata)['koishi-steam-family-bot-lite']['containerimage.digest'] }}"
           touch "/tmp/digests-lite/${digest#sha256:}"
 
       - name: Upload digest

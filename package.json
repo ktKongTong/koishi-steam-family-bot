@@ -46,6 +46,7 @@
     "clean": "pnpm run -r clean",
     "build": "pnpm run -r build",
     "ci:publish": "pnpm publish -r",
+    "ci:publish-dev": "pnpm publish -r --tag dev --no-git-checks",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs"
   },

@@ -14,7 +14,7 @@ on:
 env:
   REGISTRY: ghcr.io
   UESRNAME: ktkongtong
-  DOCKERHUB_SLUG: aktdocker/koishi-beatsaber-bot
+  DOCKERHUB_SLUG: aktdocker/koishi-steam-family-bot
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -26,7 +26,7 @@ jobs:
       - name: Create matrix
         id: platforms
         run: |
-          echo "matrix=$(docker buildx bake -f ./.github/docker/docker-bake.hcl koishi-beatsaber-bot --print | jq -cr '.target."koishi-beatsaber-bot".platforms')" >>${GITHUB_OUTPUT}
+          echo "matrix=$(docker buildx bake -f ./.github/docker/docker-bake.hcl koishi-steam-family-bot --print | jq -cr '.target."koishi-steam-family-bot".platforms')" >>${GITHUB_OUTPUT}
       - name: Show matrix
         run: |
           echo ${{ steps.platforms.outputs.matrix }}
@@ -41,7 +41,7 @@ jobs:
             type=sha,prefix=sha-
             type=match,pattern=v(.*),group=1
           labels: |
-            org.opencontainers.image.title=koishi-beatsaber-bot
+            org.opencontainers.image.title=koishi-steam-family-bot
             org.opencontainers.image.vendor=aktdocker
       - name: Rename meta bake definition file
         run: |
@@ -106,7 +106,7 @@ jobs:
           files: |
             ./.github/docker/docker-bake.hcl
             /tmp/bake-meta.json
-          targets: koishi-beatsaber-bot
+          targets: koishi-steam-family-bot
           set: |
             *.tags=
             *.platform=${{ matrix.platform }}
@@ -118,7 +118,7 @@ jobs:
           mkdir -p /tmp/digests-aio
           echo '${{ steps.bake.outputs.metadata }}'
           echo '${{ steps.bake.outputs.metadata }}' > metadata.json
-          digest="${{ fromJSON(steps.bake.outputs.metadata)['koishi-beatsaber-bot']['containerimage.digest'] }}"
+          digest="${{ fromJSON(steps.bake.outputs.metadata)['koishi-steam-family-bot']['containerimage.digest'] }}"
           touch "/tmp/digests-aio/${digest#sha256:}"
 
       - name: Upload digest
