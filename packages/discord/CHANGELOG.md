@@ -1,5 +1,13 @@
 # steam-family-bot-discord
 
+## 0.0.8-dev.13
+
+### Patch Changes
+
+- chore(canvas): add log while import canvas
+- Updated dependencies
+  - steam-family-bot-core@0.0.8-dev.13
+
 ## 0.0.8-dev.12
 
 ### Patch Changes
