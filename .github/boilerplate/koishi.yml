@@ -62,9 +62,9 @@ plugins:
     ~adapter-wecom: {}
     ~adapter-whatsapp: {}
     ~adapter-zulip: {}
-    adapter-onebot: {}
+    ~adapter-onebot: {}
   cron: {}
-  puppeteer: {}
+  ~puppeteer: {}
   steam-family-bot: {}
   group:develop:
     $if: env.NODE_ENV === 'development'
