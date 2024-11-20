@@ -1,0 +1,35 @@
+services:
+  koishi:
+    image: aktdocker/koishi-steam-family-lib-bot:0.2.0
+    tty: true
+    container_name: koishi-steam
+    restart: always
+    environment:
+      - TZ:"Asia/Shanghai"
+    volumes:
+      - koishi:/koishi
+#      - ./prod.koishi.yaml:/koishi/koishi.yml
+    networks:
+      - bs-bot
+    ports:
+      - "5140:5140"
+  napcat:
+    image: mlikiowa/napcat-docker:v3.7.0
+    environment:
+      - ACCOUNT=${ACCOUNT}
+      - WS_ENABLE=true
+    ports:
+      - 3001:3001
+      - 6099:6099
+    container_name: napcat
+    volumes:
+      # - napcat_cfg:/usr/src/app/napcat/config
+      - napcat_qq:/root/.config/QQ
+    restart: always
+    networks:
+      - bs-bot
+volumes:
+  koishi:
+  napcat_qq:
+networks:
+  bs-bot:

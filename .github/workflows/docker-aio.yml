@@ -1,0 +1,168 @@
+name: Docker Build and Push
+
+on:
+  workflow_call:
+
+    secrets:
+      docker_username:
+        description: 'docker username'
+        required: true
+
+      docker_password:
+        description: 'docker password'
+        required: true
+env:
+  REGISTRY: ghcr.io
+  UESRNAME: ktkongtong
+  DOCKERHUB_SLUG: aktdocker/koishi-beatsaber-bot
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.platforms.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Create matrix
+        id: platforms
+        run: |
+          echo "matrix=$(docker buildx bake -f ./.github/docker/docker-bake.hcl koishi-beatsaber-bot --print | jq -cr '.target."koishi-beatsaber-bot".platforms')" >>${GITHUB_OUTPUT}
+      - name: Show matrix
+        run: |
+          echo ${{ steps.platforms.outputs.matrix }}
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.DOCKERHUB_SLUG }}
+            ${{ env.GHCR_SLUG }}
+          tags: |
+            type=sha,prefix=sha-
+            type=match,pattern=v(.*),group=1
+          labels: |
+            org.opencontainers.image.title=koishi-beatsaber-bot
+            org.opencontainers.image.vendor=aktdocker
+      - name: Rename meta bake definition file
+        run: |
+          mv "${{ steps.meta.outputs.bake-file }}" "/tmp/bake-meta.json"
+      - name: Upload meta bake definition
+        uses: actions/upload-artifact@v4
+        with:
+          name: bake-meta
+          path: /tmp/bake-meta.json
+          if-no-files-found: error
+          retention-days: 1
+
+  build:
+    runs-on: ubuntu-latest
+    needs:
+      - prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    steps:
+      - name: Prepare
+        run: |
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get current git tag
+        id: get_tag
+        run: |
+          TAG=$(git describe --tags --abbrev=0)
+          # Remove 'v' prefix
+          TAG=${TAG#v}
+          echo "Current tag without v prefix: $TAG"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+      - name: Download meta bake definition
+        uses: actions/download-artifact@v4
+        with:
+          name: bake-meta
+          path: /tmp
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-flags: "--debug"
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.docker_username }}
+          password: ${{ secrets.docker_password }}
+      - name: rewrite package.json deps version
+        run: |
+          sed -i 's/workspace:\*/${{env.TAG}}/g' ./.github/boilerplate/package.json
+          cat ./.github/boilerplate/package.json
+      -
+        name: Build
+        id: bake
+        uses: docker/bake-action@v5
+        with:
+          files: |
+            ./.github/docker/docker-bake.hcl
+            /tmp/bake-meta.json
+          targets: koishi-beatsaber-bot
+          set: |
+            *.tags=
+            *.platform=${{ matrix.platform }}
+            *.cache-from=type=gha,scope=build-${{ env.PLATFORM_PAIR }}
+            *.cache-to=type=gha,scope=build-${{ env.PLATFORM_PAIR }}
+            *.output=type=image,"name=${{ env.DOCKERHUB_SLUG }}",name-canonical=true,push-by-digest=true,push=${{ github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/v') }}
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests-aio
+          echo '${{ steps.bake.outputs.metadata }}'
+          echo '${{ steps.bake.outputs.metadata }}' > metadata.json
+          digest="${{ fromJSON(steps.bake.outputs.metadata)['koishi-beatsaber-bot']['containerimage.digest'] }}"
+          touch "/tmp/digests-aio/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-aio-${{ env.PLATFORM_PAIR }}
+          path: /tmp/digests-aio/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - build
+    steps:
+      - name: Download meta bake definition
+        uses: actions/download-artifact@v4
+        with:
+          name: bake-meta
+          path: /tmp
+
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/digests-aio
+          pattern: digests-aio-*
+          merge-multiple: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.docker_username }}
+          password: ${{ secrets.docker_password }}
+
+      - name: Create manifest list and push
+        working-directory: /tmp/digests-aio
+        run: |
+          echo $DOCKER_METADATA_OUTPUT_JSON
+          docker buildx imagetools create $(jq -cr '.target."docker-metadata-action".tags | map(select(startswith("${{ env.DOCKERHUB_SLUG }}")) | "-t " + .) | join(" ")' /tmp/bake-meta.json) $(printf '${{ env.DOCKERHUB_SLUG }}@sha256:%s ' *)
+
+      - name: Inspect image
+        run: |
+          docker buildx imagetools inspect ${{ env.DOCKERHUB_SLUG }}:$(jq -r '.target."docker-metadata-action".args.DOCKER_META_VERSION' /tmp/bake-meta.json)
