@@ -1,5 +1,13 @@
 # koishi-plugin-steam-family-bot
 
+## 0.0.8-dev.15
+
+### Patch Changes
+
+- refactor(core): update interface exports and optimize canvas component
+- Updated dependencies
+  - steam-family-bot-core@0.0.8-dev.15
+
 ## 0.0.8-dev.14
 
 ### Patch Changes
