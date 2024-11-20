@@ -6,11 +6,12 @@ import {
 } from 'node-steam-family-group-api'
 import { ISteamFamilyAPI, ProxiedAPIResponse } from '../interface'
 import { GameBaseInfoResp } from '../../interface'
+import { Logger } from '@/interface/logger'
 
 export class LocalFamilyAPI extends ISteamFamilyAPI {
   steamAPI: SteamAPI
   helperAPIHost: string
-  constructor(helperApiHost: string, token?: string) {
+  constructor(helperApiHost: string, logger: Logger, token?: string) {
     super()
     if (helperApiHost.endsWith('/')) {
       this.helperAPIHost = helperApiHost.slice(0, helperApiHost.length - 1)

@@ -104,13 +104,11 @@ export const prepareLibData = async <T>(
     familyId,
     'lib'
   )
-  const libs = api.Steam.withRetry(3)
-    .getSteamFamilyGroupLibs(BigInt(familyId))
-    .then((res) =>
-      res?.data.apps.filter(
-        (app) => app.excludeReason == undefined || app.excludeReason == 0
-      )
+  const libs = api.Steam.getSteamFamilyGroupLibs(BigInt(familyId)).then((res) =>
+    res?.data.apps.filter(
+      (app) => app.excludeReason == undefined || app.excludeReason == 0
     )
+  )
   const [awaitedPrevLibs, awaitedLibs] = await Promise.all([prevLibs, libs])
   return { prevLibs: awaitedPrevLibs, libs: awaitedLibs }
 }

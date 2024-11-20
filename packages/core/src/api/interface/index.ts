@@ -10,7 +10,6 @@ import {
 import { APIResp, WishItem } from './types'
 import _ from 'lodash'
 import { GameBaseInfoResp } from '../../interface'
-import { ServiceWithAPIHelper } from '../helper'
 
 export interface ProxiedAPIResponse<T> {
   ok: boolean
@@ -25,7 +24,7 @@ const sleep = async (millSec: number = 300) => {
 }
 
 export interface IAPIService {
-  Steam: ServiceWithAPIHelper<ISteamFamilyAPI>
+  Steam: ISteamFamilyAPI
 }
 
 export abstract class ISteamFamilyAPI {

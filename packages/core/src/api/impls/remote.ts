@@ -7,26 +7,27 @@ import {
   PartialMessage,
 } from 'node-steam-family-group-api'
 import { GameBaseInfoResp } from '@/interface'
+import { createFetch, Fetch } from '@/utils/fetch'
+import { Logger } from '@/interface/logger'
 
 export class DefaultRemoteFamilyAPI extends ISteamFamilyAPI {
-  remoteHost: string
-  constructor(steamHelperAPIHost: string) {
+  f: Fetch
+  constructor(steamHelperAPIHost: string, logger: Logger) {
     super()
-    this.remoteHost = `${steamHelperAPIHost}/api/steam`
+    this.f = createFetch(logger).extend({
+      baseURL: `${steamHelperAPIHost}/api/steam`,
+    })
   }
 
   getFamilyMembers(
     memberIds: string[],
     token?: string
   ): Promise<ProxiedAPIResponse<CPlayer_GetPlayerLinkDetails_Response>> {
-    // <ProxiedAPIResponse<CPlayer_GetPlayerLinkDetails_Response>>
-    return fetch(
-      `${this.remoteHost}/player/${memberIds.join(',')}?access_token=${token}`,
-      {
-        method: 'GET',
-        headers: {},
-      }
-    ).then((res) => res.json())
+    return this.f.get(`/player/${memberIds.join(',')}`, {
+      query: {
+        access_token: token,
+      },
+    })
   }
 
   getPlaytimeSummary(
@@ -37,40 +38,33 @@ export class DefaultRemoteFamilyAPI extends ISteamFamilyAPI {
   }
 
   getSteamFamilyGroup(token?: string, steamId?: bigint) {
-    return fetch(`${this.remoteHost}/family?access_token=${token}`, {
-      method: 'GET',
-      headers: {},
-    }).then((res) => res.json())
+    return this.f.get(`/family`, {
+      query: {
+        access_token: token,
+      },
+    })
   }
 
   getSteamFamilyGroupLibs(
     familyId: bigint,
     token?: string
   ): Promise<ProxiedAPIResponse<CFamilyGroups_GetSharedLibraryApps_Response>> {
-    return fetch(
-      `${this.remoteHost}/family/shared/${familyId}?access_token=${token}`,
-      {
-        method: 'GET',
-        headers: {},
-      }
-    ).then((res) => res.json())
+    return this.f.get(`/family/shared/${familyId}`, {
+      query: {
+        access_token: token,
+      },
+    })
   }
 
   getSteamItems(
     appIds: string[]
   ): Promise<ProxiedAPIResponse<CStoreBrowse_GetItems_Response>> {
-    return fetch(`${this.remoteHost}/items/${appIds.join(',')}`, {
-      method: 'GET',
-      headers: {},
-    }).then((res) => res.json())
+    return this.f.get(`/items/${appIds.join(',')}`)
   }
 
   getSteamItemsBaseInfo(
     appIds: number[]
   ): Promise<ProxiedAPIResponse<GameBaseInfoResp>> {
-    return fetch(`${this.remoteHost}/info/${appIds.join(',')}`, {
-      method: 'GET',
-      headers: {},
-    }).then((res) => res.json())
+    return this.f.get(`/info/${appIds.join(',')}`)
   }
 }

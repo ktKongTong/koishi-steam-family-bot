@@ -262,14 +262,9 @@ export abstract class ISteamService<T> {
       .sort((a, b) => b.rtTimeAcquired - a.rtTimeAcquired)
       .slice(0, 12)
     const [summary, members, recentAppDetail] = await Promise.all([
-      this.api.Steam.withRetry(3).getPlaytimeSummary(
-        res.data.familyGroupid,
-        token
-      ),
-      this.api.Steam.withRetry(3).getFamilyMembers(ids, token),
-      this.api.Steam.withRetry(3).getSteamItems(
-        recentApp.map((it) => it.appId.toString())
-      ),
+      this.api.Steam.getPlaytimeSummary(res.data.familyGroupid, token),
+      this.api.Steam.getFamilyMembers(ids, token),
+      this.api.Steam.getSteamItems(recentApp.map((it) => it.appId.toString())),
     ])
     return {
       familyInfo: res.data,
