@@ -32,7 +32,7 @@
     "globals": "^15.3.0",
     "globby": "^14.0.1",
     "husky": "^9.0.11",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.1.1",
     "lint-staged": "^15.2.5",
     "mocha": "^10.4.0",
     "react-jsx": "^1.0.0",
